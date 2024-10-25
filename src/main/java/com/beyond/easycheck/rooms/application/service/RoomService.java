@@ -8,7 +8,6 @@ import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
 import com.beyond.easycheck.rooms.infrastructure.repository.DailyRoomAvailabilityRepository;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomImageRepository;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepository;
-import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepositoryCustom;
 import com.beyond.easycheck.rooms.ui.requestbody.RoomCreateRequest;
 import com.beyond.easycheck.rooms.ui.requestbody.RoomUpdateRequest;
 import com.beyond.easycheck.rooms.ui.view.RoomView;
@@ -121,7 +120,7 @@ public class RoomService {
         return RoomView.builder()
                 .roomId(room.getRoomId())
                 .images(images)
-                .roomNumber(room.getRoomNumber())
+                .roomNumber(room.getType())
                 .roomAmount(room.getRoomAmount())
                 .remainingRoom(room.getRemainingRoom())
                 .status(room.getStatus())
@@ -149,7 +148,7 @@ public class RoomService {
 
                     return new RoomView(
                             roomEntity.getRoomId(),
-                            roomEntity.getRoomNumber(),
+                            roomEntity.getType(),
                             imageUrls,
                             roomEntity.getRoomAmount(),
                             roomEntity.getRemainingRoom(),

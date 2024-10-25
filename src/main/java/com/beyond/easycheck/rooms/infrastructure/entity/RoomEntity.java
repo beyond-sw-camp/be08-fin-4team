@@ -32,7 +32,7 @@ public class RoomEntity extends BaseTimeEntity {
     private RoomtypeEntity roomTypeEntity;
 
     @Column(nullable = false)
-    private String roomNumber;
+    private String type;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageEntity> images = new ArrayList<>();
@@ -53,7 +53,7 @@ public class RoomEntity extends BaseTimeEntity {
     }
 
     public void update(RoomUpdateRequest roomUpdateRequest) {
-        roomNumber = roomUpdateRequest.getRoomNumber();
+        type = roomUpdateRequest.getRoomNumber();
         roomAmount = roomUpdateRequest.getRoomAmount();
         status = roomUpdateRequest.getStatus();
 
