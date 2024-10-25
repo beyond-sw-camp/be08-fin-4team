@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "Ticket", description = "입장권 정보 관리 API")
 @RestController
-@RequestMapping("/api/v1/parks/{themeParkId}/tickets")
+@RequestMapping("/api/v1/parks")
 @RequiredArgsConstructor
 public class TicketController {
 
@@ -29,7 +29,7 @@ public class TicketController {
     private final TicketReadUseCase ticketReadUseCase;
 
     @Operation(summary = "입장권 종류를 등록하는 API")
-    @PostMapping("")
+    @PostMapping("/{themeParkId}/tickets")
     public ResponseEntity<ApiResponseView<TicketView>> createTicket(@PathVariable Long themeParkId,
                                                                     @RequestBody @Validated TicketRequest request) {
         TicketCreateCommand command = TicketCreateCommand.builder()
@@ -79,7 +79,7 @@ public class TicketController {
     }
 
     @Operation(summary = "해당 테마파크 내 입장권 종류를 조회하는 API")
-    @GetMapping("")
+    @GetMapping("/{themeParkId}/tickets")
     public ResponseEntity<ApiResponseView<List<TicketView>>> getAllTicketsByThemePark(@PathVariable Long themeParkId) {
         List<FindTicketResult> results = ticketReadUseCase.getTicketsByThemePark(themeParkId);
 
@@ -92,7 +92,7 @@ public class TicketController {
     }
 
     @Operation(summary = "해당 테마파크 내 현재시점에서 판매하고 있는 입장권 조회 API")
-    @GetMapping("/on-sale")
+    @GetMapping("/{themeParkId}/tickets/on-sale")
     public ResponseEntity<ApiResponseView<List<TicketView>>> getTicketsByThemeParkOnSale(@PathVariable Long themeParkId) {
         List<FindTicketResult> results = ticketReadUseCase.getTicketsByThemeParkOnSale(themeParkId);
 
