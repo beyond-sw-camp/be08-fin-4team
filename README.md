@@ -91,11 +91,14 @@
 
 ### 4. API Apecification
 
+[API 명세서 바로가기](https://www.notion.so/playdatacademy/2a38dc8d0e284273beff05c21db17618?v=4d05adcbbbe34b1a859aa461c86c97a0&pvs=4)
+
 <br>
 
-### 5. Test Case
+### 5. Backend Test Case
 
-[Test Case 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
+[Test Case 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107) <br>
+[Test Case 시나리오](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=1297816150#gid=1297816150)
 
 <br>
 
@@ -104,6 +107,12 @@
 ### 1. WireFrame
 
 [WireFrame 바로가기](https://docs.google.com/spreadsheets/d/1Vqk9uPfJh2YJlPmghDuVuqGf8T6JbJRY/edit?gid=543705097#gid=543705097)
+
+<br>
+
+### 1. UI/UX Test Case
+
+[Test Case 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
 
 <br>
 
