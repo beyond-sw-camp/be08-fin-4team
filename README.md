@@ -91,7 +91,7 @@
 
 ### 4. API Apecification
 
-[API 명세서 바로가기](https://www.notion.so/playdatacademy/2a38dc8d0e284273beff05c21db17618?v=4d05adcbbbe34b1a859aa461c86c97a0&pvs=4)
+[API 명세서 바로가기](https://playdatacademy.notion.site/2a38dc8d0e284273beff05c21db17618?v=fffd943bcac281f7b6a5000c13ea4a89)
 
 <br>
 
