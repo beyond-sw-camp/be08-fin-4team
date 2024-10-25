@@ -126,7 +126,7 @@ public class RoomService {
                 .status(room.getStatus())
                 .roomTypeId(roomType.getRoomTypeId())
                 .accomodationId(roomType.getAccommodationEntity().getId())
-                .typeName(roomType.getTypeName())
+                .typeName(roomType.getName())
                 .description(roomType.getDescription())
                 .maxOccupancy(roomType.getMaxOccupancy())
                 .build();
@@ -155,7 +155,7 @@ public class RoomService {
                             roomEntity.getStatus(),
                             roomEntity.getRoomTypeEntity().getRoomTypeId(),
                             roomEntity.getRoomTypeEntity().getAccommodationEntity().getId(),
-                            roomEntity.getRoomTypeEntity().getTypeName(),
+                            roomEntity.getRoomTypeEntity().getName(),
                             roomEntity.getRoomTypeEntity().getDescription(),
                             roomEntity.getRoomTypeEntity().getMaxOccupancy()
                     );

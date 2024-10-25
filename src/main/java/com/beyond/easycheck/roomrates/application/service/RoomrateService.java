@@ -76,7 +76,7 @@ public class RoomrateService {
                 .rateType(roomrate.getRateType())
                 .rate(roomrate.getRate())
                 .status(room.getStatus())
-                .typeName(roomtype.getTypeName())
+                .typeName(roomtype.getName())
                 .seasonName(season.getSeasonName())
                 .build();
 
@@ -97,7 +97,7 @@ public class RoomrateService {
                         roomrateEntity.getRateType(),
                         roomrateEntity.getRate(),
                         roomrateEntity.getRoomEntity().getStatus(),
-                        roomrateEntity.getRoomEntity().getRoomTypeEntity().getTypeName(),
+                        roomrateEntity.getRoomEntity().getRoomTypeEntity().getName(),
                         roomrateEntity.getSeasonEntity().getSeasonName()
                 )).collect(Collectors.toList());
 

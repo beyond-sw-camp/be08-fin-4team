@@ -72,7 +72,7 @@ class ReservationRoomServiceTest {
         when(mockRoomEntity.getRoomId()).thenReturn(roomId);
 
         RoomtypeEntity mockRoomTypeEntity = mock(RoomtypeEntity.class);
-        when(mockRoomTypeEntity.getTypeName()).thenReturn("Deluxe");
+        when(mockRoomTypeEntity.getName()).thenReturn("Deluxe");
 
         when(mockRoomEntity.getRoomTypeEntity()).thenReturn(mockRoomTypeEntity);
 
@@ -177,7 +177,7 @@ class ReservationRoomServiceTest {
         when(mockUserEntity.getName()).thenReturn("John Doe");
 
         RoomtypeEntity mockRoomTypeEntity = mock(RoomtypeEntity.class);
-        when(mockRoomTypeEntity.getTypeName()).thenReturn("Deluxe");
+        when(mockRoomTypeEntity.getName()).thenReturn("Deluxe");
 
         RoomEntity mockRoomEntity = mock(RoomEntity.class);
         when(mockRoomEntity.getRoomId()).thenReturn(1L);

@@ -141,7 +141,7 @@ public class ReservationRoomService {
 
                     return new RoomAvailabilityView(
                             roomEntity.getRoomId(),
-                            roomEntity.getRoomTypeEntity().getTypeName(),
+                            roomEntity.getRoomTypeEntity().getName(),
                             roomEntity.getType(),
                             availability.getRemainingRoom(),
                             availability.getStatus(),
@@ -194,7 +194,7 @@ public class ReservationRoomService {
 
                         return new RoomAvailabilityView(
                                 room.getRoomId(),
-                                room.getRoomTypeEntity().getTypeName(),
+                                room.getRoomTypeEntity().getName(),
                                 room.getType(),
                                 dailyAvailability.getRemainingRoom(),
                                 dailyAvailability.getStatus(),

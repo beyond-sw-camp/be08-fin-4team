@@ -56,7 +56,7 @@ public class RoomtypeService {
         RoomtypeView roomtypeView = RoomtypeView.builder()
                 .accomodationId(accommodationEntity.getId())
                 .roomTypeId(roomTypeEntity.getRoomTypeId())
-                .typeName(roomTypeEntity.getTypeName())
+                .typeName(roomTypeEntity.getName())
                 .description(roomTypeEntity.getDescription())
                 .maxOccupancy(roomTypeEntity.getMaxOccupancy())
                 .build();
@@ -72,7 +72,7 @@ public class RoomtypeService {
                 .map(roomTypeEntity -> new RoomtypeView(
                         roomTypeEntity.getRoomTypeId(),
                         roomTypeEntity.getAccommodationEntity().getId(),
-                        roomTypeEntity.getTypeName(),
+                        roomTypeEntity.getName(),
                         roomTypeEntity.getDescription(),
                         roomTypeEntity.getMaxOccupancy()
                 )).collect(Collectors.toList());
