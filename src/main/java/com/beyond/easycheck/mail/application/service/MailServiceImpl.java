@@ -389,7 +389,7 @@ public class MailServiceImpl implements MailService{
                 "<table role=\"presentation\" style=\"width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\">" +
                 "<tr>" +
                 "<td style=\"padding: 40px 40px 20px 40px; text-align: center;\">" +
-                "<img src=\"https://example.com/ticketlink-logo.png\" alt=\"티켓링크 로고\" style=\"max-width: 200px; height: auto;\">" +
+                "<img src=\"https://beyond-easycheck.s3.us-east-1.amazonaws.com/logos/email-logo.png\" alt=\"티켓링크 로고\" style=\"max-width: 100%; height: auto;\">" +
                 "</td>" +
                 "</tr>" +
                 "<tr>" +
