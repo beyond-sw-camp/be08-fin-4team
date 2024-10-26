@@ -213,6 +213,24 @@ public class ReservationRoomService {
         return result;
     }
 
+//    public List<ReservationRoomEntity> getReservationsForReminder() {
+//        LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
+//        List<ReservationRoomEntity> reservations = reservationRoomRepository.findByReservationDateBeforeAndReminderSentFalse(tenMinutesAgo);
+//        return reservations;
+//    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationRoomEntity> get3DaysBeforeReservationsForReminder() {
+        LocalDate threeDaysFromNow = LocalDate.now().plusDays(3);
+        return reservationRoomRepository.findByCheckinDate(threeDaysFromNow);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationRoomEntity> get10DaysBeforeReservationsForReminder() {
+        LocalDate tenDaysFromNow = LocalDate.now().plusDays(10);
+        return reservationRoomRepository.findByCheckinDate(tenDaysFromNow);
+    }
+
     @Transactional(readOnly = true)
     public List<ReservationRoomView> getAllReservations(int page, int size) {
 

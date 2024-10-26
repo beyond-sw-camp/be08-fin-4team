@@ -33,6 +33,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
     // AWS
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
