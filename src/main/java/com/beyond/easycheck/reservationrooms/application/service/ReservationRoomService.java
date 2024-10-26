@@ -220,9 +220,15 @@ public class ReservationRoomService {
 //    }
 
     @Transactional(readOnly = true)
-    public List<ReservationRoomEntity> getReservationsForReminder() {
+    public List<ReservationRoomEntity> get3DaysBeforeReservationsForReminder() {
         LocalDate threeDaysFromNow = LocalDate.now().plusDays(3);
         return reservationRoomRepository.findByCheckinDate(threeDaysFromNow);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationRoomEntity> get10DaysBeforeReservationsForReminder() {
+        LocalDate tenDaysFromNow = LocalDate.now().plusDays(10);
+        return reservationRoomRepository.findByCheckinDate(tenDaysFromNow);
     }
 
     @Transactional(readOnly = true)
