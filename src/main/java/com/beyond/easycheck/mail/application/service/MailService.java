@@ -11,5 +11,7 @@ public interface MailService {
 
     void sendReservationConfirmationEmail(String email, ReservationRoomView reservationDetails);
 
+    void sendReservationReminderEmail(String email, ReservationRoomView reservationDetails);
+
     void sendSuggestionReply(SuggestionReplyRequestBody requestBody);
 }

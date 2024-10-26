@@ -214,6 +214,12 @@ public class ReservationRoomService {
     }
 
     @Transactional(readOnly = true)
+    public List<ReservationRoomEntity> getReservationsForReminder() {
+        LocalDateTime tenMinutesAgo = LocalDateTime.now().minusMinutes(10);
+        return reservationRoomRepository.findByReservationDateBeforeAndReminderSentFalse(tenMinutesAgo);
+    }
+
+    @Transactional(readOnly = true)
     public List<ReservationRoomView> getAllReservations(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);

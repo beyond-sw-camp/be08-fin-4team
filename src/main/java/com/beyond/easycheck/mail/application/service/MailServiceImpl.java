@@ -31,6 +31,7 @@ public class MailServiceImpl implements MailService{
 
     private static final String MAIL_SUBJECT = "EasyCheck 이메일 인증코드";
     private static final String MAIL_RESERVATION = "EasyCheck 예약 안내";
+    private static final String REMINDER_SUBJECT = "EasyCheck 예약 안내";
 
     public static final Long VERIFICATION_EXPIRED_TIME = 300L;
 
@@ -125,6 +126,26 @@ public class MailServiceImpl implements MailService{
         }
     }
 
+    @Override
+    @Transactional
+    public void sendReservationReminderEmail(String email, ReservationRoomView reservationDetails) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            final String SENDER_EMAIL_ADDRESS = "yonginfren@gmail.com";
+            message.setFrom(new InternetAddress(SENDER_EMAIL_ADDRESS));
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject(REMINDER_SUBJECT);
+
+            String htmlContent = generateReservationReminderEmailContent(reservationDetails);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            mailSender.send(message);
+            log.info("Reservation reminder email sent to {}", email);
+        } catch (MessagingException e) {
+            log.error("Failed to send reservation reminder email", e);
+            throw new EasyCheckException(CommonMessageType.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     @Transactional
@@ -221,6 +242,36 @@ public class MailServiceImpl implements MailService{
                 "</div>";
 
 
+
+        return generateEmailTemplate(title, mainContent);
+    }
+
+    private String generateReservationReminderEmailContent(ReservationRoomView reservationDetails) {
+        String title = "체크인 3일 전 예약 안내";
+        String mainContent = "<div style=\"width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;\">" +
+                "<div style=\"background-color: #f8f8f8; padding: 20px; border-radius: 8px;\">" +
+                "<h1 style=\"color: #FF6B35; font-size: 24px; margin-bottom: 15px; text-align: center; font-weight: bold;\">" +
+                "EasyCheck 예약 체크인 안내</h1>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center;\">" +
+                "안녕하세요, <strong>" + reservationDetails.getUserName() + "</strong>님.</p>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center; margin-bottom: 20px;\">" +
+                "예약하신 객실의 체크인 날짜가 3일 남았습니다. 예약 정보를 확인해 주세요.</p>" +
+                "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 8px;\">" +
+                "<table style=\"width: 100%; border-collapse: collapse; font-size: 16px; color: #333333;\">" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크인 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckinDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크아웃 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckoutDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "<p style=\"color: #666666; font-size: 14px; text-align: center; margin-top: 20px;\">" +
+                "감사합니다,<br><strong>EasyCheck 팀</strong></p>" +
+                "</div>";
 
         return generateEmailTemplate(title, mainContent);
     }
