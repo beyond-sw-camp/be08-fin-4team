@@ -31,7 +31,7 @@ public class MailServiceImpl implements MailService{
 
     private static final String MAIL_SUBJECT = "EasyCheck 이메일 인증코드";
     private static final String MAIL_RESERVATION = "EasyCheck 예약 안내";
-    private static final String REMINDER_SUBJECT = "EasyCheck 예약 안내";
+    private static final String REMINDER_SUBJECT = "EasyCheck 예약 안내 재발송";
 
     public static final Long VERIFICATION_EXPIRED_TIME = 300L;
 
