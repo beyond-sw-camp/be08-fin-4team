@@ -59,13 +59,6 @@ public class ReservationRoomEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    @Column(nullable = false)
-    private boolean reminderSent = false;
-
-    public void markReminderSent() {
-        this.reminderSent = true;
-    }
-
     public void updateReservationRoom(ReservationRoomUpdateRequest reservationRoomUpdateRequest) {
         Optional.ofNullable(reservationRoomUpdateRequest.getReservationStatus()).ifPresent(reservationStatus -> this.reservationStatus = reservationStatus);
     }

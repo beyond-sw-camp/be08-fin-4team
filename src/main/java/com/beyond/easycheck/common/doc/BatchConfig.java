@@ -49,8 +49,6 @@ public class BatchConfig {
                                 reservation.getUserEntity().getEmail(),
                                 ReservationRoomView.of(reservation)
                         );
-                        reservation.markReminderSent();
-                        reservationRoomRepository.save(reservation);
                     }
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
