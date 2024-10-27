@@ -5,12 +5,12 @@ import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationTyp
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.roomrates.exception.RoomrateMessageType;
-import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateEntity;
+import com.beyond.easycheck.roomrates.infrastructure.entity.RoomRateEntity;
 import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateType;
-import com.beyond.easycheck.roomrates.infrastructure.repository.RoomrateRepository;
+import com.beyond.easycheck.roomrates.infrastructure.repository.RoomRateRepository;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateCreateRequest;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateUpdateRequest;
-import com.beyond.easycheck.roomrates.ui.view.RoomrateView;
+import com.beyond.easycheck.roomrates.ui.view.RoomRateView;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepository;
@@ -44,10 +44,10 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class RoomrateServiceTest {
+public class RoomRateServiceTest {
 
     @Mock
-    private RoomrateRepository roomrateRepository;
+    private RoomRateRepository roomrateRepository;
 
     @Mock
     private SeasonRepository seasonRepository;
@@ -62,7 +62,7 @@ public class RoomrateServiceTest {
     private RoomtypeRepository roomtypeRepository;
 
     @InjectMocks
-    private RoomrateService roomrateService;
+    private RoomRateService roomrateService;
 
     RoomEntity roomEntity;
     SeasonEntity seasonEntity;
@@ -112,7 +112,7 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 생성 성공")
-    void createRoomrate_success() {
+    void createRoomRate_success() {
         // Given
         when(seasonRepository.findById(1L)).thenReturn(Optional.of(seasonEntity));
         when(roomRepository.findById(1L)).thenReturn(Optional.of(roomEntity));
@@ -124,7 +124,7 @@ public class RoomrateServiceTest {
                 BigDecimal.valueOf(100000)
         );
 
-        RoomrateEntity roomrateEntity = new RoomrateEntity(
+        RoomRateEntity roomrateEntity = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -132,13 +132,13 @@ public class RoomrateServiceTest {
                 BigDecimal.valueOf(100000)
         );
 
-        when(roomrateRepository.save(any(RoomrateEntity.class))).thenReturn(roomrateEntity);
+        when(roomrateRepository.save(any(RoomRateEntity.class))).thenReturn(roomrateEntity);
 
         // When
-        roomrateService.createRoomrate(roomrateCreateRequest);
+        roomrateService.createRoomRate(roomrateCreateRequest);
 
         // When & Then
-        assertThatCode(() -> roomrateService.createRoomrate(roomrateCreateRequest))
+        assertThatCode(() -> roomrateService.createRoomRate(roomrateCreateRequest))
                 .doesNotThrowAnyException();
 
         verify(roomRepository).save(any(RoomEntity.class));
@@ -146,7 +146,7 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 생성 실패 - 존재하지 않는 roomId")
-    void createRoomrate_fail_wrongRoomId() {
+    void createRoomRate_fail_wrongRoomId() {
         // Given
         RoomrateCreateRequest roomrateCreateRequest = new RoomrateCreateRequest(
                 999L,
@@ -156,16 +156,16 @@ public class RoomrateServiceTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.createRoomrate(roomrateCreateRequest))
+        assertThatThrownBy(() -> roomrateService.createRoomRate(roomrateCreateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(ROOM_NOT_FOUND.getMessage());
 
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 생성 실패 - 존재하지 않는 seasonId")
-    void createRoomrate_fail_wrongSeasonId() {
+    void createRoomRate_fail_wrongSeasonId() {
         // Given
         RoomrateCreateRequest roomrateCreateRequest = new RoomrateCreateRequest(
                 1L,
@@ -178,16 +178,16 @@ public class RoomrateServiceTest {
         when(seasonRepository.findById(999L)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.createRoomrate(roomrateCreateRequest))
+        assertThatThrownBy(() -> roomrateService.createRoomRate(roomrateCreateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(SEASON_NOT_FOUND.getMessage());
 
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 생성 실패 - 잘못된 입력값")
-    void createRoomrate_fail_wrongValue() {
+    void createRoomRate_fail_wrongValue() {
         // Given
         RoomrateCreateRequest roomrateCreateRequest = new RoomrateCreateRequest(
                 1L,
@@ -200,18 +200,18 @@ public class RoomrateServiceTest {
         when(seasonRepository.findById(1L)).thenReturn(Optional.of(seasonEntity));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.createRoomrate(roomrateCreateRequest))
+        assertThatThrownBy(() -> roomrateService.createRoomRate(roomrateCreateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(RoomrateMessageType.ARGUMENT_NOT_VALID.getMessage());
 
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 단일 조회 성공")
-    void readRoomrate_success() {
+    void readRoomRate_success() {
         // Given
-        RoomrateEntity roomrateEntity = new RoomrateEntity(
+        RoomRateEntity roomrateEntity = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -224,7 +224,7 @@ public class RoomrateServiceTest {
         when(seasonRepository.findById(1L)).thenReturn(Optional.of(seasonEntity));
         when(roomrateRepository.findById(1L)).thenReturn(Optional.of(roomrateEntity));
 
-        RoomrateView roomrateView = new RoomrateView(
+        RoomRateView roomrateView = new RoomRateView(
                 1L,
                 RoomrateType.주말,
                 BigDecimal.valueOf(100000),
@@ -234,7 +234,7 @@ public class RoomrateServiceTest {
         );
 
         // When
-        RoomrateView readRoomrate = roomrateService.readRoomrate(1L);
+        RoomRateView readRoomrate = roomrateService.readRoomRate(1L);
 
         // Then
         assertThat(readRoomrate.getId()).isEqualTo(roomrateView.getId());
@@ -247,7 +247,7 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 단일 조회 실패 - 존재하지 않는 roomrateId")
-    void readRoomrate_fail() {
+    void readRoomRate_fail() {
         // Given
         Long roomrateId = 999L;
 
@@ -255,16 +255,16 @@ public class RoomrateServiceTest {
         when(seasonRepository.findById(1L)).thenReturn(Optional.of(seasonEntity));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.readRoomrate(roomrateId))
+        assertThatThrownBy(() -> roomrateService.readRoomRate(roomrateId))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(RoomrateMessageType.ROOM_RATE_NOT_FOUND.getMessage());
     }
 
     @Test
     @DisplayName("객실 요금 전체 조회 성공")
-    void readRoomrates_success() {
+    void readRoomRates_success() {
         // Given
-        RoomrateEntity roomrate1 = new RoomrateEntity(
+        RoomRateEntity roomrate1 = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -272,7 +272,7 @@ public class RoomrateServiceTest {
                 BigDecimal.valueOf(100000)
         );
 
-        RoomrateEntity roomrate2 = new RoomrateEntity(
+        RoomRateEntity roomrate2 = new RoomRateEntity(
                 2L,
                 roomEntity,
                 seasonEntity,
@@ -280,28 +280,28 @@ public class RoomrateServiceTest {
                 BigDecimal.valueOf(100000)
         );
 
-        List<RoomrateEntity> roomrateEntities = Arrays.asList(roomrate1, roomrate2);
+        List<RoomRateEntity> roomrateEntities = Arrays.asList(roomrate1, roomrate2);
         when(roomrateRepository.findAll()).thenReturn(roomrateEntities);
 
         // When
-        List<RoomrateView> roomrateViews = roomrateService.readRoomrates();
+        List<RoomRateView> roomRateViews = roomrateService.readRoomRates();
 
         // Then
-        assertThat(roomrateViews).hasSize(2);
-        assertThat(roomrateViews.get(0).getId()).isEqualTo(roomrate1.getId());
-        assertThat(roomrateViews.get(1).getId()).isEqualTo(roomrate2.getId());
+        assertThat(roomRateViews).hasSize(2);
+        assertThat(roomRateViews.get(0).getId()).isEqualTo(roomrate1.getId());
+        assertThat(roomRateViews.get(1).getId()).isEqualTo(roomrate2.getId());
 
         verify(roomrateRepository).findAll();
     }
 
     @Test
     @DisplayName("객실 요금 전체 조회 실패 - 빈 리스트")
-    void readRoomrates_fail() {
+    void readRoomRates_fail() {
         // Given
         when(roomrateRepository.findAll()).thenThrow(new EasyCheckException(ROOM_RATES_NOT_FOUND));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.readRoomrates())
+        assertThatThrownBy(() -> roomrateService.readRoomRates())
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(ROOM_RATES_NOT_FOUND.getMessage());
 
@@ -310,9 +310,9 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 정보 수정 성공")
-    void updateRoomrate_success() {
+    void updateRoomRate_success() {
         // Given
-        RoomrateEntity roomrate = new RoomrateEntity(
+        RoomRateEntity roomrate = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -332,7 +332,7 @@ public class RoomrateServiceTest {
         when(roomrateRepository.findById(1L)).thenReturn(Optional.of(roomrate));
 
         // When
-        roomrateService.updateRoomrate(1L, updateRoomrateRequest);
+        roomrateService.updateRoomRate(1L, updateRoomrateRequest);
 
         // Then
         assertThat(updateRoomrateRequest.getRoomEntity()).isEqualTo(1L);
@@ -345,9 +345,9 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 정보 수정 실패 - 존재하지 않는 roomId")
-    void updateRoomrate_fail_wrongRoomId() {
+    void updateRoomRate_fail_wrongRoomId() {
         // Given
-        RoomrateEntity roomrate = new RoomrateEntity(
+        RoomRateEntity roomrate = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -365,19 +365,19 @@ public class RoomrateServiceTest {
         when(roomrateRepository.findById(1L)).thenReturn(Optional.of(roomrate));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.updateRoomrate(1L, updateRoomrateRequest))
+        assertThatThrownBy(() -> roomrateService.updateRoomRate(1L, updateRoomrateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(ROOM_NOT_FOUND.getMessage());
 
         verify(roomrateRepository).findById(1L);
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 정보 수정 실패 - 존재하지 않는 seasonId")
-    void updateRoomrate_fail_wrongSeasonId() {
+    void updateRoomRate_fail_wrongSeasonId() {
         // Given
-        RoomrateEntity roomrate = new RoomrateEntity(
+        RoomRateEntity roomrate = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -396,19 +396,19 @@ public class RoomrateServiceTest {
         when(roomrateRepository.findById(1L)).thenReturn(Optional.of(roomrate));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.updateRoomrate(1L, updateRoomrateRequest))
+        assertThatThrownBy(() -> roomrateService.updateRoomRate(1L, updateRoomrateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(SEASON_NOT_FOUND.getMessage());
 
         verify(roomrateRepository).findById(1L);
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 정보 수정 실패 - 잘못된 입력값")
     void updateRoom_fail() {
         // Given
-        RoomrateEntity roomrate = new RoomrateEntity(
+        RoomRateEntity roomrate = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -428,21 +428,21 @@ public class RoomrateServiceTest {
         when(roomrateRepository.findById(1L)).thenReturn(Optional.of(roomrate));
 
         // When & Then
-        assertThatThrownBy(() -> roomrateService.updateRoomrate(1L, updateRoomrateRequest))
+        assertThatThrownBy(() -> roomrateService.updateRoomRate(1L, updateRoomrateRequest))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(ARGUMENT_NOT_VALID.getMessage());
 
         verify(roomrateRepository).findById(1L);
-        verify(roomrateRepository, never()).save(any(RoomrateEntity.class));
+        verify(roomrateRepository, never()).save(any(RoomRateEntity.class));
     }
 
     @Test
     @DisplayName("객실 요금 정보 삭제 성공")
-    void deleteRoomrate_success() {
+    void deleteRoomRate_success() {
         // Given
         Long roomrateId = 1L;
 
-        RoomrateEntity roomrate = new RoomrateEntity(
+        RoomRateEntity roomrate = new RoomRateEntity(
                 1L,
                 roomEntity,
                 seasonEntity,
@@ -453,7 +453,7 @@ public class RoomrateServiceTest {
         when(roomrateRepository.findById(roomrateId)).thenReturn(Optional.of(roomrate));
 
         // When
-        roomrateService.deleteRoomrate(roomrateId);
+        roomrateService.deleteRoomRate(roomrateId);
 
         // Then
         verify(roomrateRepository).delete(roomrate);
@@ -461,12 +461,12 @@ public class RoomrateServiceTest {
 
     @Test
     @DisplayName("객실 요금 정보 삭제 실패 - 잘못된 RoomrateID")
-    void deleteRoomrate_fail() {
+    void deleteRoomRate_fail() {
         Long roomrateId = 999L;
 
         when(roomrateRepository.findById(roomrateId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> roomrateService.deleteRoomrate(roomrateId))
+        assertThatThrownBy(() -> roomrateService.deleteRoomRate(roomrateId))
                 .isInstanceOf(EasyCheckException.class)
                 .hasMessage(ROOM_RATE_NOT_FOUND.getMessage());
 

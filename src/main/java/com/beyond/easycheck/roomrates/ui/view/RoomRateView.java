@@ -2,6 +2,7 @@ package com.beyond.easycheck.roomrates.ui.view;
 
 import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateType;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,26 +14,21 @@ import java.math.BigDecimal;
 @Setter
 @Builder
 @ToString
-public class RoomrateView {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RoomRateView {
 
     private Long id;
 
-    private RoomrateType rateType;
+    private BigDecimal normalRate;
 
-    private BigDecimal rate;
-
-    private RoomStatus status;
-
-    private String typeName;
+    private BigDecimal corpRate;
 
     private String seasonName;
 
-    public RoomrateView(Long id, RoomrateType rateType, BigDecimal rate, RoomStatus status, String typeName, String seasonName) {
+    public RoomRateView(Long id, BigDecimal normalRate, BigDecimal corpRate, String seasonName) {
         this.id = id;
-        this.rateType = rateType;
-        this.rate = rate;
-        this.status = status;
-        this.typeName = typeName;
+        this.normalRate = normalRate;
+        this.corpRate = corpRate;
         this.seasonName = seasonName;
     }
 }
