@@ -1,67 +1,64 @@
 package com.beyond.easycheck.rooms.ui.view;
 
+import com.beyond.easycheck.rooms.application.dto.FindRoomResult;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
 
 @Getter
-@Setter
-@Builder
 @ToString
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoomView {
 
-    @NotNull
     private Long roomId;
 
-    @NotBlank
     private String type;
 
-    @NotBlank
     private List<String> images;
 
-    @NotNull
     private int roomAmount;
 
-    @NotNull
     private int remainingRoom;
 
-    @NotBlank
     private RoomStatus status;
 
-    @NotNull
     private Long roomTypeId;
 
-    @NotNull
-    private Long accomodationId;
+    private Long accommodationId;
 
-    @NotBlank
-    private String typeName;
-
-    @NotBlank
     private String description;
 
-    @Min(1)
+    private String checkInTime;
+
+    private String checkOutTime;
+
+    private String composition;
+
+    private String size;
+
     private int maxOccupancy;
 
-    public RoomView(Long roomId, String type, List<String> images, int roomAmount, int remainingRoom, RoomStatus status, Long roomTypeId, Long accomodationId, String typeName, String description, int maxOccupancy) {
-        this.roomId = roomId;
-        this.type = type;
-        this.images = images;
-        this.roomAmount = roomAmount;
-        this.remainingRoom = remainingRoom;
-        this.status = status;
-        this.roomTypeId = roomTypeId;
-        this.accomodationId = accomodationId;
-        this.typeName = typeName;
-        this.description = description;
-        this.maxOccupancy = maxOccupancy;
+    private int standardOccupancy;
+
+    public RoomView(FindRoomResult result) {
+        this.roomId = result.roomId();
+        this.type = result.type();
+        this.images = result.images();
+        this.roomAmount = result.roomAmount();
+        this.remainingRoom = result.remainingRoom();
+        this.status = result.status();
+        this.description = result.description();
+        this.checkInTime = result.checkInTime();
+        this.checkOutTime = result.checkOutTime();
+        this.composition = result.composition();
+        this.size = result.size();
+        this.maxOccupancy = result.maxOccupancy();
+        this.standardOccupancy = result.standardOccupancy();
+
+        // roomTypeId랑 accommodationId 필요??
     }
 
 }

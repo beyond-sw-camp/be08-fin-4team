@@ -1,6 +1,7 @@
 package com.beyond.easycheck.rooms.application.service;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.rooms.application.dto.FindRoomResult;
 import com.beyond.easycheck.rooms.application.dto.RoomFindQuery;
 import com.beyond.easycheck.rooms.infrastructure.entity.DailyRoomAvailabilityEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomEntity;
@@ -24,7 +25,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.beyond.easycheck.rooms.exception.RoomMessageType.*;
 import static com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType.ROOM_TYPE_NOT_FOUND;
@@ -111,25 +111,7 @@ public class RoomService {
         RoomEntity room = roomRepository.findById(id)
                 .orElseThrow(() -> new EasyCheckException(ROOM_NOT_FOUND));
 
-        RoomtypeEntity roomType = room.getRoomTypeEntity();
-
-        List<String> images = room.getImages().stream()
-                .map(RoomEntity.ImageEntity::getUrl)
-                .collect(Collectors.toList());
-
-        return RoomView.builder()
-                .roomId(room.getRoomId())
-                .images(images)
-                .type(room.getType())
-                .roomAmount(room.getRoomAmount())
-                .remainingRoom(room.getRemainingRoom())
-                .status(room.getStatus())
-                .roomTypeId(roomType.getRoomTypeId())
-                .accomodationId(roomType.getAccommodationEntity().getId())
-                .typeName(roomType.getName())
-                .description(roomType.getDescription())
-                .maxOccupancy(roomType.getMaxOccupancy())
-                .build();
+        return new RoomView(FindRoomResult.findByRoomEntity(room));
     }
 
     public List<RoomView> readRooms(RoomFindQuery query) {
@@ -140,29 +122,10 @@ public class RoomService {
             throw new EasyCheckException(ROOMS_NOT_FOUND);
         }
 
-        List<RoomView> roomViews = roomEntities.stream()
-                .map(roomEntity -> {
-                    List<String> imageUrls = roomEntity.getImages().stream()
-                            .map(RoomEntity.ImageEntity::getUrl)
-                            .collect(Collectors.toList());
-
-                    return new RoomView(
-                            roomEntity.getRoomId(),
-                            roomEntity.getType(),
-                            imageUrls,
-                            roomEntity.getRoomAmount(),
-                            roomEntity.getRemainingRoom(),
-                            roomEntity.getStatus(),
-                            roomEntity.getRoomTypeEntity().getRoomTypeId(),
-                            roomEntity.getRoomTypeEntity().getAccommodationEntity().getId(),
-                            roomEntity.getRoomTypeEntity().getName(),
-                            roomEntity.getRoomTypeEntity().getDescription(),
-                            roomEntity.getRoomTypeEntity().getMaxOccupancy()
-                    );
-                })
-                .collect(Collectors.toList());
-
-        return roomViews;
+        return roomEntities.stream()
+                .map(FindRoomResult::findByRoomEntity)
+                .map(RoomView::new)
+                .toList();
     }
 
     @Transactional
