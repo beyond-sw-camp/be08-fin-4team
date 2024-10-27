@@ -30,16 +30,8 @@ public class RoomtypeEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private String description;
-
-    @Column(nullable = false)
-    private int maxOccupancy;
-
     public void update(RoomtypeUpdateRequest roomTypeUpdateRequest) {
         name = roomTypeUpdateRequest.getTypeName();
-        description = roomTypeUpdateRequest.getDescription();
-        maxOccupancy = roomTypeUpdateRequest.getMaxOccupancy();
     }
 
 }

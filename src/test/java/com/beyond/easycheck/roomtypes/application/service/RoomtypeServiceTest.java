@@ -56,8 +56,6 @@ class RoomtypeServiceTest {
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(result.getRoomTypeId()).isEqualTo(roomTypeId); // RoomType ID 검증
         Assertions.assertThat(result.getName()).isEqualTo("디럭스"); // RoomType 이름 검증
-        Assertions.assertThat(result.getDescription()).isEqualTo("아늑한 룸"); // RoomType 설명 검증
-        Assertions.assertThat(result.getMaxOccupancy()).isEqualTo(1); // 최대 수용 인원 검증
     }
 
     @Test
