@@ -55,7 +55,7 @@ class RoomtypeServiceTest {
         // then
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(result.getRoomTypeId()).isEqualTo(roomTypeId); // RoomType ID 검증
-        Assertions.assertThat(result.getTypeName()).isEqualTo("디럭스"); // RoomType 이름 검증
+        Assertions.assertThat(result.getName()).isEqualTo("디럭스"); // RoomType 이름 검증
         Assertions.assertThat(result.getDescription()).isEqualTo("아늑한 룸"); // RoomType 설명 검증
         Assertions.assertThat(result.getMaxOccupancy()).isEqualTo(1); // 최대 수용 인원 검증
     }
@@ -93,8 +93,8 @@ class RoomtypeServiceTest {
         // then
         Assertions.assertThat(result).isNotEmpty();
         Assertions.assertThat(result.size()).isEqualTo(2);
-        Assertions.assertThat(result.get(0).getTypeName()).isEqualTo(request1.getTypeName());
-        Assertions.assertThat(result.get(1).getTypeName()).isEqualTo(request2.getTypeName());
+        Assertions.assertThat(result.get(0).getName()).isEqualTo(request1.getTypeName());
+        Assertions.assertThat(result.get(1).getName()).isEqualTo(request2.getTypeName());
 
     }
 

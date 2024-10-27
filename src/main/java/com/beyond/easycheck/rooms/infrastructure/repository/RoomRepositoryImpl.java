@@ -41,7 +41,7 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom {
 
     private BooleanExpression roomNumberContains(String roomNumber) {
         return roomNumber != null ?
-                QRoomEntity.roomEntity.roomNumber.contains(roomNumber) : null;
+                QRoomEntity.roomEntity.type.contains(roomNumber) : null;
     }
 
     private BooleanExpression statusEq(RoomStatus status) {

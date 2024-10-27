@@ -21,7 +21,7 @@ public class RoomView {
     private Long roomId;
 
     @NotBlank
-    private String roomNumber;
+    private String type;
 
     @NotBlank
     private List<String> images;
@@ -50,9 +50,9 @@ public class RoomView {
     @Min(1)
     private int maxOccupancy;
 
-    public RoomView(Long roomId, String roomNumber, List<String> images, int roomAmount, int remainingRoom, RoomStatus status, Long roomTypeId, Long accomodationId, String typeName, String description, int maxOccupancy) {
+    public RoomView(Long roomId, String type, List<String> images, int roomAmount, int remainingRoom, RoomStatus status, Long roomTypeId, Long accomodationId, String typeName, String description, int maxOccupancy) {
         this.roomId = roomId;
-        this.roomNumber = roomNumber;
+        this.type = type;
         this.images = images;
         this.roomAmount = roomAmount;
         this.remainingRoom = remainingRoom;

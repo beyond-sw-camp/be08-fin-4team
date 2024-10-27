@@ -65,7 +65,7 @@ public class RoomService {
         RoomtypeEntity roomType = roomTypeRepository.findById(roomCreateRequest.getRoomTypeId())
                 .orElseThrow(() -> new EasyCheckException(ROOM_TYPE_NOT_FOUND));
 
-        if (roomCreateRequest.getStatus() == null || roomCreateRequest.getRoomNumber() == null ||
+        if (roomCreateRequest.getStatus() == null || roomCreateRequest.getType() == null ||
                 roomCreateRequest.getRemainingRoom() < 0 || roomCreateRequest.getRoomAmount() < 0) {
             throw new EasyCheckException(ARGUMENT_NOT_VALID);
         }
@@ -73,7 +73,7 @@ public class RoomService {
 
         RoomEntity room = RoomEntity.builder()
                 .roomTypeEntity(roomType)
-                .roomNumber(roomCreateRequest.getRoomNumber())
+                .type(roomCreateRequest.getType())
                 .status(roomCreateRequest.getStatus())
                 .roomAmount(roomCreateRequest.getRoomAmount())
                 .remainingRoom(roomCreateRequest.getRemainingRoom())
@@ -120,7 +120,7 @@ public class RoomService {
         return RoomView.builder()
                 .roomId(room.getRoomId())
                 .images(images)
-                .roomNumber(room.getType())
+                .type(room.getType())
                 .roomAmount(room.getRoomAmount())
                 .remainingRoom(room.getRemainingRoom())
                 .status(room.getStatus())
