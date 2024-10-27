@@ -14,6 +14,8 @@ public enum UserMessageType implements MessageType {
     USER_ROLE_INVALID("Invalid or non-existent user role specified", HttpStatus.BAD_REQUEST),
     PASSWORD_INCORRECT("", HttpStatus.BAD_REQUEST),
 
+
+    USER_UNAUTHORIZED("Authentication required to access this resource", HttpStatus.UNAUTHORIZED),
     EMAIL_NOT_VERIFIED("Email address has not been verified", HttpStatus.UNAUTHORIZED),
     PHONE_NOT_VERIFIED("Phone number has not been verified", HttpStatus.UNAUTHORIZED),
     ;

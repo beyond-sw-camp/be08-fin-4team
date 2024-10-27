@@ -15,6 +15,10 @@ public interface UserOperationUseCase {
 
     void changePassword(ChangePasswordCommand command);
 
+    FindUserResult usePoints(int amount);
+
+    FindUserResult accumulatePoints(int amount);
+
     FindJwtResult loginGuest(GuestUserLoginCommand command);
 
     FindUserResult registerUser(UserRegisterCommand command);
