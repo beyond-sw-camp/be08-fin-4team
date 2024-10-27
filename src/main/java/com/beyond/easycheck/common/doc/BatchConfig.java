@@ -4,6 +4,7 @@ import com.beyond.easycheck.mail.application.service.MailService;
 import com.beyond.easycheck.reservationrooms.application.service.ReservationRoomService;
 import com.beyond.easycheck.reservationrooms.infrastructure.entity.ReservationRoomEntity;
 import com.beyond.easycheck.reservationrooms.ui.view.ReservationRoomView;
+import com.beyond.easycheck.rooms.application.service.RoomService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -23,10 +24,12 @@ public class BatchConfig {
 
     private final ReservationRoomService reservationRoomService;
     private final MailService mailService;
+    private final RoomService roomService;
 
-    public BatchConfig(ReservationRoomService reservationRoomService, MailService mailService) {
+    public BatchConfig(ReservationRoomService reservationRoomService, MailService mailService, RoomService roomService) {
         this.reservationRoomService = reservationRoomService;
         this.mailService = mailService;
+        this.roomService = roomService;
     }
 
     @Bean
@@ -34,6 +37,13 @@ public class BatchConfig {
         return new JobBuilder("sendReminderEmailsJob", jobRepository)
                 .start(send3DaysReminderEmailsStep)
                 .next(send10DaysReminderEmailsStep)
+                .build();
+    }
+
+    @Bean
+    public Job initializeTwoMonthsAheadAvailabilityJob(JobRepository jobRepository, Step initializeTwoMonthsAheadAvailabilityStep) {
+        return new JobBuilder("initializeTwoMonthsAheadAvailabilityJob", jobRepository)
+                .start(initializeTwoMonthsAheadAvailabilityStep)
                 .build();
     }
 
@@ -64,6 +74,16 @@ public class BatchConfig {
                                 ReservationRoomView.of(reservation)
                         );
                     }
+                    return RepeatStatus.FINISHED;
+                }, transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step initializeTwoMonthsAheadAvailabilityStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("initializeTwoMonthsAheadAvailabilityStep", jobRepository)
+                .tasklet((contribution, chunkContext) -> {
+                    roomService.initializeTwoMonthsAheadAvailability();
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
