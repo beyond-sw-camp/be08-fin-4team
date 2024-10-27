@@ -13,6 +13,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         roomService.initializeInitialRoomAvailability();
-        System.out.println("초기 객실 가용성 5개월간 설정 완료");
+        System.out.println("초기 객실 가용성 4개월간 설정 완료");
     }
 }
