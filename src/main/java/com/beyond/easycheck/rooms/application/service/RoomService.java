@@ -86,10 +86,26 @@ public class RoomService {
         return room;
     }
 
-    public void initializeRoomAvailability(RoomEntity roomEntity) {
+    @Transactional
+    public void initializeInitialRoomAvailability() {
         LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusMonths(4).withDayOfMonth(today.plusMonths(4).lengthOfMonth());
 
-        for (LocalDate date = today; !date.isAfter(today.plusDays(30)); date = date.plusDays(1)) {
+        List<RoomEntity> rooms = roomRepository.findAll();
+        rooms.forEach(room -> initializeRoomAvailability(room, today, endDate));
+    }
+
+    @Transactional
+    public void initializeTwoMonthsAheadAvailability() {
+        LocalDate startDate = LocalDate.now().plusMonths(2).withDayOfMonth(1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        List<RoomEntity> rooms = roomRepository.findAll();
+        rooms.forEach(room -> initializeRoomAvailability(room, startDate, endDate));
+    }
+
+    private void initializeRoomAvailability(RoomEntity roomEntity, LocalDate startDate, LocalDate endDate) {
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             DailyRoomAvailabilityEntity dailyAvailability = dailyRoomAvailabilityRepository
                     .findByRoomEntityAndDate(roomEntity, date.atStartOfDay())
                     .orElse(null);
