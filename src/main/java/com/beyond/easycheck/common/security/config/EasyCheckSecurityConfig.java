@@ -43,20 +43,34 @@ public class EasyCheckSecurityConfig {
         http
                 .authorizeHttpRequests(registry -> {
 
+                    // swagger
                     registry.requestMatchers(
-                                    "/api/v1/users",
-                                    "/api/v1/users/login",
-                                    "/api/v1/users/check-duplicate",
-                                    "/api/v1/users/change-password",
-                                    "/api/v1/verification-code",
-                                    "/api/v1/verify-code",
-                                    "/api/v1/sms/**",
-
                                     // Swagger UI v3 (OpenAPI)
                                     "/v3/api-docs/**",
                                     "/swagger-ui/**"
                             )
                             .permitAll();
+
+                    // 회원가입, 로그인
+                    registry.requestMatchers(HttpMethod.POST,
+                                    "/api/v1/users/",
+                                    "/api/v1/corp-users",
+                                    "/api/v1/users/login"
+                            )
+                            .permitAll();
+
+                    // 휴대폰 인증
+                    registry.requestMatchers(HttpMethod.POST,
+                            "/api/v1/sms/code",
+                            "/api/v1/sms/verify"
+                    ).permitAll();
+
+                    // 중복확인 비밀번호 변경, email
+                    registry.requestMatchers(HttpMethod.PATCH,
+                            "/api/v1/users/check-duplicate",
+                            "/api/v1/verification-code",
+                            "/api/v1/verify-code"
+                    ).permitAll();
 
                     registry.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
 
