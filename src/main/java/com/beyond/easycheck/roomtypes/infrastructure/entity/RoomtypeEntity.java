@@ -30,6 +30,10 @@ public class RoomtypeEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    private String description;
+
+    private String thumbnailUrl;
+
     public void update(RoomtypeUpdateRequest roomTypeUpdateRequest) {
         name = roomTypeUpdateRequest.getTypeName();
     }
