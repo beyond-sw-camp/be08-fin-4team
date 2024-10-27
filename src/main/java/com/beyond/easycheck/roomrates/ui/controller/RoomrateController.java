@@ -1,20 +1,21 @@
 package com.beyond.easycheck.roomrates.ui.controller;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
-import com.beyond.easycheck.roomrates.application.service.RoomrateService;
+import com.beyond.easycheck.roomrates.application.dto.RoomRateFindQuery;
+import com.beyond.easycheck.roomrates.application.service.RoomRateService;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateCreateRequest;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateUpdateRequest;
-import com.beyond.easycheck.roomrates.ui.view.RoomrateView;
+import com.beyond.easycheck.roomrates.ui.view.RoomRateView;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.beyond.easycheck.roomrates.exception.RoomrateMessageType.ARGUMENT_NOT_VALID;
@@ -26,7 +27,7 @@ import static com.beyond.easycheck.rooms.exception.RoomMessageType.ROOM_NOT_FOUN
 @RequestMapping("api/v1/roomrates")
 public class RoomrateController {
 
-    private final RoomrateService roomrateService;
+    private final RoomRateService roomrateService;
     private final RoomRepository roomRepository;
 
     @PostMapping("")
@@ -36,22 +37,26 @@ public class RoomrateController {
             throw new EasyCheckException(ARGUMENT_NOT_VALID);
         }
 
-        roomrateService.createRoomrate(roomrateCreateRequest);
+        roomrateService.createRoomRate(roomrateCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "객실 요금 단일 조회 API")
-    public ResponseEntity<RoomrateView> readRoomrate(@PathVariable Long id) {
-        RoomrateView roomrateView = roomrateService.readRoomrate(id);
+    public ResponseEntity<RoomRateView> readRoomrate(@PathVariable Long id) {
+        RoomRateView roomrateView = roomrateService.readRoomRate(id);
         return ResponseEntity.ok().body(roomrateView);
     }
 
     @GetMapping("")
     @Operation(summary = "객실 요금 전체 조회 API")
-    public ResponseEntity<List<RoomrateView>> readRoomrates() {
-        List<RoomrateView> roomrateViews = roomrateService.readRoomrates();
-        return ResponseEntity.ok().body(roomrateViews);
+    public ResponseEntity<List<RoomRateView>> readRoomrates(
+            @RequestParam(required = false) Long roomId, @RequestParam(required = false) LocalDate startDate
+            ) {
+        RoomRateFindQuery query = new RoomRateFindQuery(roomId, startDate);
+
+        List<RoomRateView> roomRateViews = roomrateService.readRoomRates(query);
+        return ResponseEntity.ok().body(roomRateViews);
     }
 
     @PutMapping("/{id}")
@@ -69,14 +74,14 @@ public class RoomrateController {
             throw new EasyCheckException(ROOM_NOT_FOUND);
         }
 
-        roomrateService.updateRoomrate(id, roomrateUpdateRequest);
+        roomrateService.updateRoomRate(id, roomrateUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "객실 요금 삭제 API")
     public ResponseEntity<Void> deleteRoomrate(@PathVariable Long id) {
-        roomrateService.deleteRoomrate(id);
+        roomrateService.deleteRoomRate(id);
         return ResponseEntity.noContent().build();
     }
     
