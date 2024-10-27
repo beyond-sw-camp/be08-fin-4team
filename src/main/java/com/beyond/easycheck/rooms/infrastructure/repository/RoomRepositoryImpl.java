@@ -53,9 +53,4 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom {
         return minAmount != null ?
                 QRoomEntity.roomEntity.roomAmount.goe(minAmount) : null;
     }
-
-    private BooleanExpression maxOccupancyLoe(Integer maxOccupancy) {
-        return maxOccupancy != null ?
-                QRoomtypeEntity.roomtypeEntity.maxOccupancy.loe(maxOccupancy) : null;
-    }
 }
