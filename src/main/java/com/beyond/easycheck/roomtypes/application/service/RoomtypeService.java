@@ -3,6 +3,7 @@ package com.beyond.easycheck.roomtypes.application.service;
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.roomtypes.application.dto.RoomTypeFindQuery;
 import com.beyond.easycheck.roomtypes.infrastructure.entity.RoomtypeEntity;
 import com.beyond.easycheck.roomtypes.infrastructure.repository.RoomtypeRepository;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeCreateRequest;
@@ -60,9 +61,9 @@ public class RoomtypeService {
         return roomtypeView;
     }
 
-    public List<RoomtypeView> readRoomtypes() {
+    public List<RoomtypeView> readRoomtypes(RoomTypeFindQuery query) {
 
-        List<RoomtypeEntity> roomTypeEntities = roomTypeRepository.findAll();
+        List<RoomtypeEntity> roomTypeEntities = roomTypeRepository.findAllRoomTypes(query);
 
         return roomTypeEntities.stream()
                 .map(roomTypeEntity -> new RoomtypeView(
