@@ -47,7 +47,7 @@ class RoomtypeServiceTest {
         accommodationRepository.save(accommodation); // Accommodation 저장
 
         // RoomType 데이터 추가
-        RoomtypeCreateRequest roomtypeRequest = new RoomtypeCreateRequest(roomTypeId, "디럭스", "아늑한 룸", 1);
+        RoomtypeCreateRequest roomtypeRequest = new RoomtypeCreateRequest(roomTypeId, "디럭스", "아늑한 룸", "test");
         roomtypeService.createRoomtype(roomtypeRequest); // RoomType 생성
 
         // when
@@ -80,8 +80,8 @@ class RoomtypeServiceTest {
     @DisplayName("[객실 유형 목록 조회] - 성공")
     void readRoomtypes() {
         // given
-        RoomtypeCreateRequest request1 = new RoomtypeCreateRequest(6L,"디럭스","한 명이 묵을 수 있는 아늑한 룸", 1);
-        RoomtypeCreateRequest request2 = new RoomtypeCreateRequest(7L, "디럭스 - 원룸", "두 명이 묵을 수 있는 넓은 룸", 2);
+        RoomtypeCreateRequest request1 = new RoomtypeCreateRequest(6L,"디럭스","한 명이 묵을 수 있는 아늑한 룸", "test");
+        RoomtypeCreateRequest request2 = new RoomtypeCreateRequest(7L, "디럭스 - 원룸", "두 명이 묵을 수 있는 넓은 룸", "test");
 
         roomtypeService.createRoomtype(request1);
         roomtypeService.createRoomtype(request2);
@@ -92,8 +92,8 @@ class RoomtypeServiceTest {
         // then
         Assertions.assertThat(result).isNotEmpty();
         Assertions.assertThat(result.size()).isEqualTo(2);
-        Assertions.assertThat(result.get(0).getName()).isEqualTo(request1.getTypeName());
-        Assertions.assertThat(result.get(1).getName()).isEqualTo(request2.getTypeName());
+        Assertions.assertThat(result.get(0).getName()).isEqualTo(request1.getName());
+        Assertions.assertThat(result.get(1).getName()).isEqualTo(request2.getName());
 
     }
 

@@ -13,4 +13,8 @@ public class RoomtypeUpdateRequest {
     @NotBlank
     private String typeName;
 
+    private String description;
+
+    private String thumbnailUrl;
+
 }
