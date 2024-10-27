@@ -56,9 +56,10 @@ public class RoomController {
     @GetMapping("")
     @Operation(summary = "객실 전체 조회 API")
     public ResponseEntity<List<RoomView>> readRooms(
-            @RequestParam(required = false) Long accommodationId
+            @RequestParam(required = false) Long accommodationId,
+            @RequestParam(required = false) Long roomTypeId
     ) {
-        RoomFindQuery query = new RoomFindQuery(accommodationId);
+        RoomFindQuery query = new RoomFindQuery(accommodationId, roomTypeId);
 
         List<RoomView> roomViews = roomService.readRooms(query);
 

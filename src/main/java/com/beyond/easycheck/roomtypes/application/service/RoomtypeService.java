@@ -36,9 +36,7 @@ public class RoomtypeService {
 
         RoomtypeEntity roomType = RoomtypeEntity.builder()
                 .accommodationEntity(accommodationEntity)
-                .typeName(roomTypeCreateRequest.getTypeName())
-                .description(roomTypeCreateRequest.getDescription())
-                .maxOccupancy(roomTypeCreateRequest.getMaxOccupancy())
+                .name(roomTypeCreateRequest.getTypeName())
                 .build();
 
         roomTypeRepository.save(roomType);
@@ -54,11 +52,9 @@ public class RoomtypeService {
                 .orElseThrow(() -> new EasyCheckException(ACCOMMODATION_NOT_FOUND));
 
         RoomtypeView roomtypeView = RoomtypeView.builder()
-                .accomodationId(accommodationEntity.getId())
+                .accommodationId(accommodationEntity.getId())
                 .roomTypeId(roomTypeEntity.getRoomTypeId())
-                .typeName(roomTypeEntity.getTypeName())
-                .description(roomTypeEntity.getDescription())
-                .maxOccupancy(roomTypeEntity.getMaxOccupancy())
+                .name(roomTypeEntity.getName())
                 .build();
 
         return roomtypeView;
@@ -72,9 +68,7 @@ public class RoomtypeService {
                 .map(roomTypeEntity -> new RoomtypeView(
                         roomTypeEntity.getRoomTypeId(),
                         roomTypeEntity.getAccommodationEntity().getId(),
-                        roomTypeEntity.getTypeName(),
-                        roomTypeEntity.getDescription(),
-                        roomTypeEntity.getMaxOccupancy()
+                        roomTypeEntity.getName()
                 )).collect(Collectors.toList());
     }
 

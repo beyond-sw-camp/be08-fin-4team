@@ -32,7 +32,7 @@ public class RoomEntity extends BaseTimeEntity {
     private RoomtypeEntity roomTypeEntity;
 
     @Column(nullable = false)
-    private String roomNumber;
+    private String type;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageEntity> images = new ArrayList<>();
@@ -47,13 +47,31 @@ public class RoomEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private int remainingRoom;
 
+    /**
+     * 추가된 컬럼
+     * 객실 details
+     */
+    private String description;
+
+    private String checkInTime;
+
+    private String checkOutTime;
+
+    private String composition;
+
+    private String size;
+
+    private int maxOccupancy;
+
+    private int standardOccupancy;
+
     @PrePersist
     public void prePersist() {
         this.remainingRoom = this.roomAmount;
     }
 
     public void update(RoomUpdateRequest roomUpdateRequest) {
-        roomNumber = roomUpdateRequest.getRoomNumber();
+        type = roomUpdateRequest.getRoomNumber();
         roomAmount = roomUpdateRequest.getRoomAmount();
         status = roomUpdateRequest.getStatus();
 

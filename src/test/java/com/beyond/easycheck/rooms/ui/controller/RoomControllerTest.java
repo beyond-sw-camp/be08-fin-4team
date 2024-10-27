@@ -253,7 +253,7 @@ public class RoomControllerTest {
                 RoomStatus.예약가능,
                 roomtypeEntity.getRoomTypeId(),
                 roomtypeEntity.getAccommodationEntity().getId(),
-                roomtypeEntity.getTypeName(),
+                roomtypeEntity.getName(),
                 roomtypeEntity.getDescription(),
                 4
         );

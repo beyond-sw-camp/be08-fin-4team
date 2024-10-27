@@ -16,22 +16,14 @@ public class RoomtypeView {
     private Long roomTypeId;
 
     @NotNull
-    private Long accomodationId;
+    private Long accommodationId;
 
     @NotBlank
-    private String typeName;
+    private String name;
 
-    @NotBlank
-    private String description;
-
-    @Min(1)
-    private int maxOccupancy;
-
-    public RoomtypeView(Long roomTypeId, Long accomodationId, String typeName, String description, int maxOccupancy) {
+    public RoomtypeView(Long roomTypeId, Long accommodationId, String name) {
         this.roomTypeId = roomTypeId;
-        this.accomodationId = accomodationId;
-        this.typeName = typeName;
-        this.description = description;
-        this.maxOccupancy = maxOccupancy;
+        this.accommodationId = accommodationId;
+        this.name = name;
     }
 }
