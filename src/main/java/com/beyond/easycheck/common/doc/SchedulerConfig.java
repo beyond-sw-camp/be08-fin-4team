@@ -29,19 +29,19 @@ public class SchedulerConfig {
     }
 
     // 3일 전 리마인더 이메일 스케줄 (매일 자정 실행)
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 15 * * ?")
     public void perform3DaysBeforeReminderJob() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("time", System.currentTimeMillis(), false)
                 .toJobParameters();
         jobLauncher.run(send3DaysBeforeReminderJob, jobParameters);
     }
 
     // 10일 전 리마인더 이메일 스케줄 (매일 자정 실행)
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 15 * * ?")
     public void perform10DaysBeforeReminderJob() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
+                .addLong("time", System.currentTimeMillis(), false)
                 .toJobParameters();
         jobLauncher.run(send10DaysBeforeReminderJob, jobParameters);
     }
