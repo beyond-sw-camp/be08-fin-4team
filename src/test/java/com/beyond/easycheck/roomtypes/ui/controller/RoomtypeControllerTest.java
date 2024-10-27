@@ -111,10 +111,10 @@ class RoomtypeControllerTest {
 
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].typeName").value(request1.getTypeName()))
+                .andExpect(jsonPath("$[0].typeName").value(request1.getName()))
                 .andExpect(jsonPath("$[0].description").value(request1.getDescription()))
                 .andExpect(jsonPath("$[0].maxOccupancy").value(request1.getMaxOccupancy()))
-                .andExpect(jsonPath("$[1].typeName").value(request2.getTypeName()))
+                .andExpect(jsonPath("$[1].typeName").value(request2.getName()))
                 .andExpect(jsonPath("$[1].description").value(request2.getDescription()))
                 .andExpect(jsonPath("$[1].maxOccupancy").value(request2.getMaxOccupancy()));
 

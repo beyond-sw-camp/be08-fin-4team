@@ -3,6 +3,7 @@ package com.beyond.easycheck.roomtypes.application.service;
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.roomtypes.application.dto.FindRoomTypeResult;
 import com.beyond.easycheck.roomtypes.application.dto.RoomTypeFindQuery;
 import com.beyond.easycheck.roomtypes.infrastructure.entity.RoomtypeEntity;
 import com.beyond.easycheck.roomtypes.infrastructure.repository.RoomtypeRepository;
@@ -15,10 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType.ROOM_TYPE_NOT_FOUND;
 import static com.beyond.easycheck.accomodations.exception.AccommodationMessageType.ACCOMMODATION_NOT_FOUND;
+import static com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType.ROOM_TYPE_NOT_FOUND;
 
 
 @Slf4j
@@ -30,14 +30,16 @@ public class RoomtypeService {
     private final AccommodationRepository accommodationRepository;
 
     @Transactional
-    public void createRoomtype(RoomtypeCreateRequest roomTypeCreateRequest) {
+    public void createRoomtype(RoomtypeCreateRequest request) {
 
-        AccommodationEntity accommodationEntity = accommodationRepository.findById(roomTypeCreateRequest.getAccommodationId())
+        AccommodationEntity accommodationEntity = accommodationRepository.findById(request.getAccommodationId())
                 .orElseThrow(() -> new EasyCheckException(ACCOMMODATION_NOT_FOUND));
 
         RoomtypeEntity roomType = RoomtypeEntity.builder()
                 .accommodationEntity(accommodationEntity)
-                .name(roomTypeCreateRequest.getTypeName())
+                .name(request.getName())
+                .description(request.getDescription())
+                .thumbnailUrl(request.getThumbnailUrl())
                 .build();
 
         roomTypeRepository.save(roomType);
@@ -49,16 +51,7 @@ public class RoomtypeService {
         RoomtypeEntity roomTypeEntity = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new EasyCheckException(ROOM_TYPE_NOT_FOUND));
 
-        AccommodationEntity accommodationEntity = accommodationRepository.findById(roomTypeEntity.getAccommodationEntity().getId())
-                .orElseThrow(() -> new EasyCheckException(ACCOMMODATION_NOT_FOUND));
-
-        RoomtypeView roomtypeView = RoomtypeView.builder()
-                .accommodationId(accommodationEntity.getId())
-                .roomTypeId(roomTypeEntity.getRoomTypeId())
-                .name(roomTypeEntity.getName())
-                .build();
-
-        return roomtypeView;
+        return new RoomtypeView(FindRoomTypeResult.findByRoomTypeEntity(roomTypeEntity));
     }
 
     public List<RoomtypeView> readRoomtypes(RoomTypeFindQuery query) {
@@ -66,11 +59,9 @@ public class RoomtypeService {
         List<RoomtypeEntity> roomTypeEntities = roomTypeRepository.findAllRoomTypes(query);
 
         return roomTypeEntities.stream()
-                .map(roomTypeEntity -> new RoomtypeView(
-                        roomTypeEntity.getRoomTypeId(),
-                        roomTypeEntity.getAccommodationEntity().getId(),
-                        roomTypeEntity.getName()
-                )).collect(Collectors.toList());
+                .map(FindRoomTypeResult::findByRoomTypeEntity)
+                .map(RoomtypeView::new)
+                .toList();
     }
 
     @Transactional
