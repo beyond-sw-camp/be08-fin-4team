@@ -4,6 +4,7 @@ import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEnt
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationType;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.roomtypes.application.dto.RoomTypeFindQuery;
 import com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeCreateRequest;
 import com.beyond.easycheck.roomtypes.ui.view.RoomtypeView;
@@ -86,7 +87,7 @@ class RoomtypeServiceTest {
         roomtypeService.createRoomtype(request2);
 
         // when
-        List<RoomtypeView> result = roomtypeService.readRoomtypes();
+        List<RoomtypeView> result = roomtypeService.readRoomtypes(new RoomTypeFindQuery(null));
 
         // then
         Assertions.assertThat(result).isNotEmpty();
@@ -103,7 +104,7 @@ class RoomtypeServiceTest {
 
         // given
         // when
-        List<RoomtypeView> roomtypeViews = roomtypeService.readRoomtypes();
+        List<RoomtypeView> roomtypeViews = roomtypeService.readRoomtypes(new RoomTypeFindQuery(null));
         // then
         assertThat(roomtypeViews.size()).isZero();
     }
