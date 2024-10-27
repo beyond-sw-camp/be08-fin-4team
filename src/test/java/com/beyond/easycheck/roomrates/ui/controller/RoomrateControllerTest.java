@@ -4,11 +4,11 @@ import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEnt
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationType;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
-import com.beyond.easycheck.roomrates.application.service.RoomrateService;
+import com.beyond.easycheck.roomrates.application.service.RoomRateService;
 import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateType;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateCreateRequest;
 import com.beyond.easycheck.roomrates.ui.requestbody.RoomrateUpdateRequest;
-import com.beyond.easycheck.roomrates.ui.view.RoomrateView;
+import com.beyond.easycheck.roomrates.ui.view.RoomRateView;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepository;
@@ -60,7 +60,7 @@ public class RoomrateControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    RoomrateService roomrateService;
+    RoomRateService roomrateService;
 
     @MockBean
     private AccommodationRepository accommodationRepository;
@@ -157,7 +157,7 @@ public class RoomrateControllerTest {
                 BigDecimal.valueOf(100000)
         );
 
-        doThrow(new EasyCheckException(ROOM_NOT_FOUND)).when(roomrateService).createRoomrate(any(RoomrateCreateRequest.class));
+        doThrow(new EasyCheckException(ROOM_NOT_FOUND)).when(roomrateService).createRoomRate(any(RoomrateCreateRequest.class));
 
         // When
         ResultActions perform = mockMvc.perform(post("/api/v1/roomrates")
@@ -183,7 +183,7 @@ public class RoomrateControllerTest {
                 BigDecimal.valueOf(100000)
         );
 
-        doThrow(new EasyCheckException(SEASON_NOT_FOUND)).when(roomrateService).createRoomrate(any(RoomrateCreateRequest.class));
+        doThrow(new EasyCheckException(SEASON_NOT_FOUND)).when(roomrateService).createRoomRate(any(RoomrateCreateRequest.class));
 
         // When
         ResultActions perform = mockMvc.perform(post("/api/v1/roomrates")
@@ -208,7 +208,7 @@ public class RoomrateControllerTest {
                 null
         );
 
-        doThrow(new EasyCheckException(ARGUMENT_NOT_VALID)).when(roomrateService).createRoomrate(any(RoomrateCreateRequest.class));
+        doThrow(new EasyCheckException(ARGUMENT_NOT_VALID)).when(roomrateService).createRoomRate(any(RoomrateCreateRequest.class));
 
         // When
         ResultActions perform = mockMvc.perform(post("/api/v1/roomrates")
@@ -227,7 +227,7 @@ public class RoomrateControllerTest {
     void readRoomrate_success() throws Exception {
         // Given
         Long id = 1L;
-        RoomrateView roomrateView = new RoomrateView(
+        RoomRateView roomrateView = new RoomRateView(
                 1L,
                 RoomrateType.주말,
                 BigDecimal.valueOf(100000),
@@ -236,7 +236,7 @@ public class RoomrateControllerTest {
                 "여름"
         );
 
-        when(roomrateService.readRoomrate(id)).thenReturn(roomrateView);
+        when(roomrateService.readRoomRate(id)).thenReturn(roomrateView);
 
         // When
         ResultActions perform = mockMvc.perform(get("/api/v1/roomrates/{id}", id)
@@ -253,7 +253,7 @@ public class RoomrateControllerTest {
     void readRoomrate_fail() throws Exception {
         // Given
         Long id = 999L;
-        when(roomrateService.readRoomrate(id)).thenThrow(new EasyCheckException(ROOM_RATE_NOT_FOUND));
+        when(roomrateService.readRoomRate(id)).thenThrow(new EasyCheckException(ROOM_RATE_NOT_FOUND));
 
         // When
         ResultActions perform = mockMvc.perform(get("/api/v1/roomrates/{id}", id)
@@ -270,7 +270,7 @@ public class RoomrateControllerTest {
     @WithEasyCheckMockUser(role = "SUPER_ADMIN")
     void readRoomrates_success() throws Exception {
         // Given
-        RoomrateView roomrate1 = new RoomrateView(
+        RoomRateView roomrate1 = new RoomRateView(
                 1L,
                 RoomrateType.주말,
                 BigDecimal.valueOf(100000),
@@ -279,7 +279,7 @@ public class RoomrateControllerTest {
                 "여름"
         );
 
-        RoomrateView roomrate2 = new RoomrateView(
+        RoomRateView roomrate2 = new RoomRateView(
                 2L,
                 RoomrateType.평일,
                 BigDecimal.valueOf(200000),
@@ -288,9 +288,9 @@ public class RoomrateControllerTest {
                 "봄"
         );
 
-        List<RoomrateView> roomrateViews = Arrays.asList(roomrate1, roomrate2);
+        List<RoomRateView> roomRateViews = Arrays.asList(roomrate1, roomrate2);
 
-        when(roomrateService.readRoomrates()).thenReturn(roomrateViews);
+        when(roomrateService.readRoomRates()).thenReturn(roomRateViews);
 
         // When
         ResultActions perform = mockMvc.perform(get("/api/v1/roomrates")
@@ -308,7 +308,7 @@ public class RoomrateControllerTest {
     @WithEasyCheckMockUser(role = "SUPER_ADMIN")
     void readRoomrates_fail() throws Exception {
         // Given
-        when(roomrateService.readRoomrates()).thenReturn(Collections.emptyList());
+        when(roomrateService.readRoomRates()).thenReturn(Collections.emptyList());
 
         // When
         ResultActions perform = mockMvc.perform(get("/api/v1/roomrates")
@@ -379,7 +379,7 @@ public class RoomrateControllerTest {
         );
 
         doThrow(new EasyCheckException(SEASON_NOT_FOUND))
-                .when(roomrateService).updateRoomrate(eq(roomrateId), any(RoomrateUpdateRequest.class));
+                .when(roomrateService).updateRoomRate(eq(roomrateId), any(RoomrateUpdateRequest.class));
 
         // When
         ResultActions perform = mockMvc.perform(put("/api/v1/roomrates/{id}", roomrateId)
@@ -425,7 +425,7 @@ public class RoomrateControllerTest {
         // Given
         Long roomRateId = 1L;
 
-        doNothing().when(roomrateService).deleteRoomrate(roomRateId);
+        doNothing().when(roomrateService).deleteRoomRate(roomRateId);
 
         // When
         ResultActions perform = mockMvc.perform(delete("/api/v1/roomrates/{id}", roomRateId)
@@ -443,7 +443,7 @@ public class RoomrateControllerTest {
         Long invalidRoomrateId = 999L;
 
         doThrow(new EasyCheckException(ROOM_RATE_NOT_FOUND))
-                .when(roomrateService).deleteRoomrate(invalidRoomrateId);
+                .when(roomrateService).deleteRoomRate(invalidRoomrateId);
 
         // When
         ResultActions perform = mockMvc.perform(delete("/api/v1/roomrates/{id}", invalidRoomrateId)
