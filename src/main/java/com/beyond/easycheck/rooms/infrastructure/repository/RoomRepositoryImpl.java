@@ -28,10 +28,17 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom {
                 .join(roomType.accommodationEntity, accommodation).fetchJoin()
                 .leftJoin(room.images).fetchJoin()  // 이미지도 함께 조회
                 .where(
-                        accommodationIdEq(query.accommodationId())
+                        accommodationIdEq(query.accommodationId()),
+                        roomTypeIdEq(query.roomTypeId())  // 룸 타입 ID 조건 추가
                 )
                 .distinct()  // 이미지 때문에 중복 제거
                 .fetch();
+    }
+
+    // roomTypeId 조건 메서드 추가
+    private BooleanExpression roomTypeIdEq(Long roomTypeId) {
+        return roomTypeId != null ?
+                QRoomEntity.roomEntity.roomTypeEntity.roomTypeId.eq(roomTypeId) : null;
     }
 
     private BooleanExpression accommodationIdEq(Long accommodationId) {
