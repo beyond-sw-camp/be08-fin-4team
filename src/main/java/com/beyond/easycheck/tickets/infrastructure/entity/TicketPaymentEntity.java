@@ -3,10 +3,7 @@ package com.beyond.easycheck.tickets.infrastructure.entity;
 import com.beyond.easycheck.common.entity.BaseTimeEntity;
 import com.beyond.easycheck.common.exception.EasyCheckException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,6 +16,7 @@ import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ticket_payment")
+@ToString(of = {"id", "impUid", "paymentAmount"})
 public class TicketPaymentEntity extends BaseTimeEntity {
 
     @Id
@@ -48,10 +46,11 @@ public class TicketPaymentEntity extends BaseTimeEntity {
 
     private LocalDateTime cancelDate;
 
-    public TicketPaymentEntity(TicketOrderEntity order, BigDecimal amount, String method) {
+    public TicketPaymentEntity(TicketOrderEntity order, String impUid,BigDecimal amount, String method) {
         if (order == null) {
             throw new EasyCheckException(TICKET_ORDER_CANNOT_BE_NULL);
         }
+        this.impUid = impUid;
         this.ticketOrder = order;
         this.paymentAmount = amount;
         this.paymentMethod = method;

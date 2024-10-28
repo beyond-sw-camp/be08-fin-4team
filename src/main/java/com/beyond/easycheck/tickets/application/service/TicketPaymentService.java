@@ -7,6 +7,7 @@ import com.beyond.easycheck.tickets.infrastructure.entity.TicketPaymentEntity;
 import com.beyond.easycheck.tickets.infrastructure.repository.TicketOrderRepository;
 import com.beyond.easycheck.tickets.infrastructure.repository.TicketPaymentRepository;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketPaymentRequest;
+import com.beyond.easycheck.tickets.ui.view.TicketPaymentView;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -50,22 +51,34 @@ public class TicketPaymentService {
     }
 
     @Transactional
-    public TicketPaymentEntity processPayment(Long orderId, Long userId, TicketPaymentRequest request) {
+    public TicketPaymentView processPayment(Long orderId, Long userId, TicketPaymentRequest request) {
         TicketOrderEntity order = getOrderById(orderId);
+        log.info("before validateUserAccess");
         validateUserAccess(order, userId);
+        log.info("after validateUserAccess");
         validateOrderStatusForPayment(order);
+        log.info("after validateOrderStatusForPayment");
 
         IamportResponse<Payment> paymentResponse = validatePortOnePayment(request.getImpUid());
 
         if (paymentResponse != null && paymentResponse.getResponse().getAmount().compareTo(request.getPaymentAmount()) == 0) {
-            return createAndCompletePayment(order, request);
+            TicketPaymentEntity result = createAndCompletePayment(order, request);
+            return new TicketPaymentView(result.getImpUid(),
+                    result.getTicketOrder().getId(),
+                    result.getPaymentMethod(),
+                    result.getPaymentAmount(),
+                    result.getPaymentDate()
+            );
         } else {
+
             throw new EasyCheckException(PORTONE_VERIFICATION_ERROR);
         }
     }
 
     private TicketPaymentEntity createAndCompletePayment(TicketOrderEntity order, TicketPaymentRequest request) {
-        TicketPaymentEntity payment = new TicketPaymentEntity(order, request.getPaymentAmount(), request.getPaymentMethod());
+        log.info("[createAndCompletePayment] - {}", request);
+        TicketPaymentEntity payment = new TicketPaymentEntity(order, request.getImpUid(), request.getPaymentAmount(), request.getPaymentMethod());
+        log.info("[createAndCompletePayment] - {}", request);
         try {
             payment.completePayment();
             ticketPaymentRepository.save(payment);
@@ -76,6 +89,7 @@ public class TicketPaymentService {
             log.info("주문 ID: {} 결제 성공, 결제 금액: {}", order.getId(), request.getPaymentAmount());
         } catch (Exception e) {
             payment.failPayment();
+            log.info("에러났음 근데 왜 저장? {}", payment);
             ticketPaymentRepository.save(payment);
             handlePaymentException(e, order);
         }
