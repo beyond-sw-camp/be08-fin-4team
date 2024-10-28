@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class RoomRateRepositoryCustomImpl implements RoomRateRepositoryCustom {
                 .join(roomRate.seasonEntity, season).fetchJoin()
                 .where(
                         roomIdEq(query.roomId()),
-                        monthYearEq(query.seasonStartDate())
+                        isDateBetweenSeasonPeriod(query.seasonStartDate())
                 )
                 .orderBy(
                         seasonOrder.asc(),
@@ -63,13 +64,13 @@ public class RoomRateRepositoryCustomImpl implements RoomRateRepositoryCustom {
                 QRoomRateEntity.roomRateEntity.roomEntity.roomId.eq(roomId) : null;
     }
 
-    private BooleanExpression monthYearEq(LocalDate date) {
+    private BooleanExpression isDateBetweenSeasonPeriod(LocalDate date) {
         if (date == null) {
             return null;
         }
 
         QSeasonEntity season = QSeasonEntity.seasonEntity;
-        return season.startDate.year().eq(date.getYear())
-                .and(season.startDate.month().eq(date.getMonthValue()));
+        return season.startDate.loe(date)  // less than or equal (날짜가 시작일보다 같거나 이후)
+                .and(season.endDate.goe(date));  // greater than or equal (날짜가 종료일보다 같거나 이전)
     }
 }
