@@ -50,7 +50,7 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
 
         checkEmailIsDuplicated(command.email());
         // 이메일 인증을 했는지 확인
-        checkEmailIsVerified(command.email());
+//        checkEmailIsVerified(command.email());
 
         UserEntity user = UserEntity.createUser(command);
         log.info("[registerUser] - userEntity after createUser = {}", user);

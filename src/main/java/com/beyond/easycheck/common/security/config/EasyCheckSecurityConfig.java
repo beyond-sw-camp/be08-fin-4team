@@ -53,7 +53,7 @@ public class EasyCheckSecurityConfig {
 
                     // 회원가입, 로그인
                     registry.requestMatchers(HttpMethod.POST,
-                                    "/api/v1/users/",
+                                    "/api/v1/users",
                                     "/api/v1/corp-users",
                                     "/api/v1/users/login"
                             )
