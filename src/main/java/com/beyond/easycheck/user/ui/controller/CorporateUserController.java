@@ -30,7 +30,7 @@ public class CorporateUserController {
     @Operation(summary = "법인회원 회원가입")
     public ResponseEntity<Void> register(@RequestBody @Validated CorporateUserRegisterRequest request) {
 
-        CorporateUserRegisterCommand command = new CorporateUserRegisterCommand(request.name(), request.email(), request.email());
+        CorporateUserRegisterCommand command = new CorporateUserRegisterCommand(request.name(), request.phone(), request.email());
 
         userOperationUseCase.registerCorporateUser(command);
 
