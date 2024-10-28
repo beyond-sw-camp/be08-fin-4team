@@ -1,6 +1,7 @@
 package com.beyond.easycheck.seasons.infrastructure.entity;
 
 import com.beyond.easycheck.common.entity.BaseTimeEntity;
+import com.beyond.easycheck.seasons.application.domain.DayType;
 import com.beyond.easycheck.seasons.ui.requestbody.SeasonUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +31,9 @@ public class SeasonEntity extends BaseTimeEntity {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Enumerated(EnumType.STRING)
+    private DayType dayType;
 
     public void update(SeasonUpdateRequest seasonUpdateRequest) {
         seasonName = seasonUpdateRequest.getSeasonName();
