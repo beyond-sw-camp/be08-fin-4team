@@ -3,6 +3,7 @@ package com.beyond.easycheck.events.application.service;
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.events.application.service.dto.EventFindQuery;
 import com.beyond.easycheck.events.infrastructure.entity.EventEntity;
 import com.beyond.easycheck.events.infrastructure.repository.EventImageRepository;
 import com.beyond.easycheck.events.infrastructure.repository.EventRepository;
@@ -100,9 +101,9 @@ public class EventService {
     }
 
     @Transactional
-    public List<EventView> readEvents() {
+    public List<EventView> readEvents(EventFindQuery query) {
 
-        List<EventEntity> eventEntities = eventRepository.findAll();
+        List<EventEntity> eventEntities = eventRepository.findAllEvents(query);
 
         if (eventEntities.isEmpty()) {
             throw new EasyCheckException(EVENTS_NOT_FOUND);

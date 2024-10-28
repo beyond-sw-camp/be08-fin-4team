@@ -6,7 +6,6 @@ import com.beyond.easycheck.tickets.application.service.TicketOperationUseCase.T
 import com.beyond.easycheck.tickets.application.service.TicketOperationUseCase.TicketUpdateCommand;
 import com.beyond.easycheck.tickets.application.service.TicketReadUseCase;
 import com.beyond.easycheck.tickets.application.service.TicketReadUseCase.FindTicketResult;
-import com.beyond.easycheck.tickets.infrastructure.entity.TicketEntity;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketRequest;
 import com.beyond.easycheck.tickets.ui.view.TicketView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +17,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "Ticket", description = "입장권 정보 관리 API")
 @RestController
-@RequestMapping("/api/v1/parks/{themeParkId}/tickets")
+@RequestMapping("/api/v1/parks")
 @RequiredArgsConstructor
 public class TicketController {
 
@@ -29,7 +29,7 @@ public class TicketController {
     private final TicketReadUseCase ticketReadUseCase;
 
     @Operation(summary = "입장권 종류를 등록하는 API")
-    @PostMapping("")
+    @PostMapping("/{themeParkId}/tickets")
     public ResponseEntity<ApiResponseView<TicketView>> createTicket(@PathVariable Long themeParkId,
                                                                     @RequestBody @Validated TicketRequest request) {
         TicketCreateCommand command = TicketCreateCommand.builder()
@@ -42,17 +42,17 @@ public class TicketController {
                 .validToDate(request.getValidToDate())
                 .build();
 
-        TicketEntity ticket = ticketOperationUseCase.createTicket(command);
+        FindTicketResult result = FindTicketResult.fromEntity(ticketOperationUseCase.createTicket(command));
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponseView<>(new TicketView(ticket)));
+                .body(new ApiResponseView<>(new TicketView(result)));
     }
 
     @Operation(summary = "입장권 종류를 수정하는 API")
     @PutMapping("/{ticketId}")
     public ResponseEntity<ApiResponseView<TicketView>> updateTicket(@PathVariable Long themeParkId,
                                                                     @PathVariable Long ticketId,
-                                                                    @RequestBody TicketRequest request) {
+                                                                    @RequestBody @Validated TicketRequest request) {
 
         TicketUpdateCommand command = TicketUpdateCommand.builder()
                 .ticketName(request.getTicketName())
@@ -63,10 +63,10 @@ public class TicketController {
                 .validToDate(request.getValidToDate())
                 .build();
 
-        TicketEntity updatedTicket = ticketOperationUseCase.updateTicket(themeParkId, ticketId, command);
+        FindTicketResult updatedResult = FindTicketResult.fromEntity(ticketOperationUseCase.updateTicket(themeParkId, ticketId, command));
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponseView<>(new TicketView(updatedTicket)));
+                .body(new ApiResponseView<>(new TicketView(updatedResult)));
     }
 
     @Operation(summary = "입장권 종류를 삭제하는 API")
@@ -79,26 +79,26 @@ public class TicketController {
     }
 
     @Operation(summary = "해당 테마파크 내 입장권 종류를 조회하는 API")
-    @GetMapping("")
+    @GetMapping("/{themeParkId}/tickets")
     public ResponseEntity<ApiResponseView<List<TicketView>>> getAllTicketsByThemePark(@PathVariable Long themeParkId) {
         List<FindTicketResult> results = ticketReadUseCase.getTicketsByThemePark(themeParkId);
 
         List<TicketView> ticketViews = results.stream()
                 .map(TicketView::new)
-                .toList();
+                .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponseView<>(ticketViews));
     }
 
     @Operation(summary = "해당 테마파크 내 현재시점에서 판매하고 있는 입장권 조회 API")
-    @GetMapping("/on-sale")
+    @GetMapping("/{themeParkId}/tickets/on-sale")
     public ResponseEntity<ApiResponseView<List<TicketView>>> getTicketsByThemeParkOnSale(@PathVariable Long themeParkId) {
         List<FindTicketResult> results = ticketReadUseCase.getTicketsByThemeParkOnSale(themeParkId);
 
         List<TicketView> ticketViews = results.stream()
                 .map(TicketView::new)
-                .toList();
+                .collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponseView<>(ticketViews));

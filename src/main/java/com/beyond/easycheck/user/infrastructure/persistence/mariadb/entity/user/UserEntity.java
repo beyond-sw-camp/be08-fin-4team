@@ -2,6 +2,7 @@ package com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user
 
 import com.beyond.easycheck.permissions.infrastructure.persistence.mariadb.entity.UserPermissionEntity;
 import com.beyond.easycheck.user.application.domain.UserStatus;
+import com.beyond.easycheck.user.application.service.UserOperationUseCase;
 import com.beyond.easycheck.user.application.service.UserOperationUseCase.UserRegisterCommand;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.corporate.CorporateEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.role.RoleEntity;
@@ -14,6 +15,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 import java.util.List;
+
+import static com.beyond.easycheck.user.application.service.UserOperationUseCase.*;
 
 @Getter
 @Entity
@@ -71,6 +74,13 @@ public class  UserEntity {
         this.marketingConsent = marketingConsent;
     }
 
+    public UserEntity(String email, String name, String phone, UserStatus status) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+        this.status = status;
+    }
+
     private UserEntity(String name, String phone) {
         this.name = name;
         this.phone = phone;
@@ -88,20 +98,24 @@ public class  UserEntity {
         );
     }
 
-    public static UserEntity createCorporateUser(UserRegisterCommand command) {
+    public static UserEntity createCorporateUser(CorporateUserRegisterCommand command) {
         return new UserEntity(
                 command.email(),
                 command.name(),
                 command.phone(),
-                UserStatus.PENDING,
-                command.addr(),
-                command.addrDetail(),
-                command.marketingConsent()
+                UserStatus.PENDING
         );
     }
 
     public static UserEntity createGuestUser(String name, String phone) {
         return new UserEntity(name, phone);
+    }
+
+    public void updateUser(UserUpdateCommand command) {
+        this.email = command.email();
+        this.phone = command.phone();
+        this.addr = command.addr();
+        this.addrDetail = command.addrDetail();
     }
 
     public void setRole(RoleEntity role) {

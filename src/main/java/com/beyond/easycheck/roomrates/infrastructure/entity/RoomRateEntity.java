@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @Table(name = "room_rate")
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomrateEntity extends BaseTimeEntity {
+public class RoomRateEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +38,8 @@ public class RoomrateEntity extends BaseTimeEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RoomrateType rateType;
+
+    private String userType;
 
     @Column(nullable = false)
     private BigDecimal rate;

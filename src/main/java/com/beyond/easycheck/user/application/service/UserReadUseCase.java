@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 
 public interface UserReadUseCase {
 
+    void checkEmailDuplicated(UserFindQuery query);
+
     FindUserResult getUserInfo(UserFindQuery query);
 
     @Builder

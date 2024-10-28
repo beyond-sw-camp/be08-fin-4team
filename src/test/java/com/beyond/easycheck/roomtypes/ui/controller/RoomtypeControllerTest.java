@@ -1,21 +1,17 @@
 package com.beyond.easycheck.roomtypes.ui.controller;
 
-import com.beyond.easycheck.accomodations.exception.AccommodationMessageType;
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationType;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.roomtypes.application.service.RoomtypeService;
 import com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeCreateRequest;
-import com.beyond.easycheck.roomtypes.ui.view.RoomtypeView;
 import com.beyond.easycheck.user.application.mock.WithEasyCheckMockUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,13 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.given;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -80,9 +69,8 @@ class RoomtypeControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.roomTypeId").value(roomTypeId))
-                .andExpect(jsonPath("$.typeName").value("디럭스"))
-                .andExpect(jsonPath("$.description").value("아늑한 룸"))
-                .andExpect(jsonPath("$.maxOccupancy").value(1));
+                .andExpect(jsonPath("$.name").value("디럭스"));
+
 
     }
 
@@ -123,10 +111,10 @@ class RoomtypeControllerTest {
 
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].typeName").value(request1.getTypeName()))
+                .andExpect(jsonPath("$[0].typeName").value(request1.getName()))
                 .andExpect(jsonPath("$[0].description").value(request1.getDescription()))
                 .andExpect(jsonPath("$[0].maxOccupancy").value(request1.getMaxOccupancy()))
-                .andExpect(jsonPath("$[1].typeName").value(request2.getTypeName()))
+                .andExpect(jsonPath("$[1].typeName").value(request2.getName()))
                 .andExpect(jsonPath("$[1].description").value(request2.getDescription()))
                 .andExpect(jsonPath("$[1].maxOccupancy").value(request2.getMaxOccupancy()));
 

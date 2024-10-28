@@ -69,18 +69,49 @@ public class PaymentService {
 
         if (paymentResponse != null && paymentResponse.getResponse().getAmount().intValue() == paymentCreateRequest.getAmount()) {
 
-            PaymentEntity paymentEntity = createPayment(paymentCreateRequest, reservationRoomEntity);
-            paymentRepository.save(paymentEntity);
+            if ("vbank".equals(paymentCreateRequest.getMethod())) {
+                handleVirtualAccountPayment(paymentCreateRequest, reservationRoomEntity, paymentResponse);
+            } else {
+                PaymentEntity paymentEntity = createPayment(paymentCreateRequest, reservationRoomEntity);
+                paymentRepository.save(paymentEntity);
 
-            reservationRoomEntity.updatePaymentStatus(PaymentStatus.PAID);
-            reservationRoomRepository.save(reservationRoomEntity);
+                reservationRoomEntity.updatePaymentStatus(PaymentStatus.PAID);
+                reservationRoomRepository.save(reservationRoomEntity);
 
-            ReservationRoomView reservationRoomView = ReservationRoomView.of(reservationRoomEntity);
-            mailService.sendReservationConfirmationEmail(reservationRoomEntity.getUserEntity().getEmail(), reservationRoomView);
+                ReservationRoomView reservationRoomView = ReservationRoomView.of(reservationRoomEntity);
+                mailService.sendReservationConfirmationEmail(reservationRoomEntity.getUserEntity().getEmail(), reservationRoomView);
+            }
 
         } else {
             throw new EasyCheckException(PaymentMessageType.PAYMENT_VERIFICATION_FAILED);
         }
+    }
+
+    @Transactional
+    public void handleVirtualAccountDeposit(String impUid) {
+
+        IamportResponse<Payment> paymentResponse = validatePortOnePayment(impUid);
+
+        if (paymentResponse != null && "vbank".equals(paymentResponse.getResponse().getPayMethod())) {
+            PaymentEntity paymentEntity = paymentRepository.findByImpUid(impUid)
+                    .orElseThrow(() -> new EasyCheckException(PaymentMessageType.PAYMENT_NOT_FOUND));
+
+            paymentEntity.updateCompletionStatus(CompletionStatus.COMPLETE);
+            paymentRepository.save(paymentEntity);
+
+            log.info("가상계좌 입금 확인: impUid={}, 결제 완료", impUid);
+        }
+    }
+
+    public void handleVirtualAccountPayment(PaymentCreateRequest paymentCreateRequest, ReservationRoomEntity reservationRoomEntity, IamportResponse<Payment> paymentIamportResponse) {
+
+        log.info("가상계좌 결제 처리: 은행 = {}, 계좌명 = {}", paymentCreateRequest.getBank(), paymentCreateRequest.getAccountHolder());
+
+        PaymentEntity paymentEntity = createPayment(paymentCreateRequest, reservationRoomEntity);
+        paymentEntity.updateCompletionStatus(CompletionStatus.INCOMPLETE);
+
+        log.info("가상계좌 생성됨: {} - {} 은행, 입금자: {}", paymentCreateRequest.getBank(),paymentCreateRequest.getAmount(), paymentCreateRequest.getAccountHolder());
+        paymentRepository.save(paymentEntity);
     }
 
     public IamportResponse<Payment> validatePortOnePayment(String impUid) {

@@ -1,5 +1,6 @@
 package com.beyond.easycheck.tickets.ui.view;
 
+import com.beyond.easycheck.themeparks.infrastructure.entity.ThemeParkEntity;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketEntity;
 import com.beyond.easycheck.tickets.application.service.TicketReadUseCase.FindTicketResult;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class TicketView {
     private final Long id;
+    private final Long themeParkId;
     private final String ticketName;
     private final BigDecimal price;
     private final LocalDateTime saleStartDate;
@@ -16,18 +18,9 @@ public class TicketView {
     private final LocalDateTime validFromDate;
     private final LocalDateTime validToDate;
 
-    public TicketView(TicketEntity entity) {
-        this.id = entity.getId();
-        this.ticketName = entity.getTicketName();
-        this.price = entity.getPrice();
-        this.saleStartDate = entity.getSaleStartDate();
-        this.saleEndDate = entity.getSaleEndDate();
-        this.validFromDate = entity.getValidFromDate();
-        this.validToDate = entity.getValidToDate();
-    }
-
     public TicketView(FindTicketResult result) {
         this.id = result.getId();
+        this.themeParkId = result.getThemeParkId();
         this.ticketName = result.getTicketName();
         this.price = result.getPrice();
         this.saleStartDate = result.getSaleStartDate();

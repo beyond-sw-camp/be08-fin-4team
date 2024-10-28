@@ -18,7 +18,7 @@ public class RoomCreateRequest {
     private Long roomTypeId;
 
     @NotNull
-    private String roomNumber;
+    private String type;
 
     @NotNull
     private RoomStatus status;

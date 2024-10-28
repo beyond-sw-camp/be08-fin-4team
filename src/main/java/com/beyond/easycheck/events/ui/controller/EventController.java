@@ -4,6 +4,7 @@ import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEnt
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.events.application.service.EventService;
+import com.beyond.easycheck.events.application.service.dto.EventFindQuery;
 import com.beyond.easycheck.events.infrastructure.entity.EventEntity;
 import com.beyond.easycheck.events.infrastructure.repository.EventImageRepository;
 import com.beyond.easycheck.events.infrastructure.repository.EventRepository;
@@ -33,8 +34,9 @@ import static com.beyond.easycheck.events.exception.EventMessageType.IMAGE_NOT_F
 public class EventController {
 
     private final EventService eventService;
-    private final EventRepository eventRepository;
+
     private final AccommodationRepository accommodationRepository;
+
     private final EventImageRepository eventImageRepository;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -60,8 +62,13 @@ public class EventController {
 
     @GetMapping("")
     @Operation(summary = "이벤트 전체 조회 API")
-    public ResponseEntity<List<EventView>> readEvents() {
-        List<EventView> eventViews = eventService.readEvents();
+    public ResponseEntity<List<EventView>> readEvents(
+            @RequestParam(required = false) Long accommodationId
+    ) {
+        EventFindQuery query = new EventFindQuery(accommodationId);
+
+        List<EventView> eventViews = eventService.readEvents(query);
+
         return ResponseEntity.ok().body(eventViews);
     }
 
@@ -84,7 +91,7 @@ public class EventController {
     @Operation(summary = "이벤트 사진 수정 API")
     public ResponseEntity<Void> updateEventImage(@PathVariable Long imageId, @RequestPart MultipartFile newImageFile) {
         EventEntity.ImageEntity image = eventImageRepository.findById(imageId)
-                        .orElseThrow(() -> new EasyCheckException(IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new EasyCheckException(IMAGE_NOT_FOUND));
 
         eventService.updateEventImage(imageId, newImageFile);
         return ResponseEntity.noContent().build();

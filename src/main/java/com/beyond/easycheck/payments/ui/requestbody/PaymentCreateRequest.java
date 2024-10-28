@@ -31,6 +31,12 @@ public class PaymentCreateRequest {
     @Min(value = 0, message = "price must be greater than or equal to 0")
     private Integer amount;
 
+    private String bank;
+
+    private String accountHolder;
+
+    private LocalDateTime depositDeadline;
+
     @NotNull
     private LocalDateTime paymentDate;
 

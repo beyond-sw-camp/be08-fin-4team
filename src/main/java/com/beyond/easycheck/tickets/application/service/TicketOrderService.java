@@ -10,6 +10,7 @@ import com.beyond.easycheck.tickets.infrastructure.repository.TicketPaymentRepos
 import com.beyond.easycheck.tickets.infrastructure.repository.TicketRepository;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketOrderRequest;
 import com.beyond.easycheck.tickets.ui.view.TicketOrderDTO;
+import com.beyond.easycheck.tickets.ui.view.OrderDetailsDTO;
 import com.beyond.easycheck.user.exception.UserMessageType;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
@@ -47,12 +48,15 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
         validateQuantity(request.getQuantity());
         log.info("여기 나오나?");
         TicketOrderEntity ticketOrder = new TicketOrderEntity(
-                ticket,
-                request.getQuantity(),
                 userEntity,
-                request.getReceiptMethod(),
                 request.getCollectionAgreement()
         );
+
+        for (int i = 0; i < tickets.size(); i++) {
+            TicketEntity ticket = tickets.get(i);
+            int quantity = request.getQuantities().get(i);
+            ticketOrder.addOrderDetail(ticket, quantity);
+        }
 
         ticketOrderRepository.save(ticketOrder);
 
@@ -116,35 +120,53 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
                 .orElseThrow(() -> new EasyCheckException(UserMessageType.USER_NOT_FOUND));
     }
 
-    private TicketEntity getTicketById(Long ticketId) {
-        return ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new EasyCheckException(TICKET_NOT_FOUND));
-    }
-
-    private void validateSalePeriod(TicketEntity ticket) {
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isBefore(ticket.getSaleStartDate()) || now.isAfter(ticket.getSaleEndDate())) {
-            throw new EasyCheckException(TICKET_SALE_PERIOD_INVALID);
+    private List<TicketEntity> getTicketsByIds(List<Long> ticketIds) {
+        List<TicketEntity> tickets = ticketRepository.findAllById(ticketIds);
+        if (tickets.size() != ticketIds.size()) {
+            throw new EasyCheckException(TICKET_NOT_FOUND);
         }
+        return tickets;
     }
 
-    private void validateQuantity(int quantity) {
-        if (quantity <= 0) {
+    private void validateTickets(List<TicketEntity> tickets, List<Integer> quantities) {
+        if (tickets.size() != quantities.size()) {
             throw new EasyCheckException(INVALID_QUANTITY);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        for (TicketEntity ticket : tickets) {
+            if (now.isBefore(ticket.getSaleStartDate()) || now.isAfter(ticket.getSaleEndDate())) {
+                throw new EasyCheckException(TICKET_SALE_PERIOD_INVALID);
+            }
+        }
+
+        for (int quantity : quantities) {
+            if (quantity <= 0) {
+                throw new EasyCheckException(INVALID_QUANTITY);
+            }
         }
     }
 
     private TicketOrderDTO convertToDTO(TicketOrderEntity ticketOrder, TicketPaymentEntity payment) {
+        List<OrderDetailsDTO> orderDetailsDTOList = ticketOrder.getOrderDetails().stream()
+                .map(detail -> new OrderDetailsDTO(
+                        detail.getTicket().getId(),
+                        detail.getTicket().getTicketName(),
+                        detail.getQuantity(),
+                        detail.getPrice()))
+                .collect(Collectors.toList());
+
         return new TicketOrderDTO(
                 ticketOrder.getId(),
-                ticketOrder.getTicket().getTicketName(),
-                ticketOrder.getQuantity(),
-                ticketOrder.getTotalPrice(),
                 ticketOrder.getUserEntity().getId(),
+                ticketOrder.getCollectionAgreement().name(),
+                ticketOrder.getOrderStatus(),
+                ticketOrder.getTotalPrice(),
                 ticketOrder.getPurchaseTimestamp(),
+                orderDetailsDTOList,
                 payment != null ? payment.getPaymentMethod() : null,
-                payment != null ? payment.getPaymentAmount() : null,
-                ticketOrder.getOrderStatus()
+                payment != null ? payment.getPaymentAmount() : null
         );
     }
+
 }

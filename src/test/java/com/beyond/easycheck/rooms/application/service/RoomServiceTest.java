@@ -318,7 +318,7 @@ public class RoomServiceTest {
         roomService.updateRoom(1L, updateRoom);
 
         // Then
-        assertThat(existingRoom.getRoomNumber()).isEqualTo("403");
+        assertThat(existingRoom.getType()).isEqualTo("403");
         assertThat(existingRoom.getStatus()).isEqualTo(RoomStatus.예약불가);
         assertThat(existingRoom.getRoomAmount()).isEqualTo(5);
 

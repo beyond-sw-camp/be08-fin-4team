@@ -23,6 +23,7 @@ public interface TicketReadUseCase {
     @EqualsAndHashCode
     class FindTicketResult {
         private Long id;
+        private Long themeParkId;
         private String ticketName;
         private BigDecimal price;
         private LocalDateTime saleStartDate;
@@ -33,6 +34,7 @@ public interface TicketReadUseCase {
         public static FindTicketResult fromEntity(TicketEntity ticket) {
             return FindTicketResult.builder()
                     .id(ticket.getId())
+                    .themeParkId(ticket.getThemePark().getId())
                     .ticketName(ticket.getTicketName())
                     .price(ticket.getPrice())
                     .saleStartDate(ticket.getSaleStartDate())

@@ -4,6 +4,7 @@ import com.beyond.easycheck.reservationrooms.application.service.ReservationRoom
 import com.beyond.easycheck.reservationrooms.infrastructure.entity.ReservationRoomEntity;
 import com.beyond.easycheck.reservationrooms.ui.requestbody.ReservationRoomCreateRequest;
 import com.beyond.easycheck.reservationrooms.ui.requestbody.ReservationRoomUpdateRequest;
+import com.beyond.easycheck.reservationrooms.ui.view.AvailableReservationRoomView;
 import com.beyond.easycheck.reservationrooms.ui.view.DayRoomAvailabilityView;
 import com.beyond.easycheck.reservationrooms.ui.view.ReservationRoomView;
 import com.beyond.easycheck.reservationrooms.ui.view.RoomAvailabilityView;
@@ -42,12 +43,12 @@ public class ReservationRoomController {
 
     @Operation(summary = "체크인, 체크아웃 날짜에 예약 가능한 객실 조회 API")
     @GetMapping("/available")
-    public ResponseEntity<List<RoomAvailabilityView>> getAvailableRooms(
+    public ResponseEntity<List<AvailableReservationRoomView>> getAvailableRooms(
             @RequestParam Long accommodationId,
             @RequestParam LocalDate checkinDate,
             @RequestParam LocalDate checkoutDate) {
 
-        List<RoomAvailabilityView> availableRooms = reservationRoomService.getAvailableRoomsByCheckInCheckOut(accommodationId, checkinDate, checkoutDate);
+        List<AvailableReservationRoomView> availableRooms = reservationRoomService.getAvailableRoomsByCheckInCheckOut(accommodationId, checkinDate, checkoutDate);
         return ResponseEntity.ok(availableRooms);
     }
 

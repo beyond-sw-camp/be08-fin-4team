@@ -3,6 +3,7 @@ package com.beyond.easycheck.payments.ui.controller;
 import com.beyond.easycheck.payments.application.service.PaymentService;
 import com.beyond.easycheck.payments.ui.requestbody.PaymentCreateRequest;
 import com.beyond.easycheck.payments.ui.requestbody.PaymentUpdateRequest;
+import com.beyond.easycheck.payments.ui.requestbody.WebhookRequest;
 import com.beyond.easycheck.payments.ui.view.PaymentView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +31,18 @@ public class PaymentController {
         paymentService.processReservationPayment(paymentCreateRequest.getReservationId(), paymentCreateRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "가상계좌 입금 확인 API")
+    @PostMapping("/portone")
+    public ResponseEntity<String> handlePortOneWebhook(@RequestBody WebhookRequest webhookRequest) {
+
+        try {
+            paymentService.handleVirtualAccountDeposit(webhookRequest.getImpUid());
+            return ResponseEntity.ok("Webhook processed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Webhook processing failed");
+        }
     }
 
     @Operation(summary = "결제 내역 리스트를 조회하는 API")

@@ -18,6 +18,6 @@ public class ThemeParkCreateRequest {
     @NotBlank(message = "테마파크 설명은 필수입니다.")
     private String description;
 
-    @NotBlank(message = "테마파크 위치는 필수입니다.")
-    private String location;
+    @NotBlank(message = "Y or N")
+    private String ticketAvailable;
 }

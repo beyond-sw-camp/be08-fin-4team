@@ -7,17 +7,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserOperationUseCase {
 
-    FindUserResult registerUser(UserRegisterCommand command);
-
-    FindUserResult registerCorporateUser(UserRegisterCommand command, CorporateCreateRequest corporateCreateRequest, MultipartFile verificationFilesZip);
+    void logout(UserLogoutCommand command);
 
     FindJwtResult login(UserLoginCommand command);
 
-    FindJwtResult loginGuest(GuestUserLoginCommand command);
-
-    void logout(UserLogoutCommand command);
+    void deactivateUser(DeactivateUserCommand command);
 
     void changePassword(ChangePasswordCommand command);
+
+    FindJwtResult loginGuest(GuestUserLoginCommand command);
+
+    FindUserResult registerUser(UserRegisterCommand command);
+
+    FindUserResult updateUserInfo(UserUpdateCommand command);
+
+    FindUserResult registerCorporateUser(CorporateUserRegisterCommand command);
+
+    record CorporateUserRegisterCommand(
+            String name,
+            String phone,
+            String email
+    ) {
+
+    }
 
     record UserRegisterCommand(
             String email,
@@ -27,6 +39,15 @@ public interface UserOperationUseCase {
             String addr,
             String addrDetail,
             char marketingConsent
+    ) {
+    }
+
+    record UserUpdateCommand(
+            Long userId,
+            String email,
+            String phone,
+            String addr,
+            String addrDetail
     ) {
     }
 
@@ -53,5 +74,9 @@ public interface UserOperationUseCase {
             String oldPassword,
             String newPassword
     ) {
+    }
+
+    record DeactivateUserCommand(Long userId) {
+
     }
 }

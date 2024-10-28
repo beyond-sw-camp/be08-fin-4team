@@ -302,6 +302,115 @@ public class UserServiceTest {
         verify(userJpaRepository).findById(userId);
     }
 
+    @Test
+    @DisplayName("[유저 정보 수정] - 성공")
+    void updateUserInfo_success() {
+        // Given
+        Long userId = 1L;
+        UserUpdateCommand command = new UserUpdateCommand(
+                userId,
+                "Updated User",
+                "010-9999-8888",
+                "Updated City",
+                "Updated District"
+        );
+
+        UserEntity user = mock(UserEntity.class);
+        RoleEntity role = mock(RoleEntity.class);
+        VerifiedPhone verifiedPhone = mock(VerifiedPhone.class);
+
+        when(userJpaRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(smsVerifiedPhoneRepository.findById(command.phone())).thenReturn(Optional.of(verifiedPhone));
+        when(user.getName()).thenReturn("Updated User");
+        when(user.getPhone()).thenReturn("010-9999-8888");
+        when(user.getStatus()).thenReturn(UserStatus.ACTIVE);
+        when(user.getRole()).thenReturn(role);
+
+        // When
+        FindUserResult result = userService.updateUserInfo(command);
+
+        // Then
+        verify(user).updateUser(command);
+        verify(smsVerifiedPhoneRepository).findById(command.phone());
+        assertEquals("Updated User", result.name());
+        assertEquals("010-9999-8888", result.phone());
+    }
+
+    @Test
+    @DisplayName("[유저 정보 수정] - 실패 - 전화번호 미인증")
+    void updateUserInfo_fail_phoneNotVerified() {
+        // Given
+        Long userId = 1L;
+        UserUpdateCommand command = new UserUpdateCommand(
+                userId,
+                "Updated User",
+                "010-9999-8888",
+                "Updated City",
+                "Updated District"
+        );
+
+        when(smsVerifiedPhoneRepository.findById(command.phone())).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EasyCheckException.class, () -> userService.updateUserInfo(command));
+        verify(smsVerifiedPhoneRepository).findById(command.phone());
+        verify(userJpaRepository, never()).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("[유저 정보 수정] - 실패 - 사용자를 찾을 수 없음")
+    void updateUserInfo_fail_userNotFound() {
+        // Given
+        Long userId = 1L;
+        UserUpdateCommand command = new UserUpdateCommand(
+                userId,
+                "Updated User",
+                "010-9999-8888",
+                "Updated City",
+                "Updated District"
+        );
+
+        VerifiedPhone verifiedPhone = mock(VerifiedPhone.class);
+        when(smsVerifiedPhoneRepository.findById(command.phone())).thenReturn(Optional.of(verifiedPhone));
+        when(userJpaRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EasyCheckException.class, () -> userService.updateUserInfo(command));
+        verify(smsVerifiedPhoneRepository).findById(command.phone());
+        verify(userJpaRepository).findById(userId);
+    }
+
+    @Test
+    @DisplayName("[회원 비활성화] - 성공")
+    void deactivateUser_success() {
+        // Given
+        Long userId = 1L;
+        DeactivateUserCommand command = new DeactivateUserCommand(userId);
+        UserEntity user = mock(UserEntity.class);
+
+        when(userJpaRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // When
+        userService.deactivateUser(command);
+
+        // Then
+        verify(userJpaRepository).findById(userId);
+        verify(user).setUserStatus(UserStatus.DEACTIVATED);
+    }
+
+    @Test
+    @DisplayName("[회원 비활성화] - 실패 - 사용자를 찾을 수 없음")
+    void deactivateUser_fail_userNotFound() {
+        // Given
+        Long userId = 1L;
+        DeactivateUserCommand command = new DeactivateUserCommand(userId);
+
+        when(userJpaRepository.findById(userId)).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(EasyCheckException.class, () -> userService.deactivateUser(command));
+        verify(userJpaRepository).findById(userId);
+    }
 
 
 

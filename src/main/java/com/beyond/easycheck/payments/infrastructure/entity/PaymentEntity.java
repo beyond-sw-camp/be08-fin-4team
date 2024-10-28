@@ -39,6 +39,15 @@ public class PaymentEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer amount;
 
+    @Column(nullable = true)
+    private String bank;
+
+    @Column(nullable = true)
+    private String accountHolder;
+
+    @Column(nullable = true)
+    private LocalDateTime depositDeadline;
+
     @Column(nullable = false)
     private LocalDateTime paymentDate;
 
