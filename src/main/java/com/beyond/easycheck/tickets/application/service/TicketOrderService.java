@@ -15,6 +15,7 @@ import com.beyond.easycheck.user.exception.UserMessageType;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import static com.beyond.easycheck.tickets.exception.TicketMessageType.*;
 import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,10 +41,12 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
     public TicketOrderDTO createTicketOrder(Long userId, TicketOrderRequest request) {
 
         UserEntity userEntity = getUserById(userId);
-        List<TicketEntity> tickets = getTicketsByIds(request.getTicketIds());
-
-        validateTickets(tickets, request.getQuantities());
-
+        log.info(userEntity.toString());
+        TicketEntity ticket = getTicketById(request.getTicketId());
+        log.info(ticket.toString());
+        validateSalePeriod(ticket);
+        validateQuantity(request.getQuantity());
+        log.info("여기 나오나?");
         TicketOrderEntity ticketOrder = new TicketOrderEntity(
                 userEntity,
                 request.getCollectionAgreement()

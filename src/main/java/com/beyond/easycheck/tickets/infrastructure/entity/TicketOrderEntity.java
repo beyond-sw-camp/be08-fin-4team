@@ -46,7 +46,7 @@ public class TicketOrderEntity extends BaseTimeEntity {
     public TicketOrderEntity(UserEntity userEntity, CollectionAgreementType collectionAgreement) {
         this.userEntity = userEntity;
         this.collectionAgreement = collectionAgreement;
-        this.totalPrice = BigDecimal.ZERO;
+        this.totalPrice = ticket.getPrice().multiply(BigDecimal.valueOf(Long.parseLong(String.valueOf(quantity))));
         this.purchaseTimestamp = LocalDateTime.now();
         this.orderStatus = PENDING;
     }
