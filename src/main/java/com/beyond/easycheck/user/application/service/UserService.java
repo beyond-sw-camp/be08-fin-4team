@@ -81,7 +81,12 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
         // 핸드폰 인증여부 확인
         checkPhoneIsVerified(command.phone());
 
+
         UserEntity user = UserEntity.createCorporateUser(command);
+
+        // 법인회우너 역할 지정
+        RoleEntity role = findRoleByName(UserRole.CORP_USER.name());
+        user.setRole(role);
 
         userJpaRepository.save(user);
 
