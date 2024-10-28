@@ -7,6 +7,7 @@ import com.beyond.easycheck.reservationrooms.infrastructure.entity.ReservationSt
 import com.beyond.easycheck.reservationrooms.infrastructure.repository.ReservationRoomRepository;
 import com.beyond.easycheck.reservationrooms.ui.requestbody.ReservationRoomCreateRequest;
 import com.beyond.easycheck.reservationrooms.ui.requestbody.ReservationRoomUpdateRequest;
+import com.beyond.easycheck.reservationrooms.ui.view.AvailableReservationRoomView;
 import com.beyond.easycheck.reservationrooms.ui.view.DayRoomAvailabilityView;
 import com.beyond.easycheck.reservationrooms.ui.view.ReservationRoomView;
 import com.beyond.easycheck.reservationrooms.ui.view.RoomAvailabilityView;
@@ -14,12 +15,17 @@ import com.beyond.easycheck.reservationservices.infrastructure.entity.Reservatio
 import com.beyond.easycheck.reservationservices.infrastructure.entity.ReservationServiceStatus;
 import com.beyond.easycheck.reservationservices.infrastructure.repository.ReservationServiceRepository;
 import com.beyond.easycheck.reservationservices.ui.requestbody.ReservationServiceUpdateRequest;
+import com.beyond.easycheck.roomrates.application.dto.RoomRateFindQuery;
+import com.beyond.easycheck.roomrates.infrastructure.entity.RoomRateEntity;
+import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateType;
+import com.beyond.easycheck.roomrates.infrastructure.repository.RoomRateRepository;
 import com.beyond.easycheck.rooms.exception.RoomMessageType;
 import com.beyond.easycheck.rooms.infrastructure.entity.DailyRoomAvailabilityEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
 import com.beyond.easycheck.rooms.infrastructure.repository.DailyRoomAvailabilityRepository;
 import com.beyond.easycheck.rooms.infrastructure.repository.RoomRepository;
+import com.beyond.easycheck.seasons.application.domain.DayType;
 import com.beyond.easycheck.user.exception.UserMessageType;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
@@ -32,6 +38,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -46,10 +53,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReservationRoomService {
 
-    private final ReservationRoomRepository reservationRoomRepository;
     private final RoomRepository roomRepository;
+
     private final UserJpaRepository userJpaRepository;
+
+    private final RoomRateRepository roomRateRepository;
+
+    private final ReservationRoomRepository reservationRoomRepository;
+
     private final ReservationServiceRepository reservationServiceRepository;
+
     private final DailyRoomAvailabilityRepository dailyRoomAvailabilityRepository;
 
     @Transactional
@@ -111,8 +124,7 @@ public class ReservationRoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomAvailabilityView> getAvailableRoomsByCheckInCheckOut(Long accommodationId, LocalDate checkinDate, LocalDate checkoutDate) {
-
+    public List<AvailableReservationRoomView> getAvailableRoomsByCheckInCheckOut(Long accommodationId, LocalDate checkinDate, LocalDate checkoutDate) {
         List<DailyRoomAvailabilityEntity> availableRoomsByDateRange = dailyRoomAvailabilityRepository.findAvailabilityByDateRange(
                 checkinDate.atStartOfDay(),
                 checkoutDate.atTime(23, 59)
@@ -131,7 +143,12 @@ public class ReservationRoomService {
                 ));
 
         log.info(uniqueRoomAvailabilityMap.toString());
-        List<RoomAvailabilityView> availableRooms = uniqueRoomAvailabilityMap.values().stream()
+
+        // 체크인 날짜를 이용하여 해당하는 방의 모든 요금을 조회
+        // 체크인 날짜의 요일이 토요일 또는 일요일인지 확인
+        // 요일과 회원 타입에 맞는 가격 찾기
+
+        return uniqueRoomAvailabilityMap.values().stream()
                 .map(availability -> {
                     RoomEntity roomEntity = availability.getRoomEntity();
 
@@ -139,18 +156,55 @@ public class ReservationRoomService {
                             .map(RoomEntity.ImageEntity::getUrl)
                             .collect(Collectors.toList());
 
-                    return new RoomAvailabilityView(
+                    String thumbnailImgUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
+
+                    // 체크인 날짜를 이용하여 해당하는 방의 모든 요금을 조회
+                    RoomRateFindQuery query = new RoomRateFindQuery(
                             roomEntity.getRoomId(),
-                            roomEntity.getRoomTypeEntity().getName(),
+                            checkinDate
+                    );
+
+                    List<RoomRateEntity> roomRates = roomRateRepository.findAllRoomRates(query);
+
+                    // 체크인 날짜의 요일이 토요일 또는 일요일인지 확인
+                    boolean isWeekend = checkinDate.getDayOfWeek().getValue() >= 6;
+
+                    // 요일과 회원 타입에 맞는 가격 찾기
+                    BigDecimal normalPrice = roomRates.stream()
+                            .filter(rate ->
+                                    rate.getUserType().equals("일반") &&
+                                            ((isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKEND) ||
+                                                    (!isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKDAY))
+                            )
+                            .findFirst()
+                            .map(RoomRateEntity::getRate)
+                            .orElse(BigDecimal.ZERO);
+
+                    BigDecimal corpPrice = roomRates.stream()
+                            .filter(rate ->
+                                    rate.getUserType().equals("법인") &&
+                                            ((isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKEND) ||
+                                                    (!isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKDAY))
+                            )
+                            .findFirst()
+                            .map(RoomRateEntity::getRate)
+                            .orElse(BigDecimal.ZERO);
+
+                    return new AvailableReservationRoomView(
+                            roomEntity.getRoomId(),
                             roomEntity.getType(),
+                            roomEntity.getRoomTypeEntity().getName(),
                             availability.getRemainingRoom(),
                             availability.getStatus(),
-                            imageUrls
+                            roomEntity.getDescription(),
+                            thumbnailImgUrl,
+                            normalPrice,
+                            corpPrice,
+                            roomEntity.getMaxOccupancy(),
+                            roomEntity.getStandardOccupancy()
                     );
                 })
                 .collect(Collectors.toList());
-        log.info(availableRooms.toString());
-        return availableRooms;
     }
 
     @Transactional(readOnly = true)
