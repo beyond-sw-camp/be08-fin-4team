@@ -5,6 +5,7 @@ import com.beyond.easycheck.reservationrooms.infrastructure.entity.ReservationRo
 import com.beyond.easycheck.reservationrooms.infrastructure.entity.ReservationStatus;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReservationRoomView {
 
     private Long id;
+
+    private Long userId;
 
     private String userName;
 
@@ -40,25 +44,50 @@ public class ReservationRoomView {
 
     private PaymentStatus paymentStatus;
 
-    public static ReservationRoomView of(ReservationRoomEntity reservationRoomEntity) {
+    /**
+     * 추가 부분
+     */
+    // 객실 이름
+    private String roomName;
 
-        List<String> imageUrls = reservationRoomEntity.getRoomEntity().getImages().stream()
+    // 대표 투숙자 정보
+    private String representativeName;
+    private String representativePhone;
+    private String representativeEmail;
+
+    // 인원수 정보
+    private int adultCount;
+    private int childCount;
+
+    // 방 개수
+    private int totalRoomCount;
+
+    public static ReservationRoomView of(ReservationRoomEntity reservation) {
+
+        List<String> imageUrls = reservation.getRoomEntity().getImages().stream()
                 .map(RoomEntity.ImageEntity::getUrl)
                 .collect(Collectors.toList());
 
         return new ReservationRoomView(
-
-                reservationRoomEntity.getId(),
-                reservationRoomEntity.getUserEntity().getName(),
-                reservationRoomEntity.getRoomEntity().getRoomId(),
-                reservationRoomEntity.getRoomEntity().getRoomTypeEntity().getName(),
+                reservation.getId(),
+                reservation.getUserEntity().getId(),
+                reservation.getUserEntity().getName(),
+                reservation.getRoomEntity().getRoomId(),
+                reservation.getRoomEntity().getRoomTypeEntity().getName(),
                 imageUrls,
-                reservationRoomEntity.getRoomEntity().getStatus(),
-                reservationRoomEntity.getCheckinDate(),
-                reservationRoomEntity.getCheckoutDate(),
-                reservationRoomEntity.getReservationStatus(),
-                reservationRoomEntity.getTotalPrice(),
-                reservationRoomEntity.getPaymentStatus()
+                reservation.getRoomEntity().getStatus(),
+                reservation.getCheckinDate(),
+                reservation.getCheckoutDate(),
+                reservation.getReservationStatus(),
+                reservation.getTotalPrice(),
+                reservation.getPaymentStatus(),
+                reservation.getRoomEntity().getType(),
+                reservation.getRepresentativeName(),
+                reservation.getRepresentativePhone(),
+                reservation.getRepresentativeEmail(),
+                reservation.getAdultCount(),
+                reservation.getChildCount(),
+                reservation.getTotalRoomCount()
         );
     }
 }
