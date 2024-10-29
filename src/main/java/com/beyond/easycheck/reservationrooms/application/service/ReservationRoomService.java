@@ -17,7 +17,6 @@ import com.beyond.easycheck.reservationservices.infrastructure.repository.Reserv
 import com.beyond.easycheck.reservationservices.ui.requestbody.ReservationServiceUpdateRequest;
 import com.beyond.easycheck.roomrates.application.dto.RoomRateFindQuery;
 import com.beyond.easycheck.roomrates.infrastructure.entity.RoomRateEntity;
-import com.beyond.easycheck.roomrates.infrastructure.entity.RoomrateType;
 import com.beyond.easycheck.roomrates.infrastructure.repository.RoomRateRepository;
 import com.beyond.easycheck.rooms.exception.RoomMessageType;
 import com.beyond.easycheck.rooms.infrastructure.entity.DailyRoomAvailabilityEntity;
@@ -66,16 +65,16 @@ public class ReservationRoomService {
     private final DailyRoomAvailabilityRepository dailyRoomAvailabilityRepository;
 
     @Transactional
-    public ReservationRoomEntity createReservation(Long userId, ReservationRoomCreateRequest reservationRoomCreateRequest) {
+    public ReservationRoomEntity createReservation(Long userId, ReservationRoomCreateRequest request) {
 
         UserEntity userEntity = userJpaRepository.findById(userId)
                 .orElseThrow(() -> new EasyCheckException(UserMessageType.USER_NOT_FOUND));
 
-        RoomEntity roomEntity = roomRepository.findById(reservationRoomCreateRequest.getRoomId())
+        RoomEntity roomEntity = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new EasyCheckException(RoomMessageType.ROOM_NOT_FOUND));
 
-        LocalDate checkinDate = reservationRoomCreateRequest.getCheckinDate();
-        LocalDate checkoutDate = reservationRoomCreateRequest.getCheckoutDate();
+        LocalDate checkinDate = request.getCheckinDate();
+        LocalDate checkoutDate = request.getCheckoutDate();
 
         for (LocalDateTime date = checkinDate.atStartOfDay(); !date.isAfter(checkoutDate.atStartOfDay()); date = date.plusDays(1)) {
             log.info("Logging checkpoint before dailyAvailability retrieval");
@@ -96,8 +95,15 @@ public class ReservationRoomService {
                 .checkinDate(LocalDate.from(checkinDate.atTime(15, 0)))
                 .checkoutDate(LocalDate.from(checkoutDate.atTime(11, 0)))
                 .reservationStatus(ReservationStatus.RESERVATION)
-                .totalPrice(reservationRoomCreateRequest.getTotalPrice())
-                .paymentStatus(reservationRoomCreateRequest.getPaymentStatus())
+                .totalPrice(request.getTotalPrice())
+                .paymentStatus(request.getPaymentStatus())
+                // 추가된 부분
+                .representativeName(request.getRepresentativeName())
+                .representativePhone(request.getRepresentativePhone())
+                .representativeEmail(request.getRepresentativeEmail())
+                .adultCount(request.getAdultCount())
+                .childCount(request.getChildCount())
+                .totalRoomCount(request.getTotalRoomCount())
                 .build();
 
         reservationRoomRepository.save(reservationRoomEntity);

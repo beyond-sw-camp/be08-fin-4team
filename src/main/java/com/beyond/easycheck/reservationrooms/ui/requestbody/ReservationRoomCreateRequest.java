@@ -9,13 +9,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor(access = lombok.AccessLevel.PUBLIC)
-@AllArgsConstructor
 @Getter
+@ToString
+@AllArgsConstructor
+@RequiredArgsConstructor(access = lombok.AccessLevel.PUBLIC)
 public class ReservationRoomCreateRequest {
 
     @NotNull
@@ -40,14 +42,14 @@ public class ReservationRoomCreateRequest {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
-    public void setRoom(long id, LocalDateTime date, LocalDate checkinDate, LocalDate checkoutDate, ReservationStatus reservationStatus, Integer totalPrice, PaymentStatus paymentStatus) {
+    private String representativeName;
+    private String representativePhone;
+    private String representativeEmail;
 
-        this.roomId = id;
-        this.reservationDate = date;
-        this.checkinDate = checkinDate;
-        this.checkoutDate = checkoutDate;
-        this.reservationStatus = reservationStatus;
-        this.totalPrice = totalPrice;
-        this.paymentStatus = paymentStatus;
-    }
+    // 인원수 정보
+    private int adultCount;
+    private int childCount;
+
+    // 방 개수
+    private int totalRoomCount;
 }
