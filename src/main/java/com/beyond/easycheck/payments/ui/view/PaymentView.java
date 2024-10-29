@@ -23,6 +23,8 @@ public class PaymentView {
 
     private LocalDateTime checkoutDate;
 
+    private LocalDateTime paymentDate;
+
     private String method;
 
     private Integer amount;
@@ -38,6 +40,7 @@ public class PaymentView {
                 paymentEntity.getReservationRoomEntity().getId(),
                 paymentEntity.getReservationRoomEntity().getCheckinDate().atStartOfDay(),
                 paymentEntity.getReservationRoomEntity().getCheckoutDate().atStartOfDay(),
+                paymentEntity.getPaymentDate(),
                 paymentEntity.getMethod(),
                 paymentEntity.getAmount(),
                 paymentEntity.getCompletionStatus()
