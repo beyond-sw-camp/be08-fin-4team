@@ -22,7 +22,19 @@ public class TicketPaymentView {
 
     private Long orderId;
 
+    private String accommodationName;
+
+    private String ticketName;
+
+    private LocalDateTime validFromDate;
+
+    private LocalDateTime validToDate;
+
+    private int quantity;
+
     private PaymentStatus paymentStatus;
+
+    private LocalDateTime cancelDate;
 
     private String paymentMethod;
 
@@ -37,7 +49,13 @@ public class TicketPaymentView {
                 ticketPaymentEntity.getId(),
                 ticketPaymentEntity.getImpUid(),
                 ticketPaymentEntity.getTicketOrder().getId(),
+                ticketPaymentEntity.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
+                ticketPaymentEntity.getTicketOrder().getTicket().getTicketName(),
+                ticketPaymentEntity.getTicketOrder().getTicket().getValidFromDate(),
+                ticketPaymentEntity.getTicketOrder().getTicket().getValidToDate(),
+                ticketPaymentEntity.getTicketOrder().getQuantity(),
                 ticketPaymentEntity.getPaymentStatus(),
+                ticketPaymentEntity.getCancelDate(),
                 ticketPaymentEntity.getPaymentMethod(),
                 ticketPaymentEntity.getPaymentAmount(),
                 ticketPaymentEntity.getPaymentDate()
