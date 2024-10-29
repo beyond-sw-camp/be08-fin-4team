@@ -59,6 +59,21 @@ public class ReservationRoomEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    /**
+     * 추가된 컬럼
+     */
+    // 대표 투숙자 정보
+    private String representativeName;
+    private String representativePhone;
+    private String representativeEmail;
+
+    // 인원수 정보
+    private int adultCount;
+    private int childCount;
+
+    // 방 개수
+    private int totalRoomCount;
+
     public void updateReservationRoom(ReservationRoomUpdateRequest reservationRoomUpdateRequest) {
         Optional.ofNullable(reservationRoomUpdateRequest.getReservationStatus()).ifPresent(reservationStatus -> this.reservationStatus = reservationStatus);
     }

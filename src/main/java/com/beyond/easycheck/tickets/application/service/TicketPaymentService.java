@@ -1,7 +1,6 @@
 package com.beyond.easycheck.tickets.application.service;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
-import com.beyond.easycheck.payments.ui.view.PaymentView;
 import com.beyond.easycheck.tickets.infrastructure.entity.OrderStatus;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketOrderEntity;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketPaymentEntity;
@@ -69,7 +68,13 @@ public class TicketPaymentService {
                     result.getId(),
                     result.getImpUid(),
                     result.getTicketOrder().getId(),
+                    result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
+                    result.getTicketOrder().getTicket().getTicketName(),
+                    result.getTicketOrder().getTicket().getValidFromDate(),
+                    result.getTicketOrder().getTicket().getValidToDate(),
+                    result.getTicketOrder().getQuantity(),
                     result.getPaymentStatus(),
+                    result.getCancelDate(),
                     result.getPaymentMethod(),
                     result.getPaymentAmount(),
                     result.getPaymentDate()
