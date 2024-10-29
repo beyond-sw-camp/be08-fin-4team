@@ -31,6 +31,8 @@ public class PaymentView {
 
     private CompletionStatus completionStatus;
 
+    private String accommodationName;
+
     public static PaymentView of(PaymentEntity paymentEntity) {
 
         return new PaymentView(
@@ -43,7 +45,8 @@ public class PaymentView {
                 paymentEntity.getPaymentDate(),
                 paymentEntity.getMethod(),
                 paymentEntity.getAmount(),
-                paymentEntity.getCompletionStatus()
+                paymentEntity.getCompletionStatus(),
+                paymentEntity.getReservationRoomEntity().getRoomEntity().getRoomTypeEntity().getAccommodationEntity().getName()
         );
     }
 }
