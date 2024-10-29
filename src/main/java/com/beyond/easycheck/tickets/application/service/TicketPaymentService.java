@@ -65,6 +65,13 @@ public class TicketPaymentService {
             TicketPaymentEntity result = createAndCompletePayment(order, request);
             return new TicketPaymentView(result.getImpUid(),
                     result.getTicketOrder().getId(),
+                    result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
+                    result.getTicketOrder().getTicket().getTicketName(),
+                    result.getTicketOrder().getTicket().getValidFromDate(),
+                    result.getTicketOrder().getTicket().getValidToDate(),
+                    result.getTicketOrder().getQuantity(),
+                    result.getPaymentStatus(),
+                    result.getCancelDate(),
                     result.getPaymentMethod(),
                     result.getPaymentAmount(),
                     result.getPaymentDate()
