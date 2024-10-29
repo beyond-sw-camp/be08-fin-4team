@@ -1,6 +1,7 @@
 package com.beyond.easycheck.tickets.application.service;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.mail.application.service.MailService;
 import com.beyond.easycheck.tickets.infrastructure.entity.OrderStatus;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketOrderEntity;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketPaymentEntity;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.beyond.easycheck.payments.exception.PaymentMessageType.*;
 import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
@@ -36,6 +38,8 @@ public class TicketPaymentService {
 
     private final TicketOrderRepository ticketOrderRepository;
     private final TicketPaymentRepository ticketPaymentRepository;
+
+    private final MailService mailService;
 
     private IamportClient iamportClient;
 
@@ -63,10 +67,16 @@ public class TicketPaymentService {
 
         if (paymentResponse != null && paymentResponse.getResponse().getAmount().compareTo(request.getPaymentAmount()) == 0) {
             TicketPaymentEntity result = createAndCompletePayment(order, request);
-            return new TicketPaymentView(result.getImpUid(),
+
+            // Construct the view for the email content
+            TicketPaymentView ticketPaymentView = new TicketPaymentView(
+                    result.getId(),
+                    result.getImpUid(),
                     result.getTicketOrder().getId(),
+                    result.getTicketOrder().getUserEntity().getName(),
                     result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
                     result.getTicketOrder().getTicket().getTicketName(),
+                    result.getTicketOrder().getTicket().getThemePark().getName(),
                     result.getTicketOrder().getTicket().getValidFromDate(),
                     result.getTicketOrder().getTicket().getValidToDate(),
                     result.getTicketOrder().getQuantity(),
@@ -76,8 +86,11 @@ public class TicketPaymentService {
                     result.getPaymentAmount(),
                     result.getPaymentDate()
             );
-        } else {
 
+            mailService.sendTicketPaymentConfirmationEmail(result.getTicketOrder().getUserEntity().getEmail(), ticketPaymentView);
+
+            return ticketPaymentView;
+        } else {
             throw new EasyCheckException(PORTONE_VERIFICATION_ERROR);
         }
     }
@@ -144,6 +157,12 @@ public class TicketPaymentService {
         }
 
         return ticketPaymentRepository.save(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TicketPaymentView> getAllTicketPayments() {
+
+        return ticketPaymentRepository.findAll().stream().map(TicketPaymentView::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
