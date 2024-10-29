@@ -1,6 +1,7 @@
 package com.beyond.easycheck.tickets.application.service;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.payments.ui.view.PaymentView;
 import com.beyond.easycheck.tickets.infrastructure.entity.OrderStatus;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketOrderEntity;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketPaymentEntity;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.beyond.easycheck.payments.exception.PaymentMessageType.*;
 import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
@@ -63,8 +65,11 @@ public class TicketPaymentService {
 
         if (paymentResponse != null && paymentResponse.getResponse().getAmount().compareTo(request.getPaymentAmount()) == 0) {
             TicketPaymentEntity result = createAndCompletePayment(order, request);
-            return new TicketPaymentView(result.getImpUid(),
+            return new TicketPaymentView(
+                    result.getId(),
+                    result.getImpUid(),
                     result.getTicketOrder().getId(),
+                    result.getPaymentStatus(),
                     result.getPaymentMethod(),
                     result.getPaymentAmount(),
                     result.getPaymentDate()
@@ -137,6 +142,12 @@ public class TicketPaymentService {
         }
 
         return ticketPaymentRepository.save(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TicketPaymentView> getAllTicketPayments() {
+
+        return ticketPaymentRepository.findAll().stream().map(TicketPaymentView::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

@@ -35,14 +35,23 @@ public class TicketPaymentController {
                 .body(result);
     }
 
+    @Operation(summary = "입장권 결제 내역 조회 API")
+    @GetMapping("")
+    public ResponseEntity<List<TicketPaymentView>> getAllTicketPayments() {
+
+        List<TicketPaymentView> ticketPaymentViews = ticketPaymentService.getAllTicketPayments();
+
+        return ResponseEntity.ok(ticketPaymentViews);
+    }
+
     @Operation(summary = "입장권 결제 취소 API")
     @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponseView<TicketPaymentEntity>> cancelPayment(
+    public ResponseEntity<TicketPaymentEntity> cancelPayment(
             @PathVariable Long orderId,
             @AuthenticationPrincipal Long userId) {
 
         TicketPaymentEntity cancelledPayment = ticketPaymentService.cancelPayment(orderId, userId);
-        return ResponseEntity.ok(new ApiResponseView<>(cancelledPayment));
+        return ResponseEntity.ok(cancelledPayment);
     }
 
     @Operation(summary = "입장권 결제 상태 조회 API")
