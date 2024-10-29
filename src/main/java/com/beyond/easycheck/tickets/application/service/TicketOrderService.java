@@ -40,24 +40,26 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
     public TicketOrderDTO createTicketOrder(Long userId, TicketOrderRequest request) {
 
         UserEntity userEntity = getUserById(userId);
-        log.info(userEntity.toString());
         TicketEntity ticket = getTicketById(request.getTicketId());
-        log.info(ticket.toString());
         validateSalePeriod(ticket);
         validateQuantity(request.getQuantity());
-        log.info("여기 나오나?");
+
         TicketOrderEntity ticketOrder = new TicketOrderEntity(
                 ticket,
                 request.getQuantity(),
                 userEntity,
                 request.getReceiptMethod(),
-                request.getCollectionAgreement()
+                request.getCollectionAgreement(),
+                request.getBuyerName(),
+                request.getBuyerPhone(),
+                request.getBuyerEmail()
         );
 
         ticketOrderRepository.save(ticketOrder);
 
         return convertToDTO(ticketOrder, null);
     }
+
 
     @Override
     @Transactional
@@ -144,7 +146,10 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
                 ticketOrder.getPurchaseTimestamp(),
                 payment != null ? payment.getPaymentMethod() : null,
                 payment != null ? payment.getPaymentAmount() : null,
-                ticketOrder.getOrderStatus()
+                ticketOrder.getOrderStatus(),
+                ticketOrder.getBuyerName(),
+                ticketOrder.getBuyerPhone(),
+                ticketOrder.getBuyerEmail()
         );
     }
 }
