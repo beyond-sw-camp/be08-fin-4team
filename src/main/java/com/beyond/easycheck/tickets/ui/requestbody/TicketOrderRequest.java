@@ -26,4 +26,5 @@ public class TicketOrderRequest {
     @NotNull(message = "개인정보 수집 동의는 필수입니다.")
     private CollectionAgreementType collectionAgreement;
 
+
 }
