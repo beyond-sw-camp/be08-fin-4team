@@ -3,13 +3,12 @@ package com.beyond.easycheck.tickets.infrastructure.entity;
 import com.beyond.easycheck.common.entity.BaseTimeEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.beyond.easycheck.tickets.infrastructure.entity.OrderStatus.*;
 
@@ -24,12 +23,24 @@ public class TicketOrderEntity extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id", nullable = false)
+    private TicketEntity ticket;
+
+    @Column(nullable = false)
+    @Min(1)
+    private int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReceiptMethodType receiptMethod;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -40,28 +51,19 @@ public class TicketOrderEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime purchaseTimestamp;
 
-    @OneToMany(mappedBy = "ticketOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<OrderDetailsEntity> orderDetails = new ArrayList<>();
-
-    public TicketOrderEntity(UserEntity userEntity, CollectionAgreementType collectionAgreement) {
+    public TicketOrderEntity(TicketEntity ticket, int quantity, UserEntity userEntity, ReceiptMethodType receiptMethod, CollectionAgreementType collectionAgreement) {
+        this.ticket = ticket;
+        this.quantity = quantity;
         this.userEntity = userEntity;
+        this.receiptMethod = receiptMethod;
         this.collectionAgreement = collectionAgreement;
         this.totalPrice = ticket.getPrice().multiply(BigDecimal.valueOf(Long.parseLong(String.valueOf(quantity))));
         this.purchaseTimestamp = LocalDateTime.now();
         this.orderStatus = PENDING;
     }
 
-    public void addOrderDetail(TicketEntity ticket, int quantity) {
-        OrderDetailsEntity orderDetail = new OrderDetailsEntity(this, ticket, quantity);
-        orderDetails.add(orderDetail);
-        this.totalPrice = this.totalPrice.add(orderDetail.getPrice().multiply(BigDecimal.valueOf(orderDetail.getQuantity())));
-    }
+    public void cancelOrder() { this.orderStatus = CANCELLED; }
 
-    public void cancelOrder() {
-        this.orderStatus = CANCELLED;
-    }
+    public void completeOrder() { this.orderStatus = COMPLETED; }
 
-    public void completeOrder() {
-        this.orderStatus = COMPLETED;
-    }
 }
