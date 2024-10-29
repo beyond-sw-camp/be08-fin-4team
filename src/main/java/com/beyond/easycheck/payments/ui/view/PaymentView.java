@@ -19,6 +19,8 @@ public class PaymentView {
 
     private Long reservationRoomId;
 
+    private Long userId;
+
     private LocalDateTime checkinDate;
 
     private LocalDateTime checkoutDate;
@@ -40,6 +42,7 @@ public class PaymentView {
                 paymentEntity.getId(),
                 paymentEntity.getImpUid(),
                 paymentEntity.getReservationRoomEntity().getId(),
+                paymentEntity.getReservationRoomEntity().getUserEntity().getId(),
                 paymentEntity.getReservationRoomEntity().getCheckinDate().atStartOfDay(),
                 paymentEntity.getReservationRoomEntity().getCheckoutDate().atStartOfDay(),
                 paymentEntity.getPaymentDate(),
