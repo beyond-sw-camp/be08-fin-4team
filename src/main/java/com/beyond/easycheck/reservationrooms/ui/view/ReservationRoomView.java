@@ -62,6 +62,9 @@ public class ReservationRoomView {
     // 방 개수
     private int totalRoomCount;
 
+    private String userPhone;
+    private String accommodationName;
+
     public static ReservationRoomView of(ReservationRoomEntity reservation) {
 
         List<String> imageUrls = reservation.getRoomEntity().getImages().stream()
@@ -87,7 +90,9 @@ public class ReservationRoomView {
                 reservation.getRepresentativeEmail(),
                 reservation.getAdultCount(),
                 reservation.getChildCount(),
-                reservation.getTotalRoomCount()
+                reservation.getTotalRoomCount(),
+                reservation.getUserEntity().getPhone(),
+                reservation.getRoomEntity().getRoomTypeEntity().getAccommodationEntity().getName()
         );
     }
 }
