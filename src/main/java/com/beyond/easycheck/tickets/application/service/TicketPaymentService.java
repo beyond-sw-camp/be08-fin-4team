@@ -73,6 +73,7 @@ public class TicketPaymentService {
                     result.getId(),
                     result.getImpUid(),
                     result.getTicketOrder().getId(),
+                    result.getTicketOrder().getUserEntity().getId(),
                     result.getTicketOrder().getUserEntity().getName(),
                     result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
                     result.getTicketOrder().getTicket().getTicketName(),
