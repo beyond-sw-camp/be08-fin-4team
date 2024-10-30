@@ -196,6 +196,7 @@ public interface AdminReadUseCase {
             Long reservationRoomId,
             LocalDateTime checkinDate,
             LocalDateTime checkoutDate,
+            LocalDateTime paymentDate,
             String method,
             Integer amount,
             CompletionStatus completionStatus
@@ -209,6 +210,7 @@ public interface AdminReadUseCase {
                     payment.getReservationRoomEntity().getRoomEntity().getRoomId(),
                     payment.getReservationRoomEntity().getCheckinDate().atStartOfDay(),
                     payment.getReservationRoomEntity().getCheckoutDate().atStartOfDay(),
+                    payment.getPaymentDate(),
                     payment.getMethod(),
                     payment.getAmount(),
                     payment.getCompletionStatus()
