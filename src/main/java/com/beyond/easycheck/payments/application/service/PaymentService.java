@@ -18,6 +18,7 @@ import com.beyond.easycheck.reservationrooms.ui.view.ReservationRoomView;
 import com.beyond.easycheck.rooms.infrastructure.entity.DailyRoomAvailabilityEntity;
 import com.beyond.easycheck.rooms.infrastructure.entity.RoomStatus;
 import com.beyond.easycheck.rooms.infrastructure.repository.DailyRoomAvailabilityRepository;
+import com.beyond.easycheck.user.application.service.UserService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -44,6 +45,7 @@ public class PaymentService {
     private final ReservationRoomRepository reservationRoomRepository;
     private final DailyRoomAvailabilityRepository dailyRoomAvailabilityRepository;
 
+    private final UserService userService;
     private final MailService mailService;
 
     private IamportClient iamportClient;
@@ -77,6 +79,9 @@ public class PaymentService {
 
                 reservationRoomEntity.updatePaymentStatus(PaymentStatus.PAID);
                 reservationRoomRepository.save(reservationRoomEntity);
+
+                int pointsToAccumulate = (int) (paymentCreateRequest.getAmount() * 0.04);
+                userService.accumulatePoints(pointsToAccumulate);
 
                 ReservationRoomView reservationRoomView = ReservationRoomView.of(reservationRoomEntity);
                 mailService.sendReservationConfirmationEmail(reservationRoomEntity.getUserEntity().getEmail(), reservationRoomView);

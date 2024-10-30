@@ -26,6 +26,8 @@ public class TicketPaymentView {
 
     private String userName;
 
+    private int point;
+
     private String accommodationName;
 
     private String ticketName;
@@ -57,6 +59,7 @@ public class TicketPaymentView {
                 ticketPaymentEntity.getTicketOrder().getId(),
                 ticketPaymentEntity.getTicketOrder().getUserEntity().getId(),
                 ticketPaymentEntity.getTicketOrder().getUserEntity().getName(),
+                ticketPaymentEntity.getTicketOrder().getUserEntity().getPoint(),
                 ticketPaymentEntity.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
                 ticketPaymentEntity.getTicketOrder().getTicket().getTicketName(),
                 ticketPaymentEntity.getTicketOrder().getTicket().getThemePark().getName(),

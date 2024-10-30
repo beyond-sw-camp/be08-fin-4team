@@ -17,6 +17,7 @@ import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.R
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,6 +107,11 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
     }
 
     @Override
+    public FindUserResult getUserPoint() {
+        return null;
+    }
+
+    @Override
     public void checkEmailDuplicated(UserFindQuery query) {
         checkEmailIsDuplicated(query.email());
     }
@@ -140,6 +146,34 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
         log.info("[loginGuest] - guestUser details = {}", userDetails);
 
         return generateJwt(userDetails);
+    }
+
+    @Override
+    @Transactional
+    public FindUserResult usePoints(int amount) {
+        Long userId = getUserPrincipal();
+
+        UserEntity user = findUserById(userId);
+
+
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public FindUserResult accumulatePoints(int amount) {
+
+        Long userId = getUserPrincipal();
+        UserEntity user = findUserById(userId);
+
+        int updatedPoints = user.getPoint() + amount;
+        user.setPoint(updatedPoints);
+
+        userJpaRepository.save(user);
+
+        log.info("[accumulatePoints] - userId: {}, amount: {}, updatedPoints: {}", userId, amount, updatedPoints);
+
+        return FindUserResult.findByUserEntity(user);
     }
 
     @Override
@@ -219,6 +253,17 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
                 .ifPresent(userEntity -> {
                     throw new EasyCheckException(UserMessageType.USER_ALREADY_EXISTS);
                 });
+    }
+
+    // 인증 되었을 경우에만 사용 가능
+    private Long getUserPrincipal() {
+        Long principal = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal == null) {
+            throw new EasyCheckException(UserMessageType.USER_UNAUTHORIZED);
+        }
+
+        return principal;
     }
 
     private UserEntity findUserById(Long userId) {

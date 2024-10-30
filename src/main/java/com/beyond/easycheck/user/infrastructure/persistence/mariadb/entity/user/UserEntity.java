@@ -118,6 +118,34 @@ public class  UserEntity {
         this.addrDetail = command.addrDetail();
     }
 
+    public void accumulatePoints(int amount) {
+        // 최대 적립 포인트 요구사항이 생기면 검증로직 추가해야함
+        this.point += amount;
+    }
+
+    public void usePoints(int amount) {
+        // 사용 금액 유효성 검사
+        if (amount <= 0) {
+            throw new IllegalArgumentException("사용 포인트는 0보다 커야 합니다.");
+        }
+
+        // 최소 사용 가능 포인트 검사 (필요한 경우)
+        final int MIN_USABLE_POINTS = 1000; // 예시: 1000포인트 이상부터 사용 가능
+        if (amount < MIN_USABLE_POINTS) {
+            throw new IllegalArgumentException("최소 사용 가능 포인트는 " + MIN_USABLE_POINTS + "입니다.");
+        }
+
+        // 보유 포인트 부족 검사
+        if (this.point < amount) {
+            throw new IllegalStateException("포인트가 부족합니다. 현재 포인트: " + this.point);
+        }
+
+        this.point -= amount;
+
+        // 포인트 사용 이력 저장 (필요한 경우)
+        // savePointUsageHistory(amount);
+    }
+
     public void setRole(RoleEntity role) {
         this.role = role;
     }
@@ -132,5 +160,9 @@ public class  UserEntity {
 
     public void setSecurePassword(String password) {
         this.password = password;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 }
