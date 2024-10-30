@@ -90,4 +90,8 @@ public class TicketOrderEntity extends BaseTimeEntity {
     public void completeOrder() {
         this.orderStatus = COMPLETED;
     }
+
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 }
