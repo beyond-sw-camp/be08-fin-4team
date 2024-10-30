@@ -74,6 +74,13 @@ public class  UserEntity {
         this.marketingConsent = marketingConsent;
     }
 
+    public UserEntity(String email, String name, String phone, UserStatus status) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+        this.status = status;
+    }
+
     private UserEntity(String name, String phone) {
         this.name = name;
         this.phone = phone;
@@ -91,15 +98,12 @@ public class  UserEntity {
         );
     }
 
-    public static UserEntity createCorporateUser(UserRegisterCommand command) {
+    public static UserEntity createCorporateUser(CorporateUserRegisterCommand command) {
         return new UserEntity(
                 command.email(),
                 command.name(),
                 command.phone(),
-                UserStatus.PENDING,
-                command.addr(),
-                command.addrDetail(),
-                command.marketingConsent()
+                UserStatus.PENDING
         );
     }
 

@@ -14,8 +14,4 @@ public class ReservationRoomUpdateRequest {
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
-
-    public void setReservationStatus(ReservationStatus reservationStatus) {
-        this.reservationStatus = reservationStatus;
-    }
 }

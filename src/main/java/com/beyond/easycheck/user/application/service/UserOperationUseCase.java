@@ -25,7 +25,15 @@ public interface UserOperationUseCase {
 
     FindUserResult updateUserInfo(UserUpdateCommand command);
 
-    FindUserResult registerCorporateUser(UserRegisterCommand command, CorporateCreateRequest corporateCreateRequest, MultipartFile verificationFilesZip);
+    FindUserResult registerCorporateUser(CorporateUserRegisterCommand command);
+
+    record CorporateUserRegisterCommand(
+            String name,
+            String phone,
+            String email
+    ) {
+
+    }
 
     record UserRegisterCommand(
             String email,

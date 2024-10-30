@@ -13,6 +13,8 @@ import com.beyond.easycheck.suggestion.exception.SuggestionMessageType;
 import com.beyond.easycheck.suggestion.infrastructure.persistence.repository.SuggestionsRepository;
 import com.beyond.easycheck.suggestion.ui.requestbody.SuggestionReplyRequestBody;
 import com.beyond.easycheck.suggestion.ui.view.SuggestionView;
+import com.beyond.easycheck.tickets.application.util.TicketPaymentFormatUtil;
+import com.beyond.easycheck.tickets.ui.view.TicketPaymentView;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -31,6 +33,9 @@ public class MailServiceImpl implements MailService{
 
     private static final String MAIL_SUBJECT = "EasyCheck 이메일 인증코드";
     private static final String MAIL_RESERVATION = "EasyCheck 예약 안내";
+    private static final String MAIL_TICKET_PAYMENT = "EasyCheck 입장권 결제 안내";
+    private static final String REMINDER_BEFORE_3DAYS = "EasyCheck 체크인 3일 전";
+    private static final String REMINDER_BEFORE_10DAYS = "EasyCheck 체크인 10일 전";
 
     public static final Long VERIFICATION_EXPIRED_TIME = 300L;
 
@@ -94,6 +99,7 @@ public class MailServiceImpl implements MailService{
 
     }
 
+    // 예약 안내 메일 전송
     @Override
     @Transactional
     public void sendReservationConfirmationEmail(String email, ReservationRoomView reservationDetails) {
@@ -125,6 +131,72 @@ public class MailServiceImpl implements MailService{
         }
     }
 
+    // 체크인 3일전 예약 안내 메일 전송
+    @Override
+    @Transactional
+    public void send3DaysBeforeReservationReminderEmail(String email, ReservationRoomView reservationDetails) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            final String SENDER_EMAIL_ADDRESS = "yonginfren@gmail.com";
+            message.setFrom(new InternetAddress(SENDER_EMAIL_ADDRESS));
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject(REMINDER_BEFORE_3DAYS);
+
+            String htmlContent = generateReservation3DaysReminderEmailContent(reservationDetails);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            mailSender.send(message);
+            log.info("Reservation reminder email sent to {}", email);
+        } catch (MessagingException e) {
+            log.error("Failed to send reservation reminder email", e);
+            throw new EasyCheckException(CommonMessageType.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 체크인 10일전 예약 안내 메일 전송
+    @Override
+    @Transactional
+    public void send10DaysBeforeReservationReminderEmail(String email, ReservationRoomView reservationDetails) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            final String SENDER_EMAIL_ADDRESS = "yonginfren@gmail.com";
+            message.setFrom(new InternetAddress(SENDER_EMAIL_ADDRESS));
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject(REMINDER_BEFORE_10DAYS);
+
+            String htmlContent = generateReservation10DaysReminderEmailContent(reservationDetails);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            mailSender.send(message);
+            log.info("Reservation reminder email sent to {}", email);
+        } catch (MessagingException e) {
+            log.error("Failed to send reservation reminder email", e);
+            throw new EasyCheckException(CommonMessageType.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 입장권 결제 안내 메일 전송
+    @Override
+    @Transactional
+    public void sendTicketPaymentConfirmationEmail(String email, TicketPaymentView ticketPaymentView) {
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try {
+            final String SENDER_EMAIL_ADDRESS = "yonginfren@gmail.com";
+            message.setFrom(new InternetAddress(SENDER_EMAIL_ADDRESS));
+            message.setRecipients(MimeMessage.RecipientType.TO, email);
+            message.setSubject(MAIL_TICKET_PAYMENT);
+
+            String htmlContent = generateTicketPaymentConfirmationEmailContent(ticketPaymentView);
+            message.setContent(htmlContent, "text/html; charset=utf-8");
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            log.error("Failed to send reservation confirmation email", e);
+            throw new EasyCheckException(CommonMessageType.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     @Transactional
@@ -176,6 +248,7 @@ public class MailServiceImpl implements MailService{
 
     }
 
+    // 예약 안내 메일 폼
     private String generateReservationConfirmationEmailContent(ReservationRoomView reservationDetails) {
 
         String title = "EasyCheck 예약 안내 메일";
@@ -212,6 +285,114 @@ public class MailServiceImpl implements MailService{
                 "<tr>" +
                 "<td style=\"padding: 10px; border-right: 1px solid #ddd;\"><strong>결제 상태</strong></td>" +
                 "<td style=\"padding: 10px;\">" + ReservationFormatUtil.formatPaymentStatus(reservationDetails.getPaymentStatus()) + "</td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "<p style=\"color: #666666; font-size: 14px; text-align: center; margin-top: 20px;\">" +
+                "감사합니다,<br><strong>EasyCheck 팀</strong></p>" +
+                "</div>";
+
+
+
+        return generateEmailTemplate(title, mainContent);
+    }
+
+    // 체크인 3일 전 예약 안내 메일 폼
+    private String generateReservation3DaysReminderEmailContent(ReservationRoomView reservationDetails) {
+        String title = "체크인 3일 전 예약 안내";
+        String mainContent = "<div style=\"width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;\">" +
+                "<div style=\"background-color: #f8f8f8; padding: 20px; border-radius: 8px;\">" +
+                "<h1 style=\"color: #FF6B35; font-size: 24px; margin-bottom: 15px; text-align: center; font-weight: bold;\">" +
+                "EasyCheck 예약 체크인 안내</h1>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center;\">" +
+                "안녕하세요, <strong>" + reservationDetails.getUserName() + "</strong>님.</p>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center; margin-bottom: 20px;\">" +
+                "예약하신 객실의 체크인 날짜가 3일 남았습니다. 예약 정보를 확인해 주세요.</p>" +
+                "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 8px;\">" +
+                "<table style=\"width: 100%; border-collapse: collapse; font-size: 16px; color: #333333;\">" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크인 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckinDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크아웃 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckoutDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "<p style=\"color: #666666; font-size: 14px; text-align: center; margin-top: 20px;\">" +
+                "감사합니다,<br><strong>EasyCheck 팀</strong></p>" +
+                "</div>";
+
+        return generateEmailTemplate(title, mainContent);
+    }
+
+    // 체크인 10일 전 예약 안내 메일 폼
+    private String generateReservation10DaysReminderEmailContent(ReservationRoomView reservationDetails) {
+        String title = "체크인 10일 전 예약 안내";
+        String mainContent = "<div style=\"width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;\">" +
+                "<div style=\"background-color: #f8f8f8; padding: 20px; border-radius: 8px;\">" +
+                "<h1 style=\"color: #FF6B35; font-size: 24px; margin-bottom: 15px; text-align: center; font-weight: bold;\">" +
+                "EasyCheck 예약 체크인 안내</h1>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center;\">" +
+                "안녕하세요, <strong>" + reservationDetails.getUserName() + "</strong>님.</p>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center; margin-bottom: 20px;\">" +
+                "예약하신 객실의 체크인 날짜가 10일 남았습니다. 예약 정보를 확인해 주세요.</p>" +
+                "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 8px;\">" +
+                "<table style=\"width: 100%; border-collapse: collapse; font-size: 16px; color: #333333;\">" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크인 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckinDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\"><strong>체크아웃 날짜</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ReservationFormatUtil.formatLocalDateTime(reservationDetails.getCheckoutDate().atStartOfDay()) + "</td>" +
+                "</tr>" +
+                "</table>" +
+                "</div>" +
+                "</div>" +
+                "<p style=\"color: #666666; font-size: 14px; text-align: center; margin-top: 20px;\">" +
+                "감사합니다,<br><strong>EasyCheck 팀</strong></p>" +
+                "</div>";
+
+        return generateEmailTemplate(title, mainContent);
+    }
+
+    // 입장권 결제 안내 메일 폼
+    private String generateTicketPaymentConfirmationEmailContent(TicketPaymentView ticketPaymentView) {
+
+        String title = "EasyCheck 입장권 결제 안내 메일";
+        String mainContent = "<div style=\"width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;\">" +
+                "<div style=\"background-color: #f8f8f8; padding: 20px; border-radius: 8px;\">" +
+                "<h1 style=\"color: #FF6B35; font-size: 24px; margin-bottom: 15px; text-align: center; font-weight: bold;\">" +
+                "EasyCheck 입장권 결제 내역</h1>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center;\">" +
+                "안녕하세요, <strong>" + ticketPaymentView.getUserName() + "</strong>님.</p>" +
+                "<p style=\"font-size: 16px; color: #333333; text-align: center; margin-bottom: 20px;\">" +
+                "다음과 같이 결제 내역을 확인해주세요.</p>" +
+                "<div style=\"background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); margin-top: 20px;\">" +
+                "<table style=\"width: 100%; border-collapse: collapse; font-size: 16px; color: #333333;\">" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd;\"><strong>테마파크 이름</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ticketPaymentView.getThemeParkName() + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd;\"><strong>시작일</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + TicketPaymentFormatUtil.formatLocalDateTime(ticketPaymentView.getValidFromDate()) + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd;\"><strong>종료일</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + TicketPaymentFormatUtil.formatLocalDateTime(ticketPaymentView.getValidToDate()) + "</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd; border-right: 1px solid #ddd;\"><strong>총 가격</strong></td>" +
+                "<td style=\"padding: 10px; border-bottom: 1px solid #ddd;\">" + ticketPaymentView.getPaymentAmount() + "원</td>" +
+                "</tr>" +
+                "<tr>" +
+                "<td style=\"padding: 10px; border-right: 1px solid #ddd;\"><strong>결제 상태</strong></td>" +
+                "<td style=\"padding: 10px;\">" + TicketPaymentFormatUtil.formatPaymentStatus(ticketPaymentView.getPaymentStatus()) + "</td>" +
                 "</tr>" +
                 "</table>" +
                 "</div>" +
@@ -338,7 +519,7 @@ public class MailServiceImpl implements MailService{
                 "<table role=\"presentation\" style=\"width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);\">" +
                 "<tr>" +
                 "<td style=\"padding: 40px 40px 20px 40px; text-align: center;\">" +
-                "<img src=\"https://example.com/ticketlink-logo.png\" alt=\"티켓링크 로고\" style=\"max-width: 200px; height: auto;\">" +
+                "<img src=\"https://beyond-easycheck.s3.us-east-1.amazonaws.com/logos/email-logo.png\" alt=\"티켓링크 로고\" style=\"max-width: 100%; height: auto;\">" +
                 "</td>" +
                 "</tr>" +
                 "<tr>" +

@@ -4,8 +4,11 @@ import com.beyond.easycheck.common.ui.view.ApiResponseView;
 import com.beyond.easycheck.tickets.application.service.TicketPaymentService;
 import com.beyond.easycheck.tickets.infrastructure.entity.TicketPaymentEntity;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketPaymentRequest;
+import com.beyond.easycheck.tickets.ui.requestbody.TicketPaymentUpdateRequest;
+import com.beyond.easycheck.tickets.ui.view.TicketPaymentView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,24 +27,34 @@ public class TicketPaymentController {
 
     @Operation(summary = "입장권 결제 추가하는 API")
     @PostMapping("/{orderId}")
-    public ResponseEntity<ApiResponseView<TicketPaymentEntity>> processPayment(
+    public ResponseEntity<TicketPaymentView> processPayment(
             @PathVariable Long orderId,
             @RequestBody TicketPaymentRequest request,
             @AuthenticationPrincipal Long userId) {
 
-        TicketPaymentEntity payment = ticketPaymentService.processPayment(orderId, userId, request);
+        TicketPaymentView result = ticketPaymentService.processPayment(orderId, userId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponseView<>(payment));
+                .body(result);
+    }
+
+    @Operation(summary = "입장권 결제 내역 조회 API")
+    @GetMapping("")
+    public ResponseEntity<List<TicketPaymentView>> getAllTicketPayments() {
+
+        List<TicketPaymentView> ticketPaymentViews = ticketPaymentService.getAllTicketPayments();
+
+        return ResponseEntity.ok(ticketPaymentViews);
     }
 
     @Operation(summary = "입장권 결제 취소 API")
-    @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<ApiResponseView<TicketPaymentEntity>> cancelPayment(
-            @PathVariable Long orderId,
-            @AuthenticationPrincipal Long userId) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> cancelPayment(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid TicketPaymentUpdateRequest ticketPaymentUpdateRequest) {
 
-        TicketPaymentEntity cancelledPayment = ticketPaymentService.cancelPayment(orderId, userId);
-        return ResponseEntity.ok(new ApiResponseView<>(cancelledPayment));
+            ticketPaymentService.cancelPayment(id, ticketPaymentUpdateRequest);
+
+            return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "입장권 결제 상태 조회 API")

@@ -10,11 +10,11 @@ import com.beyond.easycheck.tickets.infrastructure.repository.TicketPaymentRepos
 import com.beyond.easycheck.tickets.infrastructure.repository.TicketRepository;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketOrderRequest;
 import com.beyond.easycheck.tickets.ui.view.TicketOrderDTO;
-import com.beyond.easycheck.tickets.ui.view.OrderDetailsDTO;
 import com.beyond.easycheck.user.exception.UserMessageType;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.beyond.easycheck.tickets.exception.TicketMessageType.*;
 import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,25 +40,26 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
     public TicketOrderDTO createTicketOrder(Long userId, TicketOrderRequest request) {
 
         UserEntity userEntity = getUserById(userId);
-        List<TicketEntity> tickets = getTicketsByIds(request.getTicketIds());
-
-        validateTickets(tickets, request.getQuantities());
+        TicketEntity ticket = getTicketById(request.getTicketId());
+        validateSalePeriod(ticket);
+        validateQuantity(request.getQuantity());
 
         TicketOrderEntity ticketOrder = new TicketOrderEntity(
+                ticket,
+                request.getQuantity(),
                 userEntity,
-                request.getCollectionAgreement()
+                request.getReceiptMethod(),
+                request.getCollectionAgreement(),
+                request.getBuyerName(),
+                request.getBuyerPhone(),
+                request.getBuyerEmail()
         );
-
-        for (int i = 0; i < tickets.size(); i++) {
-            TicketEntity ticket = tickets.get(i);
-            int quantity = request.getQuantities().get(i);
-            ticketOrder.addOrderDetail(ticket, quantity);
-        }
 
         ticketOrderRepository.save(ticketOrder);
 
         return convertToDTO(ticketOrder, null);
     }
+
 
     @Override
     @Transactional
@@ -116,53 +118,38 @@ public class TicketOrderService implements TicketOrderOperationUseCase, TicketOr
                 .orElseThrow(() -> new EasyCheckException(UserMessageType.USER_NOT_FOUND));
     }
 
-    private List<TicketEntity> getTicketsByIds(List<Long> ticketIds) {
-        List<TicketEntity> tickets = ticketRepository.findAllById(ticketIds);
-        if (tickets.size() != ticketIds.size()) {
-            throw new EasyCheckException(TICKET_NOT_FOUND);
-        }
-        return tickets;
+    private TicketEntity getTicketById(Long ticketId) {
+        return ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new EasyCheckException(TICKET_NOT_FOUND));
     }
 
-    private void validateTickets(List<TicketEntity> tickets, List<Integer> quantities) {
-        if (tickets.size() != quantities.size()) {
-            throw new EasyCheckException(INVALID_QUANTITY);
-        }
-
+    private void validateSalePeriod(TicketEntity ticket) {
         LocalDateTime now = LocalDateTime.now();
-        for (TicketEntity ticket : tickets) {
-            if (now.isBefore(ticket.getSaleStartDate()) || now.isAfter(ticket.getSaleEndDate())) {
-                throw new EasyCheckException(TICKET_SALE_PERIOD_INVALID);
-            }
+        if (now.isBefore(ticket.getSaleStartDate()) || now.isAfter(ticket.getSaleEndDate())) {
+            throw new EasyCheckException(TICKET_SALE_PERIOD_INVALID);
         }
+    }
 
-        for (int quantity : quantities) {
-            if (quantity <= 0) {
-                throw new EasyCheckException(INVALID_QUANTITY);
-            }
+    private void validateQuantity(int quantity) {
+        if (quantity <= 0) {
+            throw new EasyCheckException(INVALID_QUANTITY);
         }
     }
 
     private TicketOrderDTO convertToDTO(TicketOrderEntity ticketOrder, TicketPaymentEntity payment) {
-        List<OrderDetailsDTO> orderDetailsDTOList = ticketOrder.getOrderDetails().stream()
-                .map(detail -> new OrderDetailsDTO(
-                        detail.getTicket().getId(),
-                        detail.getTicket().getTicketName(),
-                        detail.getQuantity(),
-                        detail.getPrice()))
-                .collect(Collectors.toList());
-
         return new TicketOrderDTO(
                 ticketOrder.getId(),
-                ticketOrder.getUserEntity().getId(),
-                ticketOrder.getCollectionAgreement().name(),
-                ticketOrder.getOrderStatus(),
+                ticketOrder.getTicket().getTicketName(),
+                ticketOrder.getQuantity(),
                 ticketOrder.getTotalPrice(),
+                ticketOrder.getUserEntity().getId(),
                 ticketOrder.getPurchaseTimestamp(),
-                orderDetailsDTOList,
                 payment != null ? payment.getPaymentMethod() : null,
-                payment != null ? payment.getPaymentAmount() : null
+                payment != null ? payment.getPaymentAmount() : null,
+                ticketOrder.getOrderStatus(),
+                ticketOrder.getBuyerName(),
+                ticketOrder.getBuyerPhone(),
+                ticketOrder.getBuyerEmail()
         );
     }
-
 }

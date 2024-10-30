@@ -4,6 +4,7 @@ import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEnt
 import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationType;
 import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.roomtypes.application.dto.RoomTypeFindQuery;
 import com.beyond.easycheck.roomtypes.exception.RoomtypeMessageType;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeCreateRequest;
 import com.beyond.easycheck.roomtypes.ui.view.RoomtypeView;
@@ -46,7 +47,7 @@ class RoomtypeServiceTest {
         accommodationRepository.save(accommodation); // Accommodation 저장
 
         // RoomType 데이터 추가
-        RoomtypeCreateRequest roomtypeRequest = new RoomtypeCreateRequest(roomTypeId, "디럭스", "아늑한 룸", 1);
+        RoomtypeCreateRequest roomtypeRequest = new RoomtypeCreateRequest(roomTypeId, "디럭스", "아늑한 룸", "test");
         roomtypeService.createRoomtype(roomtypeRequest); // RoomType 생성
 
         // when
@@ -55,9 +56,7 @@ class RoomtypeServiceTest {
         // then
         Assertions.assertThat(result).isNotNull();
         Assertions.assertThat(result.getRoomTypeId()).isEqualTo(roomTypeId); // RoomType ID 검증
-        Assertions.assertThat(result.getTypeName()).isEqualTo("디럭스"); // RoomType 이름 검증
-        Assertions.assertThat(result.getDescription()).isEqualTo("아늑한 룸"); // RoomType 설명 검증
-        Assertions.assertThat(result.getMaxOccupancy()).isEqualTo(1); // 최대 수용 인원 검증
+        Assertions.assertThat(result.getName()).isEqualTo("디럭스"); // RoomType 이름 검증
     }
 
     @Test
@@ -81,20 +80,20 @@ class RoomtypeServiceTest {
     @DisplayName("[객실 유형 목록 조회] - 성공")
     void readRoomtypes() {
         // given
-        RoomtypeCreateRequest request1 = new RoomtypeCreateRequest(6L,"디럭스","한 명이 묵을 수 있는 아늑한 룸", 1);
-        RoomtypeCreateRequest request2 = new RoomtypeCreateRequest(7L, "디럭스 - 원룸", "두 명이 묵을 수 있는 넓은 룸", 2);
+        RoomtypeCreateRequest request1 = new RoomtypeCreateRequest(6L,"디럭스","한 명이 묵을 수 있는 아늑한 룸", "test");
+        RoomtypeCreateRequest request2 = new RoomtypeCreateRequest(7L, "디럭스 - 원룸", "두 명이 묵을 수 있는 넓은 룸", "test");
 
         roomtypeService.createRoomtype(request1);
         roomtypeService.createRoomtype(request2);
 
         // when
-        List<RoomtypeView> result = roomtypeService.readRoomtypes();
+        List<RoomtypeView> result = roomtypeService.readRoomtypes(new RoomTypeFindQuery(null));
 
         // then
         Assertions.assertThat(result).isNotEmpty();
         Assertions.assertThat(result.size()).isEqualTo(2);
-        Assertions.assertThat(result.get(0).getTypeName()).isEqualTo(request1.getTypeName());
-        Assertions.assertThat(result.get(1).getTypeName()).isEqualTo(request2.getTypeName());
+        Assertions.assertThat(result.get(0).getName()).isEqualTo(request1.getName());
+        Assertions.assertThat(result.get(1).getName()).isEqualTo(request2.getName());
 
     }
 
@@ -105,7 +104,7 @@ class RoomtypeServiceTest {
 
         // given
         // when
-        List<RoomtypeView> roomtypeViews = roomtypeService.readRoomtypes();
+        List<RoomtypeView> roomtypeViews = roomtypeService.readRoomtypes(new RoomTypeFindQuery(null));
         // then
         assertThat(roomtypeViews.size()).isZero();
     }

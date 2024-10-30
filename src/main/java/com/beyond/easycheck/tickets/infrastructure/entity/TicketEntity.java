@@ -6,6 +6,8 @@ import com.beyond.easycheck.tickets.application.service.TicketOperationUseCase.T
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name = "ticket")
+@ToString(of = {"id", "ticketName", "price"})
 public class TicketEntity extends BaseTimeEntity {
 
     @Id

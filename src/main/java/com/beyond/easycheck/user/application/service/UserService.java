@@ -5,7 +5,6 @@ import com.beyond.easycheck.common.security.infrastructure.persistence.entity.Ex
 import com.beyond.easycheck.common.security.infrastructure.persistence.repository.ExpiredAccessTokenJpaRepository;
 import com.beyond.easycheck.common.security.utils.JwtUtil;
 import com.beyond.easycheck.corporate.application.CorporateOperationUseCase;
-import com.beyond.easycheck.corporate.ui.requestbody.CorporateCreateRequest;
 import com.beyond.easycheck.mail.infrastructure.persistence.redis.repository.VerifiedEmailRepository;
 import com.beyond.easycheck.sms.infrastructure.persistence.redis.repository.SmsVerifiedPhoneRepository;
 import com.beyond.easycheck.user.application.domain.EasyCheckUserDetails;
@@ -22,9 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import static com.beyond.easycheck.corporate.application.CorporateOperationUseCase.CorporateCreateCommand;
 
 @Slf4j
 @Service
@@ -55,7 +51,7 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
 
         checkEmailIsDuplicated(command.email());
         // 이메일 인증을 했는지 확인
-        checkEmailIsVerified(command.email());
+//        checkEmailIsVerified(command.email());
 
         UserEntity user = UserEntity.createUser(command);
         log.info("[registerUser] - userEntity after createUser = {}", user);
@@ -81,30 +77,21 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
 
     @Override
     @Transactional
-    public FindUserResult registerCorporateUser(UserRegisterCommand userRegisterCommand, CorporateCreateRequest corporateCreateRequest, MultipartFile verificationFilesZip) {
+    public FindUserResult registerCorporateUser(CorporateUserRegisterCommand command) {
 
-        // 이메일 중복확인
-        // 회원가입 할 때 이메일 중복확인은 하지 않기로 변경
-        // checkEmailIsDuplicated(userRegisterCommand.email());
-
-        // 이메일 인증여부 확인
-        checkEmailIsVerified(userRegisterCommand.email());
         // 핸드폰 인증여부 확인
-        checkPhoneIsVerified(userRegisterCommand.phone());
+        checkPhoneIsVerified(command.phone());
 
-        UserEntity user = UserEntity.createCorporateUser(userRegisterCommand);
+
+        UserEntity user = UserEntity.createCorporateUser(command);
+
+        // 법인회우너 역할 지정
+        RoleEntity role = findRoleByName(UserRole.CORP_USER.name());
+        user.setRole(role);
 
         userJpaRepository.save(user);
 
-        CorporateCreateCommand corporateCreateCommand = new CorporateCreateCommand
-                (
-                        user.getId(),
-                        corporateCreateRequest.name(),
-                        corporateCreateRequest.businessLicenseNumber(),
-                        verificationFilesZip
-                );
-
-        corporateOperationUseCase.createCorporate(corporateCreateCommand);
+//        corporateOperationUseCase.createCorporate(corporateCreateCommand);
 
         return FindUserResult.findByUserEntity(user);
     }

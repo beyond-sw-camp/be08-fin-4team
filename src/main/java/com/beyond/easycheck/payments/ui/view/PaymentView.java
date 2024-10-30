@@ -19,15 +19,21 @@ public class PaymentView {
 
     private Long reservationRoomId;
 
+    private Long userId;
+
     private LocalDateTime checkinDate;
 
     private LocalDateTime checkoutDate;
+
+    private LocalDateTime paymentDate;
 
     private String method;
 
     private Integer amount;
 
     private CompletionStatus completionStatus;
+
+    private String accommodationName;
 
     public static PaymentView of(PaymentEntity paymentEntity) {
 
@@ -36,11 +42,14 @@ public class PaymentView {
                 paymentEntity.getId(),
                 paymentEntity.getImpUid(),
                 paymentEntity.getReservationRoomEntity().getId(),
+                paymentEntity.getReservationRoomEntity().getUserEntity().getId(),
                 paymentEntity.getReservationRoomEntity().getCheckinDate().atStartOfDay(),
                 paymentEntity.getReservationRoomEntity().getCheckoutDate().atStartOfDay(),
+                paymentEntity.getPaymentDate(),
                 paymentEntity.getMethod(),
                 paymentEntity.getAmount(),
-                paymentEntity.getCompletionStatus()
+                paymentEntity.getCompletionStatus(),
+                paymentEntity.getReservationRoomEntity().getRoomEntity().getRoomTypeEntity().getAccommodationEntity().getName()
         );
     }
 }

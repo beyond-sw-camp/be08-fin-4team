@@ -1,5 +1,6 @@
 package com.beyond.easycheck.roomtypes.ui.controller;
 
+import com.beyond.easycheck.roomtypes.application.dto.RoomTypeFindQuery;
 import com.beyond.easycheck.roomtypes.application.service.RoomtypeService;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeCreateRequest;
 import com.beyond.easycheck.roomtypes.ui.requestbody.RoomtypeUpdateRequest;
@@ -37,8 +38,13 @@ public class RoomtypeController {
 
     @GetMapping("")
     @Operation(summary = "객실 유형 전체 조회 API")
-    public ResponseEntity<List<RoomtypeView>> readRoomtypes() {
-        List<RoomtypeView> roomtypeViews = roomTypeService.readRoomtypes();
+    public ResponseEntity<List<RoomtypeView>> readRoomtypes(
+            @RequestParam(required = false) Long accommodationId
+    ) {
+        RoomTypeFindQuery query = new RoomTypeFindQuery(accommodationId);
+
+        List<RoomtypeView> roomtypeViews = roomTypeService.readRoomtypes(query);
+
         return ResponseEntity.ok().body(roomtypeViews);
     }
 
