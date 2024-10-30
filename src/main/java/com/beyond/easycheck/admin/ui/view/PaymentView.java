@@ -19,6 +19,7 @@ public class PaymentView {
     private final Long id;
     private final String impUid;
     private final String username;
+    private final String email;
     private final String userRole;
     private final Long reservationRoomId;
 
@@ -39,6 +40,7 @@ public class PaymentView {
         this.id = result.id();
         this.impUid = result.impUid();
         this.username = result.username();
+        this.email = result.email();
         this.userRole = result.userRole();
         this.reservationRoomId = result.reservationRoomId();
         this.checkinDate = result.checkinDate();
