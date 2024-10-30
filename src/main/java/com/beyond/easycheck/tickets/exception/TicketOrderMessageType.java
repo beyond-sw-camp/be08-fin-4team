@@ -29,6 +29,9 @@ public enum TicketOrderMessageType implements MessageType {
     INVALID_ORDER_STATUS_FOR_RETRY("재결제 가능한 상태가 아닙니다.", HttpStatus.BAD_REQUEST),
     TICKET_ORDER_CANNOT_BE_NULL("티켓 주문은 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     ORDER_ALREADY_LINKED("주문이 이미 결제와 연결되어 있습니다.", HttpStatus.BAD_REQUEST),
+
+    PORTONE_VERIFICATION_ERROR("PortOne 결제 검증 오류", HttpStatus.INTERNAL_SERVER_ERROR),
+    PORTONE_REFUND_FAILED("PortOne 환불 처리 실패", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
    private final String message;
    private final HttpStatus status;

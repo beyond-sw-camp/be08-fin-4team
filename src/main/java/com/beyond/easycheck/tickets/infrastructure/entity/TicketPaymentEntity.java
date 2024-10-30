@@ -2,6 +2,7 @@ package com.beyond.easycheck.tickets.infrastructure.entity;
 
 import com.beyond.easycheck.common.entity.BaseTimeEntity;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.payments.infrastructure.entity.CompletionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -63,6 +64,10 @@ public class TicketPaymentEntity extends BaseTimeEntity {
             throw new EasyCheckException(INVALID_PAYMENT_STATUS_FOR_COMPLETION);
         }
         this.paymentStatus = PaymentStatus.COMPLETED;
+    }
+
+    public void updatePaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public void failPayment() {
