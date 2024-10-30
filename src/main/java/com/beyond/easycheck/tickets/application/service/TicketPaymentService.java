@@ -134,16 +134,12 @@ public class TicketPaymentService {
     @Transactional
     public void cancelPayment(Long id, TicketPaymentUpdateRequest ticketPaymentUpdateRequest) {
 
-        log.info("Attempting to cancel payment with id: {}", id);
-
         TicketPaymentEntity ticketPaymentEntity = ticketPaymentRepository.findById(id)
                 .orElse(null);
 
         if (ticketPaymentEntity == null) {
-            log.warn("Payment entity with id {} not found", id);
             throw new EasyCheckException(TicketOrderMessageType.PAYMENT_NOT_FOUND);
         } else {
-            log.info("Found payment entity: {}", ticketPaymentEntity);
         }
 
         try {
@@ -151,7 +147,6 @@ public class TicketPaymentService {
             IamportResponse<Payment> cancelResponse = iamportClient.cancelPaymentByImpUid(cancelData);
 
             if (cancelResponse == null || cancelResponse.getResponse() == null) {
-                log.warn("Cancel response is null or empty for impUid: {}", ticketPaymentUpdateRequest.getImpUid());
                 throw new EasyCheckException(TicketOrderMessageType.PORTONE_REFUND_FAILED);
             }
 
@@ -161,9 +156,7 @@ public class TicketPaymentService {
             TicketOrderEntity ticketOrderEntity = ticketPaymentEntity.getTicketOrder();
             ticketOrderEntity.updateOrderStatus(OrderStatus.CANCELLED);
 
-            log.info("Refund successful: Payment ID = {}, Refund Amount = {}", ticketPaymentEntity.getId(), cancelResponse.getResponse().getCancelAmount());
         } catch (IamportResponseException | IOException e) {
-            log.error("Refund failed for Payment ID = {}, Error Message = {}", ticketPaymentEntity.getId(), e.getMessage());
             throw new EasyCheckException(TicketOrderMessageType.PORTONE_REFUND_FAILED);
         }
     }
