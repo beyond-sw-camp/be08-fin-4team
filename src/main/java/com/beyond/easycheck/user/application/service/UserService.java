@@ -149,6 +149,7 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
     }
 
     @Override
+    @Transactional
     public FindUserResult usePoints(int amount) {
         Long userId = getUserPrincipal();
 
@@ -159,8 +160,20 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
     }
 
     @Override
+    @Transactional
     public FindUserResult accumulatePoints(int amount) {
-        return null;
+
+        Long userId = getUserPrincipal();
+        UserEntity user = findUserById(userId);
+
+        int updatedPoints = user.getPoint() + amount;
+        user.setPoint(updatedPoints);
+
+        userJpaRepository.save(user);
+
+        log.info("[accumulatePoints] - userId: {}, amount: {}, updatedPoints: {}", userId, amount, updatedPoints);
+
+        return FindUserResult.findByUserEntity(user);
     }
 
     @Override

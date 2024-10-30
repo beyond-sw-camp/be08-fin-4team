@@ -161,4 +161,8 @@ public class  UserEntity {
     public void setSecurePassword(String password) {
         this.password = password;
     }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
 }
