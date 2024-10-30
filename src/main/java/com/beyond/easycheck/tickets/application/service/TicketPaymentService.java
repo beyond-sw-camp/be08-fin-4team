@@ -12,6 +12,7 @@ import com.beyond.easycheck.tickets.infrastructure.repository.TicketPaymentRepos
 import com.beyond.easycheck.tickets.ui.requestbody.TicketPaymentRequest;
 import com.beyond.easycheck.tickets.ui.requestbody.TicketPaymentUpdateRequest;
 import com.beyond.easycheck.tickets.ui.view.TicketPaymentView;
+import com.beyond.easycheck.user.application.service.UserService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -25,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -39,6 +42,7 @@ public class TicketPaymentService {
     private final TicketOrderRepository ticketOrderRepository;
     private final TicketPaymentRepository ticketPaymentRepository;
 
+    private final UserService userService;
     private final MailService mailService;
 
     private IamportClient iamportClient;
@@ -75,6 +79,7 @@ public class TicketPaymentService {
                     result.getTicketOrder().getId(),
                     result.getTicketOrder().getUserEntity().getId(),
                     result.getTicketOrder().getUserEntity().getName(),
+                    result.getTicketOrder().getUserEntity().getPoint(),
                     result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
                     result.getTicketOrder().getTicket().getTicketName(),
                     result.getTicketOrder().getTicket().getThemePark().getName(),
@@ -87,6 +92,14 @@ public class TicketPaymentService {
                     result.getPaymentAmount(),
                     result.getPaymentDate()
             );
+
+            BigDecimal paymentAmount = request.getPaymentAmount();
+            BigDecimal pointsPercentage = new BigDecimal("0.04");
+
+            int pointsToAccumulate = paymentAmount.multiply(pointsPercentage)
+                    .setScale(0, RoundingMode.FLOOR)
+                    .intValue();
+            userService.accumulatePoints(pointsToAccumulate);
 
             mailService.sendTicketPaymentConfirmationEmail(result.getTicketOrder().getUserEntity().getEmail(), ticketPaymentView);
 
