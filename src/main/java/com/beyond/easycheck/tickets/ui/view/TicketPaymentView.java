@@ -22,6 +22,8 @@ public class TicketPaymentView {
 
     private Long orderId;
 
+    private Long userId;
+
     private String userName;
 
     private String accommodationName;
@@ -53,6 +55,7 @@ public class TicketPaymentView {
                 ticketPaymentEntity.getId(),
                 ticketPaymentEntity.getImpUid(),
                 ticketPaymentEntity.getTicketOrder().getId(),
+                ticketPaymentEntity.getTicketOrder().getUserEntity().getId(),
                 ticketPaymentEntity.getTicketOrder().getUserEntity().getName(),
                 ticketPaymentEntity.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
                 ticketPaymentEntity.getTicketOrder().getTicket().getTicketName(),
