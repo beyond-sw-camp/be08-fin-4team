@@ -19,8 +19,10 @@ public class TicketPaymentFormatUtil {
                 return "결제 완료";
             case REFUNDED:
                 return "환불 완료";
+            case PENDING:
+                return "결제 대기";
             default:
-                return"알 수 없음";
+                return "알 수 없음";
         }
     }
 }

@@ -37,23 +37,34 @@ public class TicketPaymentEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String paymentMethod;
 
+    @Column(nullable = true)
+    private String bank;
+
+    @Column(nullable = true)
+    private String accountHolder;
+
+    @Column(nullable = true)
+    private LocalDateTime depositDeadline;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus paymentStatus;
-
 
     @Column(nullable = false)
     private LocalDateTime paymentDate;
 
     private LocalDateTime cancelDate;
 
-    public TicketPaymentEntity(TicketOrderEntity order, String impUid,BigDecimal amount, String method) {
+    public TicketPaymentEntity(TicketOrderEntity order, String impUid, BigDecimal amount, String bank, String accountHolder, LocalDateTime depositDeadline, String method) {
         if (order == null) {
             throw new EasyCheckException(TICKET_ORDER_CANNOT_BE_NULL);
         }
         this.impUid = impUid;
         this.ticketOrder = order;
         this.paymentAmount = amount;
+        this.bank = bank;
+        this.accountHolder = accountHolder;
+        this.depositDeadline = depositDeadline;
         this.paymentMethod = method;
         this.paymentStatus = PaymentStatus.PENDING;
         this.paymentDate = LocalDateTime.now();

@@ -1,5 +1,6 @@
 package com.beyond.easycheck.tickets.ui.requestbody;
 
+import com.beyond.easycheck.tickets.infrastructure.entity.PaymentStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -28,6 +29,15 @@ public class TicketPaymentRequest {
 
     @Positive(message = "결제 금액은 0보다 커야 합니다.")
     private BigDecimal paymentAmount;
+
+    private String bank;
+
+    private String accountHolder;
+
+    private LocalDateTime depositDeadline;
+
+    @NotBlank
+    private PaymentStatus paymentStatus;
 
     @NotNull(message = "결제 날짜는 필수입니다.")
     private LocalDateTime paymentDate;
