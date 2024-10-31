@@ -2,9 +2,6 @@ package com.beyond.easycheck.tickets.application.service;
 
 import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.mail.application.service.MailService;
-import com.beyond.easycheck.payments.exception.PaymentMessageType;
-import com.beyond.easycheck.payments.infrastructure.entity.CompletionStatus;
-import com.beyond.easycheck.payments.infrastructure.entity.PaymentEntity;
 import com.beyond.easycheck.tickets.exception.TicketOrderMessageType;
 import com.beyond.easycheck.tickets.infrastructure.entity.OrderStatus;
 import com.beyond.easycheck.tickets.infrastructure.entity.PaymentStatus;
@@ -72,58 +69,54 @@ public class TicketPaymentService {
 
         IamportResponse<Payment> paymentResponse = validatePortOnePayment(request.getImpUid());
 
-        if (paymentResponse != null && paymentResponse.getResponse().getAmount().compareTo(request.getPaymentAmount()) == 0) {
-            if ("vbank".equals(request.getPaymentMethod())) {
-                handleVirtualAccountTicketPayment(request, order, paymentResponse);
-            } else {
-                TicketPaymentEntity result = createAndCompletePayment(request, order);
+        if (portonePaymentFailed(request, paymentResponse)) {
+            throw new EasyCheckException(TicketOrderMessageType.PORTONE_VERIFICATION_ERROR);
+        }
+        TicketPaymentEntity result = null;
 
-                TicketPaymentView ticketPaymentView = new TicketPaymentView(
-                        result.getId(),
-                        result.getImpUid(),
-                        result.getTicketOrder().getId(),
-                        result.getTicketOrder().getUserEntity().getId(),
-                        result.getTicketOrder().getUserEntity().getName(),
-                        result.getTicketOrder().getUserEntity().getPoint(),
-                        result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
-                        result.getTicketOrder().getTicket().getTicketName(),
-                        result.getTicketOrder().getTicket().getThemePark().getName(),
-                        result.getTicketOrder().getTicket().getValidFromDate(),
-                        result.getTicketOrder().getTicket().getValidToDate(),
-                        result.getTicketOrder().getQuantity(),
-                        result.getPaymentStatus(),
-                        result.getCancelDate(),
-                        result.getPaymentMethod(),
-                        result.getPaymentAmount(),
-                        result.getPaymentDate()
-                );
-
-                BigDecimal paymentAmount = request.getPaymentAmount();
-                BigDecimal pointsPercentage = new BigDecimal("0.04");
-
-                int pointsToAccumulate = paymentAmount.multiply(pointsPercentage)
-                        .setScale(0, RoundingMode.FLOOR)
-                        .intValue();
-                userService.accumulatePoints(pointsToAccumulate);
-
-                mailService.sendTicketPaymentConfirmationEmail(result.getTicketOrder().getUserEntity().getEmail(), ticketPaymentView);
-
-                return ticketPaymentView;
-            }
+        if (paymentMethodVirtualBank(request.getPaymentMethod())) {
+            result = handleVirtualAccountTicketPayment(request, order, paymentResponse);
+        } else {
+            result = createAndCompletePayment(request, order);
         }
 
-        throw new EasyCheckException(TicketOrderMessageType.PORTONE_VERIFICATION_ERROR);
-    }
+        // 결과 View로 바꿈
+        TicketPaymentView ticketPaymentView = new TicketPaymentView(
+                result.getId(),
+                result.getImpUid(),
+                result.getTicketOrder().getId(),
+                result.getTicketOrder().getUserEntity().getId(),
+                result.getTicketOrder().getUserEntity().getName(),
+                result.getTicketOrder().getUserEntity().getPoint(),
+                result.getTicketOrder().getTicket().getThemePark().getAccommodation().getName(),
+                result.getTicketOrder().getTicket().getTicketName(),
+                result.getTicketOrder().getTicket().getThemePark().getName(),
+                result.getTicketOrder().getTicket().getValidFromDate(),
+                result.getTicketOrder().getTicket().getValidToDate(),
+                result.getTicketOrder().getQuantity(),
+                result.getPaymentStatus(),
+                result.getCancelDate(),
+                result.getPaymentMethod(),
+                result.getPaymentAmount(),
+                result.getPaymentDate()
+        );
 
-    public void handleVirtualAccountTicketPayment(TicketPaymentRequest request, TicketOrderEntity order, IamportResponse<Payment> paymentResponse) {
+        // 포인트 적립
+        BigDecimal paymentAmount = request.getPaymentAmount();
+        BigDecimal pointsPercentage = new BigDecimal("0.04");
 
-        log.info("가상계좌 결제 처리: 은행 = {}, 계좌명 = {}", request.getBank(), request.getAccountHolder());
+        int pointsToAccumulate = paymentAmount.multiply(pointsPercentage)
+                .setScale(0, RoundingMode.FLOOR)
+                .intValue();
 
-        TicketPaymentEntity ticketPaymentEntity = createAndCompletePayment(request, order);
-        ticketPaymentEntity.updatePaymentStatus(PaymentStatus.PENDING);
+        userService.accumulatePoints(pointsToAccumulate);
 
-        log.info("가상계좌 생성됨: {} - {} 은행, 입금자: {}", request.getBank(), request.getPaymentAmount(), request.getAccountHolder());
-        ticketPaymentRepository.save(ticketPaymentEntity);
+        // 티켓 구매 완료 이메일 전송
+        mailService.sendTicketPaymentConfirmationEmail(result.getTicketOrder().getUserEntity().getEmail(), ticketPaymentView);
+
+        return ticketPaymentView;
+
+
     }
 
     @Transactional
@@ -201,6 +194,26 @@ public class TicketPaymentService {
     @Transactional(readOnly = true)
     public List<TicketPaymentEntity> getPaymentHistory(Long userId) {
         return ticketPaymentRepository.findAllByTicketOrder_UserEntity_Id(userId);
+    }
+
+    private boolean paymentMethodVirtualBank(String paymentMethod) {
+        return "vbank".equals(paymentMethod);
+    }
+
+    private boolean portonePaymentFailed(TicketPaymentRequest request, IamportResponse<Payment> paymentResponse) {
+        log.info("request = {} paymentResponse = ${}", request, paymentResponse);
+        return paymentResponse == null && paymentResponse.getResponse().getAmount().compareTo(request.getPaymentAmount()) != 0;
+    }
+
+    public TicketPaymentEntity handleVirtualAccountTicketPayment(TicketPaymentRequest request, TicketOrderEntity order, IamportResponse<Payment> paymentResponse) {
+
+        log.info("가상계좌 결제 처리: 은행 = {}, 계좌명 = {}", request.getBank(), request.getAccountHolder());
+
+        TicketPaymentEntity ticketPaymentEntity = createAndCompletePayment(request, order);
+        ticketPaymentEntity.updatePaymentStatus(PaymentStatus.PENDING);
+
+        log.info("가상계좌 생성됨: {} - {} 은행, 입금자: {}", request.getBank(), request.getPaymentAmount(), request.getAccountHolder());
+        return ticketPaymentRepository.save(ticketPaymentEntity);
     }
 
 
