@@ -17,7 +17,7 @@ import static com.beyond.easycheck.tickets.exception.TicketOrderMessageType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ticket_payment")
-@ToString(of = {"id", "impUid", "paymentAmount"})
+@ToString(of = {"id", "impUid", "paymentAmount", "paymentMethod", "bank", "accountHolder", "depositDeadline"})
 public class TicketPaymentEntity extends BaseTimeEntity {
 
     @Id
