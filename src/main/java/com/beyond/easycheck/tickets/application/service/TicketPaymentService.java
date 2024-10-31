@@ -126,6 +126,7 @@ public class TicketPaymentService {
         return TicketPaymentEntity.builder()
                 .ticketOrder(ticketOrderEntity)
                 .impUid(ticketPaymentRequest.getImpUid())
+                .paymentDate(ticketPaymentRequest.getPaymentDate())
                 .paymentAmount(ticketPaymentRequest.getPaymentAmount())
                 .paymentMethod(ticketPaymentRequest.getPaymentMethod())
                 .bank(ticketPaymentRequest.getBank())

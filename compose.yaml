@@ -1,0 +1,29 @@
+networks:
+  pocket:
+    external: true
+
+services:
+  mariadb:
+    image: 'mariadb:latest'
+    container_name: 'easycheck'
+    environment:
+      - 'MYSQL_DATABASE=easycheck'
+      - 'MYSQL_PASSWORD=1234'
+      - 'MYSQL_ROOT_HOST='
+      - 'MYSQL_ROOT_PASSWORD=1234'
+      - 'MYSQL_USER=username'
+    ports:
+      - '3306:3306'
+    restart: 'on-failure'
+    volumes:
+      - 'mariadb_data:/var/lib/mysql'
+    networks:
+      - 'pocket'
+  redis:
+    image: 'redis:latest'
+    container_name: 'easycheck_redis'
+    ports:
+      - '6379:6379'
+
+volumes:
+  mariadb_data:
