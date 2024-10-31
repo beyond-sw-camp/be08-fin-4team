@@ -130,7 +130,7 @@ public class TicketPaymentService {
                 .bank(ticketPaymentRequest.getBank())
                 .accountHolder(ticketPaymentRequest.getAccountHolder())
                 .depositDeadline(ticketPaymentRequest.getDepositDeadline())
-                .paymentStatus(ticketPaymentRequest.getPaymentStatus() != null ? ticketPaymentRequest.getPaymentStatus() : PaymentStatus.PENDING)
+                .paymentStatus(ticketPaymentRequest.getPaymentStatus() != null ? ticketPaymentRequest.getPaymentStatus() : PaymentStatus.COMPLETED)
                 .build();
     }
 
