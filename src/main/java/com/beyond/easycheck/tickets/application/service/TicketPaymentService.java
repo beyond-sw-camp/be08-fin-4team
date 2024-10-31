@@ -61,11 +61,9 @@ public class TicketPaymentService {
     @Transactional
     public TicketPaymentView processPayment(Long orderId, Long userId, TicketPaymentRequest request) {
         TicketOrderEntity order = getOrderById(orderId);
-        log.info("before validateUserAccess");
+
         validateUserAccess(order, userId);
-        log.info("after validateUserAccess");
         validateOrderStatusForPayment(order);
-        log.info("after validateOrderStatusForPayment");
 
         IamportResponse<Payment> paymentResponse = validatePortOnePayment(request.getImpUid());
 
@@ -76,9 +74,13 @@ public class TicketPaymentService {
 
         if (paymentMethodVirtualBank(request.getPaymentMethod())) {
             result = handleVirtualAccountTicketPayment(request, order, paymentResponse);
+            log.info("handleVirtualAccountTicketPayment result = {}", result);
         } else {
             result = createAndCompletePayment(request, order);
+            log.info("createAndCompletePayment result = {}", result);
         }
+
+        ticketPaymentRepository.save(result);
 
         // 결과 View로 바꿈
         TicketPaymentView ticketPaymentView = new TicketPaymentView(
@@ -119,9 +121,8 @@ public class TicketPaymentService {
 
     }
 
-    @Transactional
     public TicketPaymentEntity createAndCompletePayment(TicketPaymentRequest ticketPaymentRequest, TicketOrderEntity ticketOrderEntity) {
-
+        log.info("createAndCompletePayment ticketPaymentRequest = {}", ticketPaymentRequest);
         return TicketPaymentEntity.builder()
                 .ticketOrder(ticketOrderEntity)
                 .impUid(ticketPaymentRequest.getImpUid())
@@ -130,7 +131,7 @@ public class TicketPaymentService {
                 .bank(ticketPaymentRequest.getBank())
                 .accountHolder(ticketPaymentRequest.getAccountHolder())
                 .depositDeadline(ticketPaymentRequest.getDepositDeadline())
-                .paymentStatus(ticketPaymentRequest.getPaymentStatus() != null ? ticketPaymentRequest.getPaymentStatus() : PaymentStatus.PENDING)
+                .paymentStatus(ticketPaymentRequest.getPaymentStatus() != null ? ticketPaymentRequest.getPaymentStatus() : PaymentStatus.COMPLETED)
                 .build();
     }
 
