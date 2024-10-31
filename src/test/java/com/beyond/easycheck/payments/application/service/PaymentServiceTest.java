@@ -110,7 +110,7 @@ class PaymentServiceTest {
         when(paymentRepository.findAll(pageRequest)).thenReturn(paymentPage);
 
         // When
-        var payments = paymentService.getAllPayments(0, 10);
+        var payments = paymentService.getAllPayments();
 
         // Then
         assertEquals(1, payments.size());
