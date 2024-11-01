@@ -2,22 +2,32 @@ package com.beyond.easycheck.admin.ui.controller;
 
 import com.beyond.easycheck.admin.application.service.AdminOperationUseCase;
 import com.beyond.easycheck.admin.application.service.AdminReadUseCase;
+import com.beyond.easycheck.admin.exception.AdminMessageType;
+import com.beyond.easycheck.admin.ui.requestbody.AdminLoginRequest;
 import com.beyond.easycheck.admin.ui.requestbody.UserStatusUpdateRequest;
 import com.beyond.easycheck.admin.ui.view.*;
 
+import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.user.application.service.UserReadUseCase;
 import com.beyond.easycheck.user.ui.view.UserView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.beyond.easycheck.admin.application.service.AdminOperationUseCase.*;
 import static com.beyond.easycheck.admin.application.service.AdminReadUseCase.*;
 
 @Slf4j
@@ -34,7 +44,7 @@ public class AdminController {
     @PatchMapping("/{id}/status")
     @Operation(summary = "유저 정보 바꾸는 API")
     public ResponseEntity<UserView> changeUserStatus(@PathVariable Long id, @RequestBody @Validated UserStatusUpdateRequest request) {
-        AdminOperationUseCase.UserStatusUpdateCommand command = new AdminOperationUseCase.UserStatusUpdateCommand(id, request.status());
+        UserStatusUpdateCommand command = new UserStatusUpdateCommand(id, request.status());
 
         UserReadUseCase.FindUserResult result = adminOperationUseCase.updateUserStatus(command);
 
@@ -125,15 +135,36 @@ public class AdminController {
 
     @GetMapping("/payments")
     @Operation(summary = "관리자 담당 업체 결제 내역 모두 조회")
-    public ResponseEntity<List<PaymentView>> getAllPayments() {
+    public ResponseEntity<List<PaymentView>> getAllPayments(
+            @RequestParam(required = false) Long paymentId,
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) String email,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+
+        PaymentFindQuery query = new PaymentFindQuery(paymentId, userName, email);
+        // Pageable 객체 생성
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(
                 adminReadUseCase
-                        .getAllPayments()
+                        .getAllPayments(query, pageable)
                         .stream()
                         .map(PaymentView::new).toList()
         );
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AdminLoginView> login(@RequestBody @Validated AdminLoginRequest request) {
+
+        var command = new AdminLoginCommand(request.email(), request.password());
+
+        var result = adminOperationUseCase.login(command);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new AdminLoginView(result));
+    }
 
 }
 

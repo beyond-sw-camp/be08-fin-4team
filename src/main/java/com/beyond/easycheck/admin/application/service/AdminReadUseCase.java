@@ -12,6 +12,7 @@ import com.beyond.easycheck.suggestion.infrastructure.persistence.entity.Suggest
 import com.beyond.easycheck.themeparks.infrastructure.entity.ThemeParkEntity;
 import com.beyond.easycheck.user.application.service.UserReadUseCase.FindUserResult;
 import com.beyond.easycheck.user.application.service.UserReadUseCase.UserFindQuery;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +32,7 @@ public interface AdminReadUseCase {
 
     List<FindNoticeResult> getAllNotices();
 
-    List<FindPaymentResult> getAllPayments();
+    List<FindPaymentResult> getAllPayments(PaymentFindQuery query, Pageable pageable);
 
     List<FindThemeParkResult> getAllThemeParks();
 
@@ -43,8 +44,11 @@ public interface AdminReadUseCase {
 
     List<FindAdditionalServiceResult> getAllAdditionalServices();
 
-    record FindQuery(Long themeParkId) {
-
+    record PaymentFindQuery(
+            Long paymentId,
+            String userName,
+            String email
+    ) {
     }
 
     record FindNoticeResult(

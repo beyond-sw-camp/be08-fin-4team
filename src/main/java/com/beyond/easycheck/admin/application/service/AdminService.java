@@ -2,30 +2,35 @@ package com.beyond.easycheck.admin.application.service;
 
 import com.beyond.easycheck.additionalservices.infrastructure.repository.AdditionalServiceRepository;
 import com.beyond.easycheck.admin.exception.AdminMessageType;
+import com.beyond.easycheck.admin.infrastructure.persistence.mariadb.repository.payment.PaymentJpaRepository;
 import com.beyond.easycheck.attractions.infrastructure.repository.AttractionRepository;
 import com.beyond.easycheck.common.exception.EasyCheckException;
+import com.beyond.easycheck.common.security.utils.JwtUtil;
 import com.beyond.easycheck.events.infrastructure.repository.EventRepository;
 import com.beyond.easycheck.facilities.infrastructure.repository.FacilityRepository;
 import com.beyond.easycheck.notices.infrastructure.persistence.repository.NoticesRepository;
-import com.beyond.easycheck.payments.infrastructure.repository.PaymentRepository;
 import com.beyond.easycheck.suggestion.infrastructure.persistence.repository.SuggestionsRepository;
 import com.beyond.easycheck.themeparks.infrastructure.repository.ThemeParkRepository;
+import com.beyond.easycheck.user.application.domain.EasyCheckUserDetails;
+import com.beyond.easycheck.user.application.domain.UserRole;
 import com.beyond.easycheck.user.exception.UserMessageType;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
+import java.util.Optional;
 
-import static com.beyond.easycheck.user.application.service.UserReadUseCase.*;
 import static com.beyond.easycheck.user.application.service.UserReadUseCase.FindUserResult;
+import static com.beyond.easycheck.user.application.service.UserReadUseCase.UserFindQuery;
 
 @Slf4j
 @Service
@@ -33,23 +38,54 @@ import static com.beyond.easycheck.user.application.service.UserReadUseCase.Find
 @Transactional(readOnly = true)
 public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
 
+    JwtUtil jwtUtil;
+
+    PasswordEncoder passwordEncoder;
+
     private final EventRepository eventRepository;
 
     private final UserJpaRepository userJpaRepository;
 
     private final NoticesRepository noticesRepository;
 
-    private final PaymentRepository paymentRepository;
-
     private final FacilityRepository facilityRepository;
 
     private final ThemeParkRepository themeParkRepository;
+
+    private final PaymentJpaRepository paymentJpaRepository;
 
     private final AttractionRepository attractionRepository;
 
     private final SuggestionsRepository suggestionsRepository;
 
     private final AdditionalServiceRepository additionalServiceRepository;
+
+    @Override
+    public void logout() {
+
+    }
+
+    @Override
+    public FindJwtResult login(AdminLoginCommand command) {
+
+        var user = userJpaRepository.findUserEntityByEmail(command.email())
+                .orElseThrow(() -> new EasyCheckException(UserMessageType.USER_NOT_FOUND));
+
+        if (hasNotAdminRole(user)) {
+            throw new EasyCheckException(AdminMessageType.ADMIN_ACCESS_DENIED);
+        }
+
+        if (passwordIncorrect(command, user)) {
+            throw new EasyCheckException(AdminMessageType.ADMIN_NOT_FOUND);
+        }
+
+        var userDetails = new EasyCheckUserDetails(user);
+
+        var accessToken = jwtUtil.createAccessToken(userDetails);
+        var refreshToken = jwtUtil.createAccessToken(userDetails);
+
+        return FindJwtResult.findByTokenString(accessToken, refreshToken);
+    }
 
     @Override
     @Transactional
@@ -137,29 +173,40 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
     }
 
     @Override
-    public List<FindPaymentResult> getAllPayments() {
-        return paymentRepository.findAllByAccommodationId(getManagerAccommodationId())
+    public List<FindPaymentResult> getAllPayments(PaymentFindQuery query, Pageable pageable) {
+        return paymentJpaRepository.findAllPayments(getManagerAccommodationId(), query, pageable)
                 .stream()
                 .map(FindPaymentResult::findByPaymentEntity)
                 .toList();
     }
 
-    public Long getManagerAccommodationId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    /**
+     * role 테이블에서 [accommodationId]_ADMIN 이런 방식으로 지점 관리자를 구분하고 있습니다.
+     * 최초 로그인 시점에 JWT 토큰에 해당 역할을 같이 포함했고 아래와 같이 Authentication에서 role을 가져와
+     * accommodationId를 추출합니다.
+     * @return accommodationId
+     */
+    private Long getManagerAccommodationId() {
+        // 1. 인증 정보 확인
+        Authentication authentication = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .orElseThrow(() -> new EasyCheckException(AdminMessageType.ACCOMMODATION_ADMIN_AUTHORITY_NOT_FOUND));
 
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            String role = authority.getAuthority();
-
-            // ROLE_숫자_ADMIN 형식인지 확인
-            if (role.matches("ROLE_\\d+_ADMIN")) {
-                // ROLE_ 를 제거하고 _ADMIN 을 제거한 후 남은 숫자를 추출
-                String idStr = role.replace("ROLE_", "")
-                        .replace("_ADMIN", "");
-                return Long.parseLong(idStr);
-            }
-        }
-
-        // 해당하는 권한이 없을 경우 예외
-        throw new EasyCheckException(AdminMessageType.ACCOMMODATION_ADMIN_AUTHORITY_NOT_FOUND);
+        // 2. ROLE_숫자_ADMIN 형식의 권한 찾기
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(role -> role.matches("ROLE_\\d+_ADMIN"))
+                .findFirst()
+                .map(role -> role.replace("ROLE_", "").replace("_ADMIN", ""))
+                .map(Long::parseLong)
+                .orElseThrow(() -> new EasyCheckException(AdminMessageType.ACCOMMODATION_ADMIN_AUTHORITY_NOT_FOUND));
     }
+
+    private boolean hasNotAdminRole(UserEntity user) {
+        return !user.getRole().getName().equals(UserRole.ADMIN.name());
+    }
+
+    private boolean passwordIncorrect(AdminLoginCommand command, UserEntity user) {
+        return !passwordEncoder.matches(command.password(), user.getPassword());
+    }
+
 }
