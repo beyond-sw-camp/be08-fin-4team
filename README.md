@@ -19,13 +19,14 @@
 <p><strong> Database <br></strong>
 <img alt="MariaDB" src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white"/>
 <img alt="Redis" src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=FFFFFF"/>
-<img alt="Amazon S3" src="https://img.shields.io/badge/Amazon S3-DD344C?style=for-the-badge&logo=Amazon S3&logoColor=white">
 </p>
 <p><strong> Backend <br></strong>
 <img alt="Java" src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"/>
 <img alt="SpringBoot" src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=FFFFFF"/>
+<img alt="SpringSecurity" src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"/>
+<img alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
+<img alt="SpringDataJPA" src="https://img.shields.io/badge/Spring data jpa-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
 <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=black"/>
-<img alt="Naver" src="https://img.shields.io/badge/Naver-03C75A?style=for-the-badge&logo=Naver&logoColor=white"/>
 </p>
 <p><strong> Frontend <br></strong>
 <img alt="HTML" src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> 
@@ -33,12 +34,23 @@
 <img alt="Bootstrap" src="https://img.shields.io/badge/bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white">
 <img alt="JavaScript" src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
 <img alt="Vue" src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white">
+<img alt="Material Design" src="https://img.shields.io/badge/material design-757575?style=for-the-badge&logo=material design&logoColor=white">
 </p>
-<p><strong> DevOps <br></strong>
+<p><strong> Infrastructure <br></strong>
+<img alt="AMAZON Web Services" src="https://img.shields.io/badge/Amazon Web Services-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white"/>
 <img alt="AMAZON EC2" src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=amazon-ec2&logoColor=white"/>
+<img alt="AMAZON ECS" src="https://img.shields.io/badge/Amazon ECS-FF9900?style=for-the-badge&logo=amazon-ecs&logoColor=white"/>
+<img alt="AMAZON RDS" src="https://img.shields.io/badge/AMAZON RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=FFFFFF"/>
+<img alt="Amazon S3" src="https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white">
+<img alt="Amazon Route 53" src="https://img.shields.io/badge/Amazon route 53-8C4FFF?style=for-the-badge&logo=amazon route 53&logoColor=white">
 <img alt="Docker" src ="https://img.shields.io/badge/Docker-2496ED.svg?&style=for-the-badge&logo=Docker&logoColor=white"/>
-<img alt="GithubActions" src="https://img.shields.io/badge/githubactions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white">
-<img alt="Jenkins" src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white"/>
+</p>
+<p><strong> Monitoring <br></strong>
+<img alt="Amazon Cloud Watch" src ="https://img.shields.io/badge/Amazon Cloud Watch-FF4F8B?&style=for-the-badge&logo=amazoncloudwatch&logoColor=white"/>
+</p>
+<p><strong> External API <br></strong>
+<img alt="Naver" src="https://img.shields.io/badge/Naver-03C75A?style=for-the-badge&logo=Naver&logoColor=white"/>
+<img alt="Kakao" src="https://img.shields.io/badge/kakao-FFCD00?style=for-the-badge&logo=kakaotalk&logoColor=black"/>
 </p>
 <p><strong> Collaboration Tools <br></strong>
 <img alt="Git" src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
@@ -46,7 +58,6 @@
 <img alt="Notion" src="https://img.shields.io/badge/Notion-%23000000.svg?style=for-the-badge&logo=notion&logoColor=white">
 <img alt="Figma" src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
 <img alt="Discord" src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white">
-<img alt="Slack" src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
 </p>
 <br>
 
