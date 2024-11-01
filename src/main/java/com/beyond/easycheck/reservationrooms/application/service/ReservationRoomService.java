@@ -150,10 +150,6 @@ public class ReservationRoomService {
 
         log.info(uniqueRoomAvailabilityMap.toString());
 
-        // 체크인 날짜를 이용하여 해당하는 방의 모든 요금을 조회
-        // 체크인 날짜의 요일이 토요일 또는 일요일인지 확인
-        // 요일과 회원 타입에 맞는 가격 찾기
-
         return uniqueRoomAvailabilityMap.values().stream()
                 .map(availability -> {
                     RoomEntity roomEntity = availability.getRoomEntity();
@@ -196,6 +192,26 @@ public class ReservationRoomService {
                             .map(RoomRateEntity::getRate)
                             .orElse(BigDecimal.ZERO);
 
+                    // 가장 비싼 시즌 금액 찾기 (일반 사용자 기준)
+                    int expensiveSeasonPrice = roomRates.stream()
+                            .filter(rate -> rate.getUserType().equals("일반"))
+                            .map(RoomRateEntity::getRate)
+                            .map(BigDecimal::intValue)
+                            .max(Integer::compareTo)
+                            .orElse(0);
+
+                    // 현재 시즌 금액 찾기 (일반 사용자 기준, 현재 날짜의 요일 타입 고려)
+                    int currentSeasonPrice = roomRates.stream()
+                            .filter(rate ->
+                                    rate.getUserType().equals("일반") &&
+                                            ((isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKEND) ||
+                                                    (!isWeekend && rate.getSeasonEntity().getDayType() == DayType.WEEKDAY))
+                            )
+                            .map(RoomRateEntity::getRate)
+                            .map(BigDecimal::intValue)
+                            .findFirst()
+                            .orElse(0);
+
                     return new AvailableReservationRoomView(
                             roomEntity.getRoomId(),
                             roomEntity.getType(),
@@ -207,7 +223,9 @@ public class ReservationRoomService {
                             normalPrice,
                             corpPrice,
                             roomEntity.getMaxOccupancy(),
-                            roomEntity.getStandardOccupancy()
+                            roomEntity.getStandardOccupancy(),
+                            expensiveSeasonPrice,
+                            currentSeasonPrice
                     );
                 })
                 .collect(Collectors.toList());
