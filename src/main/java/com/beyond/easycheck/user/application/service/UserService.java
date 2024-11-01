@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -225,6 +227,16 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
         UserEntity user = findUserById(command.userId());
 
         user.setUserStatus(UserStatus.DEACTIVATED);
+    }
+
+    // 아이디(이메일) 찾기
+    @Override
+    public FindUserResult findUserByNameAndPhone(UserFindQuery query) {
+        checkPhoneIsVerified(query.phone()); // 인증된 전화번호인지 확인
+        UserEntity userEntity = userJpaRepository.findUserEntityByNameAndPhone(query.email(), query.phone())
+                .orElseThrow(() -> new EasyCheckException(UserMessageType.USER_NOT_FOUND));
+
+        return FindUserResult.findByUserEntityEmail(userEntity);
     }
 
     private FindJwtResult generateJwt(EasyCheckUserDetails userDetails) {

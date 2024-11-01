@@ -66,6 +66,11 @@ public class EasyCheckSecurityConfig {
                             "/api/v1/sms/verify"
                     ).permitAll();
 
+                    // 이메일 찾기
+                    registry.requestMatchers(HttpMethod.POST,
+                            "/api/v1/users/find-email"
+                    ).permitAll();
+
                     // 중복확인 비밀번호 변경, email
                     registry.requestMatchers(HttpMethod.PATCH,
                             "/api/v1/users/check-duplicate",

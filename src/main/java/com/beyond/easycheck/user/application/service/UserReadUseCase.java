@@ -1,9 +1,11 @@
 package com.beyond.easycheck.user.application.service;
 
+import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.QUserEntity;
 import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import lombok.Builder;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 public interface UserReadUseCase {
 
@@ -13,17 +15,21 @@ public interface UserReadUseCase {
 
     FindUserResult getUserInfo(UserFindQuery query);
 
+    FindUserResult findUserByNameAndPhone(UserFindQuery query);
+
     @Builder
     record UserFindQuery(
             Long userId,
-            String email
+            String email,
+            String phone
     ) {
 
         public UserFindQuery(Long userId) {
-            this(userId, null);
+            this(userId, null, null);
         }
     }
 
+    @Builder
     record FindUserResult(
             Long id,
             String email,
@@ -32,8 +38,8 @@ public interface UserReadUseCase {
             String addr,
             String addrDetail,
             String status,
-            char marketingConsent,
-            int point,
+            Character marketingConsent,
+            Integer point,
             String role,
             Timestamp createdDate,
             Timestamp updatedDate
@@ -54,6 +60,11 @@ public interface UserReadUseCase {
                     userEntity.getUpdatedDate()
             );
         }
+
+        public static FindUserResult findByUserEntityEmail(UserEntity userEntity) {
+            return FindUserResult.builder().email(userEntity.getEmail()).build();
+        }
+
     }
 
     record FindJwtResult(

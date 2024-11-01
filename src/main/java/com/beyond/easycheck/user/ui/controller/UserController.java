@@ -2,8 +2,12 @@ package com.beyond.easycheck.user.ui.controller;
 
 import com.beyond.easycheck.admin.application.service.AdminOperationUseCase;
 import com.beyond.easycheck.admin.application.service.AdminOperationUseCase.UserStatusUpdateCommand;
+import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.user.application.service.UserOperationUseCase;
 import com.beyond.easycheck.user.application.service.UserReadUseCase;
+import com.beyond.easycheck.user.application.service.UserService;
+import com.beyond.easycheck.user.exception.UserMessageType;
+import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.ui.requestbody.*;
 import com.beyond.easycheck.admin.ui.requestbody.UserStatusUpdateRequest;
 import com.beyond.easycheck.user.ui.view.UserLoginView;
@@ -21,6 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 import static com.beyond.easycheck.user.application.service.UserOperationUseCase.*;
 import static com.beyond.easycheck.user.application.service.UserReadUseCase.*;
 import static com.beyond.easycheck.user.application.service.UserReadUseCase.FindJwtResult;
@@ -36,6 +42,7 @@ public class UserController {
     private final UserReadUseCase userReadUseCase;
 
     private final UserOperationUseCase userOperationUseCase;
+    private final UserService userService;
 
     @PostMapping("")
     @Operation(summary = "일반 유저 회원가입 API")
@@ -133,6 +140,17 @@ public class UserController {
         return ResponseEntity.ok(new UserView(result));
     }
 
+    // 아이디(이메일) 찾기
+    @PostMapping("/find-email")
+    @Operation(summary = "이메일 찾기 API")
+    public ResponseEntity<UserView> findEmail(@RequestBody @Validated EmailFindRequest request) {
+
+        // 이름과 핸드폰 번호로 유저 조회
+        UserFindQuery query = new UserFindQuery(null, request.name(), request.phone());
+        FindUserResult result = userReadUseCase.findUserByNameAndPhone(query);
+        return ResponseEntity.ok(new UserView(result));
+    }
+
     @PatchMapping("/change-password")
     @Operation(summary = "비밀번호 변경 API")
     public ResponseEntity<Void> changePassword(@RequestBody @Validated ChangePasswordRequest request) {
@@ -148,7 +166,7 @@ public class UserController {
     @Operation(summary = "이메일 중복확인 API")
     public ResponseEntity<Void> checkDuplicate(@RequestBody @Validated EmailDuplicatedCheckRequest request) {
 
-        UserFindQuery query = new UserFindQuery(null, request.email());
+        UserFindQuery query = new UserFindQuery(null, null, request.email());
 
         userReadUseCase.checkEmailDuplicated(query);
 

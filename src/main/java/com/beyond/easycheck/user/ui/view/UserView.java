@@ -19,7 +19,7 @@ public class UserView {
     private final String addrDetail;
     private final String status;
     private final Character marketingConsent;
-    private final int point;
+    private final Integer point;
     private final String role;
 
     public UserView(FindUserResult user) {
