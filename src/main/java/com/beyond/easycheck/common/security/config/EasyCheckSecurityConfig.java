@@ -55,7 +55,8 @@ public class EasyCheckSecurityConfig {
                     registry.requestMatchers(HttpMethod.POST,
                                     "/api/v1/users",
                                     "/api/v1/corp-users",
-                                    "/api/v1/users/login"
+                                    "/api/v1/users/login",
+                                    "/api/v1/admin/login"
                             )
                             .permitAll();
 
