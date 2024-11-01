@@ -38,9 +38,9 @@ import static com.beyond.easycheck.user.application.service.UserReadUseCase.User
 @Transactional(readOnly = true)
 public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
 
-    JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private final EventRepository eventRepository;
 
@@ -173,8 +173,8 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
     }
 
     @Override
-    public List<FindPaymentResult> getAllPayments(PaymentFindQuery query, Pageable pageable) {
-        return paymentJpaRepository.findAllPayments(getManagerAccommodationId(), query, pageable)
+    public List<FindPaymentResult> getAllPayments(PaymentFindQuery query) {
+        return paymentJpaRepository.findAllPayments(getManagerAccommodationId(), query)
                 .stream()
                 .map(FindPaymentResult::findByPaymentEntity)
                 .toList();
@@ -202,7 +202,7 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
     }
 
     private boolean hasNotAdminRole(UserEntity user) {
-        return !user.getRole().getName().equals(UserRole.ADMIN.name());
+        return !user.getRole().getName().endsWith(UserRole.ADMIN.name());
     }
 
     private boolean passwordIncorrect(AdminLoginCommand command, UserEntity user) {

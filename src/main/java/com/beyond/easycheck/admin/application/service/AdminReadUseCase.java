@@ -32,7 +32,7 @@ public interface AdminReadUseCase {
 
     List<FindNoticeResult> getAllNotices();
 
-    List<FindPaymentResult> getAllPayments(PaymentFindQuery query, Pageable pageable);
+    List<FindPaymentResult> getAllPayments(PaymentFindQuery query);
 
     List<FindThemeParkResult> getAllThemeParks();
 

@@ -138,17 +138,14 @@ public class AdminController {
     public ResponseEntity<List<PaymentView>> getAllPayments(
             @RequestParam(required = false) Long paymentId,
             @RequestParam(required = false) String userName,
-            @RequestParam(required = false) String email,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(required = false) String email
     ) {
 
         PaymentFindQuery query = new PaymentFindQuery(paymentId, userName, email);
-        // Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page, size);
+
         return ResponseEntity.ok(
                 adminReadUseCase
-                        .getAllPayments(query, pageable)
+                        .getAllPayments(query)
                         .stream()
                         .map(PaymentView::new).toList()
         );
