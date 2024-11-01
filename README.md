@@ -110,7 +110,7 @@
 
 <br>
 
-### 1. UI/UX Test Case
+### 2. UI/UX Test Case
 
 [UI/UX 테스트 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
 
