@@ -97,8 +97,8 @@
 
 ### 5. Backend Test Case
 
-[Test Case 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107) <br>
-[Test Case 시나리오](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=1297816150#gid=1297816150)
+[백엔드 테스트 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107) <br>
+[백엔드 테스트 시나리오](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=1297816150#gid=1297816150)
 
 <br>
 
@@ -112,11 +112,23 @@
 
 ### 1. UI/UX Test Case
 
-[Test Case 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
+[UI/UX 테스트 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
+
+<br>
+
+## DevOps
+
+### 1. CI/CD Plan
+
+[CI/CD 계획서 바로가기](https://docs.google.com/spreadsheets/d/1ZvTsCOXaZwKe9hKUvk_YHd89mwVsMYEt93ezuPh_xMo/edit?gid=0#gid=0)
 
 <br>
 
 ## 💾 Project Implementation
+
+### 1. Integrated Test
+
+[통합 테스트 바로가기](https://docs.google.com/spreadsheets/d/1ofKSyFgTL0ykWuPlfgDdsXMJ86riQVtCQ6Q7KazgCSk/edit?gid=0#gid=0)
 
 <br>
 
