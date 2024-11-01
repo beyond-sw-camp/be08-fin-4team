@@ -28,4 +28,12 @@ public class AvailableReservationRoomView {
     private int maxOccupancy;
     private int standardOccupancy;
 
+    /**
+     * 변경사항
+     * 가장 비싼 시즌 금액
+     * 현재 시즌 금액
+     */
+    private int expensiveSeasonPrice;
+    private int currentSeasonPrice;
+
 }
