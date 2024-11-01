@@ -44,9 +44,9 @@ public class  UserEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    private char marketingConsent;
+    private Character marketingConsent;
 
-    private int point;
+    private Integer point;
 
     @CreationTimestamp
     private Timestamp createdDate;
