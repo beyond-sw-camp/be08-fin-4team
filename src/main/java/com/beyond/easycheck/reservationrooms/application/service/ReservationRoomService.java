@@ -41,10 +41,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -137,17 +134,27 @@ public class ReservationRoomService {
         );
         log.info(availableRoomsByDateRange.toString());
 
+        // 먼저 예약 불가능한 방들의 ID를 수집
+        Set<Long> unavailableRoomIds = availableRoomsByDateRange.stream()
+                .filter(availability ->
+                        availability.getRoomEntity().getRoomTypeEntity().getAccommodationEntity().getId().equals(accommodationId) &&
+                                availability.getStatus() == RoomStatus.예약불가
+                )
+                .map(availability -> availability.getRoomEntity().getRoomId())
+                .collect(Collectors.toSet());
+
+        // 예약 불가능한 방들을 제외하고 맵 생성
         Map<Long, DailyRoomAvailabilityEntity> uniqueRoomAvailabilityMap = availableRoomsByDateRange.stream()
                 .filter(availability ->
                         availability.getRoomEntity().getRoomTypeEntity().getAccommodationEntity().getId().equals(accommodationId) &&
-                                availability.getStatus() == RoomStatus.예약가능
+                                availability.getStatus() == RoomStatus.예약가능 &&
+                                !unavailableRoomIds.contains(availability.getRoomEntity().getRoomId())
                 )
                 .collect(Collectors.toMap(
                         availability -> availability.getRoomEntity().getRoomId(),
                         availability -> availability,
                         (existing, replacement) -> existing.getRemainingRoom() <= replacement.getRemainingRoom() ? existing : replacement
                 ));
-
         log.info(uniqueRoomAvailabilityMap.toString());
 
         return uniqueRoomAvailabilityMap.values().stream()
@@ -156,7 +163,7 @@ public class ReservationRoomService {
 
                     List<String> imageUrls = roomEntity.getImages().stream()
                             .map(RoomEntity.ImageEntity::getUrl)
-                            .collect(Collectors.toList());
+                            .toList();
 
                     String thumbnailImgUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
 
