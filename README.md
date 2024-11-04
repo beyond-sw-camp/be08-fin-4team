@@ -51,6 +51,7 @@
 <img alt="Material Design" src="https://img.shields.io/badge/material design-757575?style=for-the-badge&logo=material design&logoColor=white">
 </p>
 <p><strong> Infrastructure <br></strong>
+<img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=Vercel&logoColor=white"/>
 <img alt="AMAZON Web Services" src="https://img.shields.io/badge/Amazon Web Services-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white"/>
 <img alt="AMAZON EC2" src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=amazon-ec2&logoColor=white"/>
 <img alt="AMAZON ECS" src="https://img.shields.io/badge/Amazon ECS-FF9900?style=for-the-badge&logo=amazon-ecs&logoColor=white"/>
@@ -64,7 +65,7 @@
 </p>
 <p><strong> External API <br></strong>
 <img alt="Naver" src="https://img.shields.io/badge/Naver-03C75A?style=for-the-badge&logo=Naver&logoColor=white"/>
-<img alt="Kakao" src="https://img.shields.io/badge/kakao-FFCD00?style=for-the-badge&logo=kakaotalk&logoColor=black"/>
+<img alt="KakaoAPI" src="https://img.shields.io/badge/Kakao%20API-FFCD00?style=for-the-badge&logo=kakao&logoColor=black">
 </p>
 <p><strong> Collaboration Tools <br></strong>
 <img alt="Git" src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
