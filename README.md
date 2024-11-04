@@ -20,7 +20,7 @@
 1. [✨ Medium](#-medium)
 2. [📋 Material](#-material)
 3. [⚙ Tech Stack](#tech-stack)
-4. [🗂️ Project Planning](#🗂️-project-planning)
+4. [🗂️ Project Planning](#%EF%B8%8F-project-planning)
 5. [🛠️ Backend](#%EF%B8%8F-backend)
 6. [🖥️ Frontend](#%EF%B8%8F-frontend)
 7. [♾️ Infrastructure](#%EF%B8%8F-infrastructure)
