@@ -15,6 +15,10 @@ phases:
       - mkdir -p src/main/resources
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
+      # 템플릿 파일 가져오기
+      - echo Fetching template files...
+      - aws s3 cp s3://$S3_BUCKET/appspec.yaml ./appspec.yaml
+      - aws s3 cp s3://$S3_BUCKET/taskdef.json ./taskdef.json.template
       # 이미지 태그 설정
       - echo Setting image tag...
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -39,24 +43,24 @@ phases:
       - echo Updating ECS service...
       # 현재 작동 중인 태스크 정의를 가져옴
       - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
-      # 새로운 이미지 URI로 태스크 정의 업데이트
-      - |
-        NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.taskDefinition | 
-          del(.taskDefinitionArn) | 
-          del(.revision) | 
-          del(.status) | 
-          del(.requiresAttributes) | 
-          del(.compatibilities) |
-          del(.registeredAt) |
-          del(.registeredBy) |
-          .containerDefinitions[0].image = $IMAGE')
+      # taskdef.json 템플릿을 기반으로 새 버전 생성
+      - sed -i "s#<IMAGE>#$REPOSITORY_URI:$IMAGE_TAG#g" taskdef.json.template
+      - mv taskdef.json.template taskdef.json
+
       # 새 태스크 정의 등록
-      - echo $NEW_TASK_DEF
-      - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --region $AWS_DEFAULT_REGION --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
+      - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --region $AWS_DEFAULT_REGION --cli-input-json file://taskdef.json | jq -r '.taskDefinition.taskDefinitionArn')
       # ECS 서비스 업데이트
       - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
+      # 이미지 정의 파일 생성
       - echo Writing image definitions file...
       - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
+
+      # 파일 생성 확인
+      - echo Verifying artifact files...
+      - ls -la
+      - cat imageDefinitions.json
+      - cat appspec.yaml
+      - cat taskdef.json
       - echo Build completed on `date`
 
 artifacts:
