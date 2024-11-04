@@ -19,8 +19,8 @@
 ## 📋 Contents
 1. [✨ Medium](#-medium)
 2. [📋 Material](#-material)
-3. [⚙ Tech Stack](#-tech-stack)
-4. [🗂️ Project Planning](#-project-planning)
+3. [⚙ Tech Stack](#tech-stack)
+4. [🗂️ Project Planning](#project-planning)
    - [1. Project Proposal](#1-project-proposal)
    - [2. Requirements Specification](#2-requirements-specification)
    - [3. System Architecture](#3-system-architecture)
