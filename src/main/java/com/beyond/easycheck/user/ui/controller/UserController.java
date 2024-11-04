@@ -1,15 +1,9 @@
 package com.beyond.easycheck.user.ui.controller;
 
-import com.beyond.easycheck.admin.application.service.AdminOperationUseCase;
-import com.beyond.easycheck.admin.application.service.AdminOperationUseCase.UserStatusUpdateCommand;
-import com.beyond.easycheck.common.exception.EasyCheckException;
 import com.beyond.easycheck.user.application.service.UserOperationUseCase;
 import com.beyond.easycheck.user.application.service.UserReadUseCase;
 import com.beyond.easycheck.user.application.service.UserService;
-import com.beyond.easycheck.user.exception.UserMessageType;
-import com.beyond.easycheck.user.infrastructure.persistence.mariadb.entity.user.UserEntity;
 import com.beyond.easycheck.user.ui.requestbody.*;
-import com.beyond.easycheck.admin.ui.requestbody.UserStatusUpdateRequest;
 import com.beyond.easycheck.user.ui.view.UserLoginView;
 import com.beyond.easycheck.user.ui.view.UserView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,8 +18,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 import static com.beyond.easycheck.user.application.service.UserOperationUseCase.*;
 import static com.beyond.easycheck.user.application.service.UserReadUseCase.*;
@@ -158,6 +150,18 @@ public class UserController {
         ChangePasswordCommand command = new ChangePasswordCommand(request.email(), request.oldPassword(), request.newPassword());
 
         userOperationUseCase.changePassword(command);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    // 비밀번호 찾기
+    @PostMapping("/find-password")
+    @Operation(summary = "비밀번호 찾기 API")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Validated FindPasswordRequest request) {
+
+        FindPasswordCommand command = new FindPasswordCommand(request.email(), request.phone(), request.newPassword());
+
+        userService.findPassword(command);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

@@ -1,5 +1,6 @@
 # 🏨 EasyStay
 > [PLAYDATA] 한화시스템 BEYOND SW캠프 / EasyStay
+> 
 
 > Team - EasyCheck
 
@@ -14,6 +15,19 @@
 - [Notion Link](https://playdatacademy.notion.site/EasyCheck-4-7f15d7203a36455fa8854fac585c262e)
 - [Presentation Material]()
 <br>
+
+## Contents
+- [⚙ Tech Stack](#-Tech-Stack)
+- [🗂️ Project Planning](#-Project-Planning)
+- [🛠️ Backend](#-Backend)
+- [🖥️ Frontend](#-Frontend)
+- [♾️ Infrastructure](#-Infrastructure)
+- [💾 Project Implementation](#-Project-Implementation)
+- [📂 Directory Structure](#-Directory-Structure)
+- [📆 WBS](#-WBS)
+- [👨‍👩‍👧‍👦 Member](#-Member)
+- [📚 Memoir](#-Memoir)
+<br><br>
 
 ## ⚙Tech Stack
 <p><strong> Database <br></strong>
@@ -127,7 +141,7 @@
 
 <br>
 
-## DevOps
+## ♾️ Infrastructure
 
 ### 1. CI/CD Plan
 

@@ -80,6 +80,13 @@ public interface UserOperationUseCase {
     ) {
     }
 
+    record FindPasswordCommand(
+            String email,
+            String phone,
+            String newPassword
+    ) {
+    }
+
     record DeactivateUserCommand(Long userId) {
 
     }
