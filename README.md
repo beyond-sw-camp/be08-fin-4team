@@ -18,7 +18,7 @@
 
 ## Contents
 - [⚙ Tech Stack](#tech-stack)
-- [🗂️ Project Planning](#🗂️ Project Planning)
+- [🗂️ Project Planning](#🗂️-Project-Planning)
 - [🛠️ Backend](#backend)
 - [🖥️ Frontend](#frontend)
 - [♾️ Infrastructure](#-infrastructure)
