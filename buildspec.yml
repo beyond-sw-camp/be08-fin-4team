@@ -27,7 +27,7 @@ phases:
       # 이미지 태그 설정 (빌드 번호 사용)
       - echo Setting image tag...
       - IMAGE_TAG=v${CODEBUILD_BUILD_NUMBER}
-      - echo "Building version: $IMAGE_TAG"
+      - echo "Building version": $IMAGE_TAG
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
 
   build:
