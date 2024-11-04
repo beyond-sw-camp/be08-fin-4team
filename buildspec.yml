@@ -51,12 +51,19 @@ phases:
           del(.registeredBy) |
           .containerDefinitions[0].image = $IMAGE')
       # 새 태스크 정의 등록
-      - echo $NEW_TASK_DEF  # 디버깅용
+      - echo $NEW_TASK_DEF
       - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --region $AWS_DEFAULT_REGION --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
       # ECS 서비스 업데이트
       - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN
+      - echo Writing image definitions file...
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
       - echo Build completed on `date`
-cache:
-  paths:
-    - '/root/.gradle/caches/**/*'
-    - '/root/.gradle/wrapper/**/*'
+
+artifacts:
+  files:
+    - imageDefinitions.json
+    - appspec.yaml
+    - taskdef.json
+  name: BuildArtifact
+  base-directory: .
+  discard-paths: yes
