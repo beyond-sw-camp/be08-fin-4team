@@ -39,6 +39,9 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
 
+      # 이미지 정의 파일 생성 (추가)
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
+
       # 현재 태스크 정의를 가져와서 새 이미지로 업데이트
       - echo Creating new task definition revision...
       - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
