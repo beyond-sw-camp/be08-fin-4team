@@ -21,7 +21,7 @@
 - [🗂️ Project Planning](#project-planning)
 - [🛠️ Backend](#backend)
 - [🖥️ Frontend](#frontend)
-- [♾️ Infrastructure](#infrastructure)
+- [♾️ Infrastructure](#-infrastructure)
 - [💾 Project Implementation](#-project-implementation)
 - [📂 Directory Structure](#-directory-structure)
 - [📆 WBS](#-wbs)
