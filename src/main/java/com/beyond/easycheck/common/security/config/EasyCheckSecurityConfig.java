@@ -68,7 +68,8 @@ public class EasyCheckSecurityConfig {
 
                     // 이메일 찾기
                     registry.requestMatchers(HttpMethod.POST,
-                            "/api/v1/users/find-email"
+                            "/api/v1/users/find-email",
+                            "/api/v1/find-password"
                     ).permitAll();
 
                     // 중복확인 비밀번호 변경, email
@@ -77,6 +78,8 @@ public class EasyCheckSecurityConfig {
                             "/api/v1/verification-code",
                             "/api/v1/verify-code"
                     ).permitAll();
+
+
 
                     registry.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
 
