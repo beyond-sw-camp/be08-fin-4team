@@ -11,12 +11,11 @@ RUN chmod +x ./gradlew
 # 의존성 다운로드 (캐시 활용)
 RUN ./gradlew dependencies
 
-# 소스 복사 (application.yml 제외)
+# 소스 복사
 COPY src/main/java /build/src/main/java
-COPY src/main/resources/application.yaml /build/src/main/resources/
 COPY src/test /build/src/test
 
-# CodeCommit에서 가져온 설정 파일들을 복사
+# application.yml 파일 복사
 COPY src/main/resources/application.yml /build/src/main/resources/
 COPY src/main/resources/application-dev.yml /build/src/main/resources/
 
@@ -29,9 +28,9 @@ WORKDIR /app
 
 # 기본 시간대 설정
 RUN apk add --no-cache tzdata curl && \
-   cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-   echo "Asia/Seoul" > /etc/timezone && \
-   apk del tzdata
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone && \
+    apk del tzdata
 
 # 애플리케이션 jar 파일 복사
 COPY --from=builder /build/build/libs/*.jar app.jar
@@ -39,18 +38,18 @@ COPY --from=builder /build/build/libs/*.jar app.jar
 # 서버 환경 설정
 ENV SERVER_PORT=30010
 ENV JAVA_OPTS="-XX:+UseZGC \
-              -XX:+ZGenerational \
-              -XX:+UseStringDeduplication \
-              -XX:MaxRAMPercentage=75 \
-              -XX:MaxMetaspaceSize=256m \
-              -XX:+HeapDumpOnOutOfMemoryError \
-              -Dfile.encoding=UTF-8 \
-              -Djava.security.egd=file:/dev/./urandom \
-              -Dspring.profiles.active=dev"
+               -XX:+ZGenerational \
+               -XX:+UseStringDeduplication \
+               -XX:MaxRAMPercentage=75 \
+               -XX:MaxMetaspaceSize=256m \
+               -XX:+HeapDumpOnOutOfMemoryError \
+               -Dfile.encoding=UTF-8 \
+               -Djava.security.egd=file:/dev/./urandom \
+               -Dspring.profiles.active=dev"
 
 # 헬스체크
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
- CMD curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1
+  CMD curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1
 
 # 비root 사용자 추가
 RUN addgroup -S spring && adduser -S spring -G spring
