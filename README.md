@@ -17,18 +17,16 @@
 <br>
 
 ## 📋 Contents
-1. [✨ Medium](#-medium)
-2. [📋 Material](#-material)
-3. [⚙ Tech Stack](#tech-stack)
-4. [🗂️ Project Planning](#%EF%B8%8F-project-planning)
-5. [🛠️ Backend](#%EF%B8%8F-backend)
-6. [🖥️ Frontend](#%EF%B8%8F-frontend)
-7. [♾️ Infrastructure](#%EF%B8%8F-infrastructure)
-8. [💾 Project Implementation](#-project-implementation)
-9. [📂 Directory Structure](#-directory-structure)
-10. [📆 WBS](#-wbs)
-11. [👨‍👩‍👧‍👦 Member](#-member)
-12. [📚 Memoir](#-memoir)
+- [⚙ Tech Stack](#tech-stack)
+- [🗂️ Project Planning](#%EF%B8%8F-project-planning)
+- [🛠️ Backend](#%EF%B8%8F-backend)
+- [🖥️ Frontend](#%EF%B8%8F-frontend)
+- [♾️ Infrastructure](#%EF%B8%8F-infrastructure)
+- [💾 Project Implementation](#-project-implementation)
+- [📂 Directory Structure](#-directory-structure)
+- [📆 WBS](#-wbs)
+- [👨‍👩‍👧‍👦 Member](#-member)
+- [📚 Memoir](#-memoir)
 <br><br>
 
 ## ⚙Tech Stack
