@@ -16,6 +16,19 @@
 - [Presentation Material]()
 <br>
 
+## Contents
+- [⚙ Tech Stack](#-Tech-Stack)
+- [🗂️ Project Planning](#-Project-Planning)
+- [🛠️ Backend](#-Backend)
+- [🖥️ Frontend](#-Frontend)
+- [♾️ Infrastructure](#-Infrastructure)
+- [💾 Project Implementation](#-Project-Implementation)
+- [📂 Directory Structure](#-Directory-Structure)
+- [📆 WBS](#-WBS)
+- [👨‍👩‍👧‍👦 Member](#-Member)
+- [📚 Memoir](#-Memoir)
+<br><br>
+
 ## ⚙Tech Stack
 <p><strong> Database <br></strong>
 <img alt="MariaDB" src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white"/>
@@ -128,7 +141,7 @@
 
 <br>
 
-## DevOps
+## ♾️ Infrastructure
 
 ### 1. CI/CD Plan
 
