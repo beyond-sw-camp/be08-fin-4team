@@ -22,11 +22,11 @@
 - [🛠️ Backend](#backend)
 - [🖥️ Frontend](#frontend)
 - [♾️ Infrastructure](#infrastructure)
-- [💾 Project Implementation](#project-implementation)
-- [📂 Directory Structure](#directory-structure)
-- [📆 WBS](#wbs)
-- [👨‍👩‍👧‍👦 Member](#member)
-- [📚 Memoir](#memoir)
+- [💾 Project Implementation](#-project-implementation)
+- [📂 Directory Structure](#-directory-structure)
+- [📆 WBS](#-wbs)
+- [👨‍👩‍👧‍👦 Member](#-member)
+- [📚 Memoir](#-memoir)
 <br><br>
 
 ## ⚙Tech Stack
