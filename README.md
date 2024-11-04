@@ -17,16 +17,16 @@
 <br>
 
 ## Contents
-- [⚙ Tech Stack](#Tech-Stack)
-- [🗂️ Project Planning](#ProjectPlanning)
-- [🛠️ Backend](#Backend)
-- [🖥️ Frontend](#Frontend)
-- [♾️ Infrastructure](#Infrastructure)
-- [💾 Project Implementation](#-Project-Implementation)
-- [📂 Directory Structure](#-Directory-Structure)
-- [📆 WBS](#-WBS)
-- [👨‍👩‍👧‍👦 Member](#-Member)
-- [📚 Memoir](#-Memoir)
+- [⚙ Tech Stack](#tech-stack)
+- [🗂️ Project Planning](#project-planning)
+- [🛠️ Backend](#backend)
+- [🖥️ Frontend](#frontend)
+- [♾️ Infrastructure](#infrastructure)
+- [💾 Project Implementation](#project-implementation)
+- [📂 Directory Structure](#directory-structure)
+- [📆 WBS](#wbs)
+- [👨‍👩‍👧‍👦 Member](#member)
+- [📚 Memoir](#memoir)
 <br><br>
 
 ## ⚙Tech Stack
