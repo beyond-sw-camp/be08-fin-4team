@@ -3,14 +3,12 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.9
       docker: 18
     commands:
-      # AWS CLI v2 설치
-      - echo Installing AWS CLI v2...
-      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      - unzip awscliv2.zip
-      - ./aws/install
+      # AWS CLI 설치
+      - echo Installing AWS CLI...
+      - yum -y update
+      - yum -y install aws-cli
       - aws --version
 
   pre_build:
