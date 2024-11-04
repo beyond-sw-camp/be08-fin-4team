@@ -209,6 +209,26 @@ public class UserService implements UserOperationUseCase, UserReadUseCase {
 
     }
 
+    // 비밀번호 찾기
+    @Transactional
+    public void findPassword(FindPasswordCommand command) {
+
+        checkPhoneIsVerified(command.phone());
+
+        UserEntity user = findUserByEmail(command.email());
+
+        // 이전 비밀번호와 새로운 비밀번호가 일치하는지 검사
+        if (passwordEncoder.matches(command.newPassword(), user.getPassword())) {
+            throw new EasyCheckException(UserMessageType.PASSWORD_DUPLICATE);
+        }
+
+        // 새 비밀번호 설정
+        String newSecurePassword = passwordEncoder.encode(command.newPassword());
+        user.setSecurePassword(newSecurePassword);
+
+        log.info("[findPassword] - 비밀번호가 성공적으로 변경되었습니다. 사용자 이메일: {}", user.getEmail());
+    }
+
     @Override
     @Transactional
     public FindUserResult updateUserInfo(UserUpdateCommand command) {

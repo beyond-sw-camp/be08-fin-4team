@@ -109,7 +109,7 @@ public class SmsController {
         SecureRandom random = new SecureRandom();
         final int CODE_LENGTH = 6;
         StringBuilder sb = new StringBuilder(CODE_LENGTH);
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 6; i++) {
             sb.append(random.nextInt(10));
         }
 
