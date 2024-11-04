@@ -1,28 +1,50 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      python: 3.9
+      docker: 18
+    commands:
+      # AWS CLI v2 설치
+      - echo Installing AWS CLI v2...
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - unzip awscliv2.zip
+      - ./aws/install
+      - aws --version
+
   pre_build:
     commands:
       # AWS 계정 로그인
+      - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       # application.yml 파일 가져오기
+      - echo Fetching configuration files from CodeCommit...
+      - mkdir -p src/main/resources
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
       # 이미지 태그 설정
+      - echo Setting image tag...
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
 
   build:
     commands:
       # Docker 이미지 빌드
+      - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
       # ECR에 이미지 푸시
+      - echo Pushing the Docker image...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
       # 이미지 정의 파일 생성
+      - echo Writing image definitions file...
       - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - echo Build completed on `date`
 
 artifacts:
   files:
