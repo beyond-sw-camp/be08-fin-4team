@@ -49,8 +49,15 @@ phases:
               Properties:
                 TaskDefinition: <TASK_DEFINITION>
                 LoadBalancerInfo:
-                  ContainerName: "easystay-backend"
+                  ContainerName: "easystay-backend-springboot"
                   ContainerPort: 30010
+                PlatformVersion: "LATEST"
+                NetworkConfiguration:
+                  AwsvpcConfiguration:
+                    Subnets: ["subnet-08c44b227b19f5cf3"]
+                    SecurityGroups: ["sg-xxxxx"]
+                    AssignPublicIp: "ENABLED"
+                DesiredCount: 1
         EOF
 
       # 이미지 정의 파일 생성
