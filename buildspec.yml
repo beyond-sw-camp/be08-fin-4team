@@ -39,7 +39,7 @@ phases:
       - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
       - echo $TASK_DEFINITION | jq -r .taskDefinition > taskdef.json
 
-      # appspec.yaml 생성 - ECS 서비스 정보 기반
+      # appspec.yaml 생성
       - |
         cat << EOF > appspec.yaml
         version: 0.0
@@ -57,24 +57,11 @@ phases:
                     Subnets: ["subnet-08c44b227b19f5cf3"]
                     SecurityGroups: ["sg-xxxxx"]
                     AssignPublicIp: "ENABLED"
-                DesiredCount: 1
         EOF
 
       # 이미지 정의 파일 생성
       - echo Writing image definitions file...
       - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
-
-      # 파일 생성 확인
-      - echo Verifying artifact files...
-      - ls -la
-      - echo "=== imageDefinitions.json ==="
-      - cat imageDefinitions.json
-      - echo "=== appspec.yaml ==="
-      - cat appspec.yaml
-      - echo "=== taskdef.json ==="
-      - cat taskdef.json
-      - echo Build completed on `date`
-
 artifacts:
   files:
     - imageDefinitions.json
