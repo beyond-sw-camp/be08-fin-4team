@@ -11,24 +11,22 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
 
+      # 설정 파일 디렉토리 생성
+      - echo Creating resources directory...
+      - mkdir -p src/main/resources
+
       # application.yml 파일들을 CodeCommit에서 가져오기
       - echo Fetching configuration files from CodeCommit...
-      - mkdir -p src/main/resources
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
 
-      # 파일 존재 여부 및 권한 확인
-      - echo "Checking config files..."
+      # 파일 존재 확인
+      - echo "=== Checking config files ==="
       - ls -la src/main/resources/
-      - echo "File contents preview (excluding sensitive data):"
-      - echo "application.yml:"
-      - head -n 5 src/main/resources/application.yml
-      - echo "application-dev.yml:"
-      - head -n 5 src/main/resources/application-dev.yml
-
-      # 파일 권한 설정
-      - chmod 644 src/main/resources/application.yml
-      - chmod 644 src/main/resources/application-dev.yml
+      - echo "=== Content of application.yml ==="
+      - cat src/main/resources/application.yml
+      - echo "=== Content of application-dev.yml ==="
+      - cat src/main/resources/application-dev.yml
 
       # 이미지 태그 설정
       - echo Setting image tag...
@@ -38,14 +36,11 @@ phases:
 
   build:
     commands:
-      # 빌드 전 설정 파일 재확인
-      - echo "Verifying config files before build:"
-      - ls -la src/main/resources/
-
       # Docker 이미지 빌드
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+
   post_build:
     commands:
       # ECR에 이미지 푸시
@@ -53,7 +48,8 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
 
-      # 이미지 정의 파일 생성 (추가)
+      # 이미지 정의 파일 생성
+      - echo Creating image definitions file...
       - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
 
       # 현재 태스크 정의를 가져와서 새 이미지로 업데이트

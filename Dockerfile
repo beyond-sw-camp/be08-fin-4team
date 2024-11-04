@@ -11,30 +11,42 @@ RUN chmod +x ./gradlew
 # 의존성 다운로드 (캐시 활용)
 RUN ./gradlew dependencies
 
-# 모든 소스 코드 복사
-COPY src /build/src
+# 소스 코드 복사 (resources 폴더 제외)
+COPY src/main/java /build/src/main/java
+COPY src/test /build/src/test
+
+# resources 디렉토리 생성 및 설정 파일 복사
+RUN mkdir -p /build/src/main/resources
+COPY src/main/resources/application.yml /build/src/main/resources/
+COPY src/main/resources/application-dev.yml /build/src/main/resources/
 
 # 설정 파일 확인
+RUN echo "=== Listing resources directory ==="
 RUN ls -la /build/src/main/resources/
-RUN echo "Config files content preview:"
-RUN head -n 5 /build/src/main/resources/application.yml
-RUN head -n 5 /build/src/main/resources/application-dev.yml
+RUN echo "=== Content of application.yml ==="
+RUN cat /build/src/main/resources/application.yml
+RUN echo "=== Content of application-dev.yml ==="
+RUN cat /build/src/main/resources/application-dev.yml
 
 # 빌드
 RUN ./gradlew clean build -x test --no-daemon
 
-# 빌드된 jar 확인
-RUN ls -la /build/build/libs/
-# Production stage
 # Production stage
 FROM --platform=linux/amd64 eclipse-temurin:21-jdk-alpine
 WORKDIR /app
+
+# 설정 파일 디렉토리 생성
+RUN mkdir -p /app/config
 
 # 기본 시간대 설정
 RUN apk add --no-cache tzdata curl && \
     cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     echo "Asia/Seoul" > /etc/timezone && \
     apk del tzdata
+
+# 설정 파일 복사
+COPY --from=builder /build/src/main/resources/application.yml /app/config/
+COPY --from=builder /build/src/main/resources/application-dev.yml /app/config/
 
 # 애플리케이션 jar 파일 복사
 COPY --from=builder /build/build/libs/*.jar app.jar
@@ -49,7 +61,8 @@ ENV JAVA_OPTS="-XX:+UseZGC \
                -XX:+HeapDumpOnOutOfMemoryError \
                -Dfile.encoding=UTF-8 \
                -Djava.security.egd=file:/dev/./urandom \
-               -Dspring.profiles.active=dev"
+               -Dspring.profiles.active=dev \
+               -Dspring.config.location=file:/app/config/"
 
 # 헬스체크
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
@@ -57,6 +70,7 @@ HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
 
 # 비root 사용자 추가
 RUN addgroup -S spring && adduser -S spring -G spring
+RUN chown -R spring:spring /app
 USER spring:spring
 
 # 컨테이너 실행
