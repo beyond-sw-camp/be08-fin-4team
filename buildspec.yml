@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      # AWS 계정 로그인
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      # application.yml 파일 가져오기
+      - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
+      - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
+      # 이미지 태그 설정
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+
+  build:
+    commands:
+      # Docker 이미지 빌드
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+
+  post_build:
+    commands:
+      # ECR에 이미지 푸시
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      # 이미지 정의 파일 생성
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+
+artifacts:
+  files:
+    - imageDetail.json
+    - appspec.yml
+    - taskdef.json
+
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'
