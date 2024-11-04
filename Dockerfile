@@ -2,29 +2,36 @@
 FROM --platform=linux/amd64 gradle:8.5-jdk21 AS builder
 WORKDIR /build
 
-# 그래들 파일들 복사
-COPY build.gradle settings.gradle gradlew /build/
+# 의존성 캐싱을 위한 그래들 파일만 먼저 복사
+COPY build.gradle settings.gradle /build/
 COPY gradle /build/gradle
-
-# 소스 복사
-COPY src /build/src
-
-# 권한 설정
+COPY gradlew /build/
 RUN chmod +x ./gradlew
 
-# 프로젝트 빌드 (프로덕션 프로파일로 빌드)
-RUN ./gradlew clean build -x test
+# 의존성 다운로드 (캐시 활용)
+RUN ./gradlew dependencies
+
+# 소스 복사 (application.yml 제외)
+COPY src/main/java /build/src/main/java
+COPY src/main/resources/application.yaml /build/src/main/resources/
+COPY src/test /build/src/test
+
+# CodeCommit에서 가져온 설정 파일들을 복사
+COPY src/main/resources/application.yml /build/src/main/resources/
+COPY src/main/resources/application-dev.yml /build/src/main/resources/
+
+# 빌드
+RUN ./gradlew clean build -x test --no-daemon
 
 # Production stage
 FROM --platform=linux/amd64 eclipse-temurin:21-jdk-alpine
 WORKDIR /app
 
 # 기본 시간대 설정
-RUN apk add --no-cache tzdata
-ENV TZ=Asia/Seoul
-
-# 알파인 리눅스 기본 설정
-RUN apk add --no-cache curl
+RUN apk add --no-cache tzdata curl && \
+   cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+   echo "Asia/Seoul" > /etc/timezone && \
+   apk del tzdata
 
 # 애플리케이션 jar 파일 복사
 COPY --from=builder /build/build/libs/*.jar app.jar
@@ -32,19 +39,24 @@ COPY --from=builder /build/build/libs/*.jar app.jar
 # 서버 환경 설정
 ENV SERVER_PORT=30010
 ENV JAVA_OPTS="-XX:+UseZGC \
-               -XX:+ZGenerational \
-               -XX:+UseStringDeduplication \
-               -XX:MaxRAMPercentage=75 \
-               -Dfile.encoding=UTF-8 \
-               -Djava.security.egd=file:/dev/./urandom \
-               -Dspring.profiles.active=dev"
+              -XX:+ZGenerational \
+              -XX:+UseStringDeduplication \
+              -XX:MaxRAMPercentage=75 \
+              -XX:MaxMetaspaceSize=256m \
+              -XX:+HeapDumpOnOutOfMemoryError \
+              -Dfile.encoding=UTF-8 \
+              -Djava.security.egd=file:/dev/./urandom \
+              -Dspring.profiles.active=dev"
 
-# 헬스체크를 위한 스크립트
+# 헬스체크
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1
+ CMD curl -f http://localhost:${SERVER_PORT}/actuator/health || exit 1
 
-# 컨테이너 실행 시 실행할 명령어
+# 비root 사용자 추가
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+
+# 컨테이너 실행
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
 
-# API 서버 포트
 EXPOSE ${SERVER_PORT}

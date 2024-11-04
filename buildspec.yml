@@ -10,11 +10,15 @@ phases:
       # AWS 계정 로그인
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      # application.yml 파일 가져오기
+
+      # application.yml 파일들을 CodeCommit에서 가져오기
       - echo Fetching configuration files from CodeCommit...
       - mkdir -p src/main/resources
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
+      - echo "Verify config files exist:"
+      - ls -la src/main/resources/
+
       # 이미지 태그 설정
       - echo Setting image tag...
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -37,11 +41,11 @@ phases:
 
       # 현재 태스크 정의를 가져와서 새 이미지로 업데이트
       - echo Creating new task definition revision...
-      - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY)
+      - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
       - NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.taskDefinition | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy) | .containerDefinitions[0].image = $IMAGE')
       - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
 
-      # ECS 서비스 업데이트
+      # ECS 서비스 업데이트 (롤링 배포)
       - echo Updating ECS service...
       - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
 
@@ -50,5 +54,9 @@ phases:
 artifacts:
   files:
     - imageDefinitions.json
-  name: BuildArtifact
   discard-paths: yes
+
+cache:
+  paths:
+    - '/root/.gradle/caches/**/*'
+    - '/root/.gradle/wrapper/**/*'
