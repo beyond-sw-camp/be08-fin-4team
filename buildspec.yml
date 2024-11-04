@@ -23,15 +23,11 @@ phases:
       # 파일 존재 확인
       - echo "=== Checking config files ==="
       - ls -la src/main/resources/
-      - echo "=== Content of application.yml ==="
-      - cat src/main/resources/application.yml
-      - echo "=== Content of application-dev.yml ==="
-      - cat src/main/resources/application-dev.yml
 
-      # 이미지 태그 설정
+      # 이미지 태그 설정 (빌드 번호 사용)
       - echo Setting image tag...
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - IMAGE_TAG=v${CODEBUILD_BUILD_NUMBER}
+      - echo "Building version: $IMAGE_TAG"
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
 
   build:
@@ -48,19 +44,33 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - docker push $REPOSITORY_URI:latest
 
-      # 이미지 정의 파일 생성
-      - echo Creating image definitions file...
-      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDefinitions.json
-
       # 현재 태스크 정의를 가져와서 새 이미지로 업데이트
       - echo Creating new task definition revision...
       - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
-      - NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.taskDefinition | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy) | .containerDefinitions[0].image = $IMAGE')
+      - |
+        NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" \
+          '.taskDefinition | 
+          del(.taskDefinitionArn) | 
+          del(.revision) | 
+          del(.status) | 
+          del(.requiresAttributes) | 
+          del(.compatibilities) | 
+          del(.registeredAt) | 
+          del(.registeredBy) |
+          .containerDefinitions[0].image = $IMAGE')
+      - echo "New task definition:"
+      - echo $NEW_TASK_DEF
       - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
 
       # ECS 서비스 업데이트 (롤링 배포)
       - echo Updating ECS service...
       - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
+      - echo "Updated to image $REPOSITORY_URI:$IMAGE_TAG"
+
+      # 배포에 필요한 정보를 artifacts로 저장
+      - echo "Creating artifacts..."
+      - printf '{"ImageURI":"%s","ImageTag":"%s"}' $REPOSITORY_URI:$IMAGE_TAG $IMAGE_TAG > imageDefinitions.json
+      - cat imageDefinitions.json
 
       - echo Build completed on `date`
 
