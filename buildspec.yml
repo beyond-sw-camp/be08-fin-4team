@@ -16,8 +16,19 @@ phases:
       - mkdir -p src/main/resources
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application.yml --output text --query fileContent > src/main/resources/application.yml
       - aws codecommit get-file --repository-name $YOUR_REPO_NAME --file-path application-dev.yml --output text --query fileContent > src/main/resources/application-dev.yml
-      - echo "Verify config files exist:"
+
+      # 파일 존재 여부 및 권한 확인
+      - echo "Checking config files..."
       - ls -la src/main/resources/
+      - echo "File contents preview (excluding sensitive data):"
+      - echo "application.yml:"
+      - head -n 5 src/main/resources/application.yml
+      - echo "application-dev.yml:"
+      - head -n 5 src/main/resources/application-dev.yml
+
+      # 파일 권한 설정
+      - chmod 644 src/main/resources/application.yml
+      - chmod 644 src/main/resources/application-dev.yml
 
       # 이미지 태그 설정
       - echo Setting image tag...
@@ -27,11 +38,14 @@ phases:
 
   build:
     commands:
+      # 빌드 전 설정 파일 재확인
+      - echo "Verifying config files before build:"
+      - ls -la src/main/resources/
+
       # Docker 이미지 빌드
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
-
   post_build:
     commands:
       # ECR에 이미지 푸시

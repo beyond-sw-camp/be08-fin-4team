@@ -11,17 +11,21 @@ RUN chmod +x ./gradlew
 # 의존성 다운로드 (캐시 활용)
 RUN ./gradlew dependencies
 
-# 소스 복사
-COPY src/main/java /build/src/main/java
-COPY src/test /build/src/test
+# 모든 소스 코드 복사
+COPY src /build/src
 
-# application.yml 파일 복사
-COPY src/main/resources/application.yml /build/src/main/resources/
-COPY src/main/resources/application-dev.yml /build/src/main/resources/
+# 설정 파일 확인
+RUN ls -la /build/src/main/resources/
+RUN echo "Config files content preview:"
+RUN head -n 5 /build/src/main/resources/application.yml
+RUN head -n 5 /build/src/main/resources/application-dev.yml
 
 # 빌드
 RUN ./gradlew clean build -x test --no-daemon
 
+# 빌드된 jar 확인
+RUN ls -la /build/build/libs/
+# Production stage
 # Production stage
 FROM --platform=linux/amd64 eclipse-temurin:21-jdk-alpine
 WORKDIR /app
