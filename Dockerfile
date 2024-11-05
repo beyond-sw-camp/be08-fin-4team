@@ -2,7 +2,7 @@
 FROM --platform=linux/amd64 gradle:8.5-jdk21 AS builder
 WORKDIR /build
 
-# 의존성 캐싱을 위한 그래들 파일만 먼저 복사
+# 의존성 캐싱을 위한 그래들 파일 복사
 COPY build.gradle settings.gradle /build/
 COPY gradle /build/gradle
 COPY gradlew /build/
@@ -15,18 +15,13 @@ RUN ./gradlew dependencies
 COPY src/main/java /build/src/main/java
 COPY src/test /build/src/test
 
-# resources 디렉토리 생성 및 설정 파일 복사
-RUN mkdir -p /build/src/main/resources
+# Parameter Store에서 가져온 설정 파일 복사
 COPY src/main/resources/application.yml /build/src/main/resources/
 COPY src/main/resources/application-dev.yml /build/src/main/resources/
 
 # 설정 파일 확인
 RUN echo "=== Listing resources directory ==="
 RUN ls -la /build/src/main/resources/
-RUN echo "=== Content of application.yml ==="
-RUN cat /build/src/main/resources/application.yml
-RUN echo "=== Content of application-dev.yml ==="
-RUN cat /build/src/main/resources/application-dev.yml
 
 # 빌드
 RUN ./gradlew clean build -x test --no-daemon
