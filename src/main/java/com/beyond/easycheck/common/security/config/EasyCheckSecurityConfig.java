@@ -121,7 +121,7 @@ public class EasyCheckSecurityConfig {
                         "http://localhost:8081",
                         "http://localhost:3000",
                         "https://be08-fin-easy-check-easy-stay-front-client.vercel.app",
-                        "https://be08-fin-easy-check-easy-stay-front-admin.vercel.app"
+                        "https://easystay-admin-cloudyongs-projects.vercel.app"
                 )
         );
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
