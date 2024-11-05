@@ -22,13 +22,12 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         return queryFactory
                 .selectFrom(event)
-                .rightJoin(event.accommodationEntity, accommodation).fetchJoin()
+                .join(event.accommodationEntity, accommodation).fetchJoin()
                 .where(
                         accommodationIdEq(query.accommodationId())
                 )
                 .distinct()
                 .fetch();
-
     }
 
     private BooleanExpression accommodationIdEq(Long accommodationId) {

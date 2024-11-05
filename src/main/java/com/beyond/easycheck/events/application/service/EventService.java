@@ -11,10 +11,11 @@ import com.beyond.easycheck.events.ui.requestbody.EventCreateRequest;
 import com.beyond.easycheck.events.ui.requestbody.EventUpdateRequest;
 import com.beyond.easycheck.events.ui.view.EventView;
 import com.beyond.easycheck.s3.application.service.S3Service;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class EventService {
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EventView> readEvents(EventFindQuery query) {
 
         List<EventEntity> eventEntities = eventRepository.findAllEvents(query);
