@@ -80,7 +80,6 @@ public class EasyCheckSecurityConfig {
                     ).permitAll();
 
 
-
                     registry.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
 
                     registry.requestMatchers("/api/v1/users/{id}/status")
@@ -118,7 +117,7 @@ public class EasyCheckSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080","http://localhost:8081", "http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:8081", "http://localhost:3000", "https://be08-fin-easy-check-easy-stay-front-client.vercel.app", "https://be08-fin-easy-check-easy-stay-front-admin.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
