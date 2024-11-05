@@ -48,14 +48,7 @@ COPY --from=builder /build/build/libs/*.jar app.jar
 
 # 서버 환경 설정
 ENV SERVER_PORT=30010
-ENV JAVA_OPTS="-XX:+UseZGC \
-               -XX:+ZGenerational \
-               -XX:+UseStringDeduplication \
-               -XX:MaxRAMPercentage=75 \
-               -XX:MaxMetaspaceSize=256m \
-               -XX:+HeapDumpOnOutOfMemoryError \
-               -Dfile.encoding=UTF-8 \
-               -Djava.security.egd=file:/dev/./urandom \
+ENV JAVA_OPTS="-Dfile.encoding=UTF-8 \
                -Dspring.profiles.active=dev \
                -Dspring.config.location=file:/app/config/"
 
