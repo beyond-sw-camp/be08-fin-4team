@@ -7,41 +7,46 @@ phases:
 
   pre_build:
     commands:
-      # AWS ECR 로그인
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-
-      # 설정 파일 디렉토리 생성
       - mkdir -p src/main/resources
-
-      # Parameter Store에서 설정 가져오기
       - echo Fetching configuration from Parameter Store...
       - aws ssm get-parameter --name "/easystay/backend/application.yml" --query Parameter.Value --output text > src/main/resources/application.yml
       - aws ssm get-parameter --name "/easystay/backend/application-dev.yml" --query Parameter.Value --output text > src/main/resources/application-dev.yml
-
-      # 파일 존재 및 내용 확인
       - echo "=== Checking config files ==="
       - ls -la src/main/resources/
       - echo "=== Content of application.yml ==="
       - cat src/main/resources/application.yml
       - echo "=== Content of application-dev.yml ==="
       - cat src/main/resources/application-dev.yml
-
-      # 이미지 태그 설정
       - IMAGE_TAG=v${CODEBUILD_BUILD_NUMBER}
       - echo "Building version": $IMAGE_TAG
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
 
   build:
     commands:
-      # Docker 이미지 빌드
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
     commands:
-    # 나머지 post_build 명령어들...
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
+      - echo Creating new task definition revision...
+      - TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_FAMILY --region $AWS_DEFAULT_REGION)
+      - NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.taskDefinition | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy) | .containerDefinitions[0].image = $IMAGE')
+      - echo "New task definition:"
+      - echo $NEW_TASK_DEF
+      - NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
+      - echo Updating ECS service...
+      - aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
+      - echo "Updated to image $REPOSITORY_URI:$IMAGE_TAG"
+      - echo "Creating artifacts..."
+      - printf '{"ImageURI":"%s","ImageTag":"%s"}' $REPOSITORY_URI:$IMAGE_TAG $IMAGE_TAG > imageDefinitions.json
+      - cat imageDefinitions.json
+      - echo Build completed on `date`
 
 artifacts:
   files:
