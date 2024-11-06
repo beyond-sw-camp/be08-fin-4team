@@ -7,22 +7,40 @@ phases:
 
   pre_build:
     commands:
+      # Docker Hub 로그인 추가
+      - echo "Logging in to Docker Hub..."
+      - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+
+      # Amazon ECR 로그인
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+      # 리소스 디렉토리 생성 및 설정 파일 가져오기
       - echo "Creating resources directory..."
       - mkdir -p src/main/resources
       - echo "Fetching configuration from Parameter Store..."
       - aws ssm get-parameter --name "/easystay/backend/application.yml" --query Parameter.Value --output text > src/main/resources/application.yml
       - aws ssm get-parameter --name "/easystay/backend/application-dev.yml" --query Parameter.Value --output text > src/main/resources/application-dev.yml
       - ls -la src/main/resources/
+
+      # Docker 빌드 설정
       - echo "Setting up Docker build..."
       - IMAGE_TAG=v${CODEBUILD_BUILD_NUMBER}
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME
 
+      # Gradle 캐시 디렉토리 생성
+      - echo "Setting up Gradle cache directories..."
+      - mkdir -p /root/.gradle
+      - chmod -R 777 /root/.gradle
+
   build:
     commands:
       - echo "Building the Docker image..."
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - |
+        docker build \
+          --build-arg GRADLE_CACHE=/root/.gradle \
+          --cache-from $REPOSITORY_URI:latest \
+          -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
 
   post_build:
