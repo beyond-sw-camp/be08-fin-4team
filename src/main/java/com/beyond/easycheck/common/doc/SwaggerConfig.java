@@ -14,7 +14,7 @@ import java.util.Collections;
 @OpenAPIDefinition(
         info = @Info(title = "EasyCheck Service API",
                 description = "이지 체크 API",
-                version = "1.2"))
+                version = "1.3"))
 @Configuration
 public class SwaggerConfig {
     @Bean
