@@ -99,7 +99,7 @@
 
 ### 3. System Architecture
 
-<img width="555" alt="image" src="https://github.com/user-attachments/assets/9519afbd-1b7e-41f0-9398-cb847aa69f18"> <br>
+<img width="660" alt="System Architecture" src="https://github.com/user-attachments/assets/010d6e3b-e3c0-488a-98e7-6371e57dc5d7">
 
 <br>
 
@@ -114,11 +114,13 @@
 
 ### 2. E-R Diagram
 
-![EasyCheck](https://github.com/user-attachments/assets/f71fc3da-97b3-48c0-8066-e8b5ec8671c2)
+![EasyCheck](https://github.com/user-attachments/assets/19825b58-48b7-48dd-a295-ff8bf8aa6b21)
 
 <br>
 
 ### 3. Table Apecification
+
+[테이블 정의서 바로가기](https://docs.google.com/spreadsheets/d/1r6jrYhL0HWZaqtQJr3PtKUgaaS4pgxZX/edit?gid=63886534#gid=63886534)
 
 <br>
 
@@ -158,6 +160,8 @@
 <br>
 
 ### 2. CI/CD Architecture
+
+<img width="660" alt="CI/CD Architecture" src="https://github.com/user-attachments/assets/d9fcb80b-06d2-470e-a429-b1ec729b634d">
 
 <br>
 
