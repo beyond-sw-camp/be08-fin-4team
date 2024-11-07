@@ -3,7 +3,9 @@
 
 > Team - EasyCheck
 
-> Site - 
+> Site -
+
+> Demo - [데모영상 바로가기]()
 
 <br>
 
@@ -24,7 +26,6 @@
 - [🖥️ Frontend](#%EF%B8%8F-frontend)
 - [♾️ Infrastructure](#%EF%B8%8F-infrastructure)
 - [💾 Project Implementation](#-project-implementation)
-- [📂 Directory Structure](#-directory-structure)
 - [📆 WBS](#-wbs)
 - [👨‍👩‍👧‍👦 Member](#-member)
 - [📚 Memoir](#-memoir)
@@ -161,10 +162,6 @@
 ### 1. Integrated Test
 
 [통합 테스트 바로가기](https://docs.google.com/spreadsheets/d/1ofKSyFgTL0ykWuPlfgDdsXMJ86riQVtCQ6Q7KazgCSk/edit?gid=0#gid=0)
-
-<br>
-
-## 📂 Directory Structure
 
 <br>
 
