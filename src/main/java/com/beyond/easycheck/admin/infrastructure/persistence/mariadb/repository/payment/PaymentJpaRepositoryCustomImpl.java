@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-
 @RequiredArgsConstructor
 public class PaymentJpaRepositoryCustomImpl implements PaymentJpaRepositoryCustom {
 
@@ -32,8 +31,10 @@ public class PaymentJpaRepositoryCustomImpl implements PaymentJpaRepositoryCusto
         // 동적 쿼리 조건 생성
         BooleanBuilder builder = new BooleanBuilder();
 
-        // 필수 조건: 관리자가 담당하는 숙소의 결제 내역만 조회
-        builder.and(roomType.accommodationEntity.id.eq(managedAccommodationId));
+        // managedAccommodationId가 null이 아닐 때만 특정 숙소 조건 추가
+        if (managedAccommodationId != null) {
+            builder.and(roomType.accommodationEntity.id.eq(managedAccommodationId));
+        }
 
         // 선택적 조건들 추가 - 부분 일치 검색으로 변경
         if (StringUtils.hasText(query.userName())) {

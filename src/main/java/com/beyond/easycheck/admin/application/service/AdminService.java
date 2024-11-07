@@ -182,16 +182,26 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
 
     /**
      * role 테이블에서 [accommodationId]_ADMIN 이런 방식으로 지점 관리자를 구분하고 있습니다.
+     * SUPER_ADMIN의 경우 모든 숙박시설에 대한 권한을 가지므로 null을 반환합니다.
      * 최초 로그인 시점에 JWT 토큰에 해당 역할을 같이 포함했고 아래와 같이 Authentication에서 role을 가져와
      * accommodationId를 추출합니다.
-     * @return accommodationId
+     * @return accommodationId 또는 SUPER_ADMIN인 경우 null
      */
     private Long getManagerAccommodationId() {
         // 1. 인증 정보 확인
         Authentication authentication = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .orElseThrow(() -> new EasyCheckException(AdminMessageType.ACCOMMODATION_ADMIN_AUTHORITY_NOT_FOUND));
 
-        // 2. ROLE_숫자_ADMIN 형식의 권한 찾기
+        // 2. SUPER_ADMIN 체크
+        boolean isSuperAdmin = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_SUPER_ADMIN"));
+
+        if (isSuperAdmin) {
+            return null;
+        }
+
+        // 3. ROLE_숫자_ADMIN 형식의 권한 찾기
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(role -> role.matches("ROLE_\\d+_ADMIN"))
