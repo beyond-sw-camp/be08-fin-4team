@@ -1,5 +1,7 @@
 package com.beyond.easycheck.admin.application.service;
 
+import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
+import com.beyond.easycheck.accomodations.infrastructure.repository.AccommodationRepository;
 import com.beyond.easycheck.additionalservices.infrastructure.repository.AdditionalServiceRepository;
 import com.beyond.easycheck.admin.exception.AdminMessageType;
 import com.beyond.easycheck.admin.infrastructure.persistence.mariadb.repository.payment.PaymentJpaRepository;
@@ -58,6 +60,8 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
 
     private final SuggestionsRepository suggestionsRepository;
 
+    private final AccommodationRepository accommodationRepository;
+
     private final AdditionalServiceRepository additionalServiceRepository;
 
     @Override
@@ -112,6 +116,25 @@ public class AdminService implements AdminOperationUseCase, AdminReadUseCase {
     @Override
     public FindAdminResult getAdminDetails() {
         return null;
+    }
+
+    @Override
+    public FindAccommodationResult getManagerAccommodation() {
+        Long managerAccommodationId = getManagerAccommodationId();
+
+        if (managerAccommodationId == null) {
+            return FindAccommodationResult.findByAccommodationEntityWithName(
+                    AccommodationEntity.builder()
+                            .name("최종 관리자")
+                            .build()
+
+            );
+        }
+
+        AccommodationEntity result = accommodationRepository.findById(managerAccommodationId)
+                .orElseThrow(() -> new EasyCheckException(AdminMessageType.ACCOMMODATION_NOT_MANAGED));
+
+        return FindAccommodationResult.findByAccommodationEntityWithName(result);
     }
 
     @Override

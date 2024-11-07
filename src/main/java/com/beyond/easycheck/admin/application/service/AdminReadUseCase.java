@@ -1,5 +1,7 @@
 package com.beyond.easycheck.admin.application.service;
 
+import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationEntity;
+import com.beyond.easycheck.accomodations.infrastructure.entity.AccommodationType;
 import com.beyond.easycheck.additionalservices.infrastructure.entity.AdditionalServiceEntity;
 import com.beyond.easycheck.attractions.infrastructure.entity.AttractionEntity;
 import com.beyond.easycheck.events.infrastructure.entity.EventEntity;
@@ -12,6 +14,7 @@ import com.beyond.easycheck.suggestion.infrastructure.persistence.entity.Suggest
 import com.beyond.easycheck.themeparks.infrastructure.entity.ThemeParkEntity;
 import com.beyond.easycheck.user.application.service.UserReadUseCase.FindUserResult;
 import com.beyond.easycheck.user.application.service.UserReadUseCase.UserFindQuery;
+import lombok.Builder;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -27,6 +30,8 @@ public interface AdminReadUseCase {
 
     // 현재 로그인한 관리자 정보 조회
     FindAdminResult getAdminDetails();
+
+    FindAccommodationResult getManagerAccommodation();
 
     List<FindEventResult> getAllEvents();
 
@@ -49,6 +54,27 @@ public interface AdminReadUseCase {
             String userName,
             String email
     ) {
+    }
+
+    @Builder
+    record FindAccommodationResult(
+            Long id,
+            String name,
+            List<String> thumbnailUrls,
+            List<String> landscapeUrls,
+            String address,
+            String directionsUrl,
+            String latitude,
+            String longitude,
+            String responseTime,
+            AccommodationType accommodationType
+            ) {
+
+        static public FindAccommodationResult findByAccommodationEntityWithName(AccommodationEntity accommodation) {
+            return FindAccommodationResult.builder()
+                    .name(accommodation.getName())
+                    .build();
+        }
     }
 
     record FindNoticeResult(

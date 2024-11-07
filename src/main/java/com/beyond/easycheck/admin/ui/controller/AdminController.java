@@ -52,6 +52,14 @@ public class AdminController {
                 .body(new UserView(result));
     }
 
+    @GetMapping("/accommodation")
+    @Operation(summary = "관리자 담당 지점 조회")
+    public ResponseEntity<AccommodationView> getManagerAccommodation() {
+        FindAccommodationResult result = adminReadUseCase.getManagerAccommodation();
+
+        return ResponseEntity.ok(new AccommodationView(result));
+    }
+
     @GetMapping("/notices")
     @Operation(summary = "관리자 담당 업체 건의사항 모두 조회")
     public ResponseEntity<List<NoticesView>> getAllNotices() {
