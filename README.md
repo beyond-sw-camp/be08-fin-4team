@@ -147,7 +147,7 @@
 
 ### 2. UI/UX Test Case
 
-[UI/UX 테스트 바로가기](https://docs.google.com/spreadsheets/d/1sKs9u2-jmpIpiN_TV9gyMLveyxQH9EOo/edit?gid=475237107#gid=475237107)
+[UI/UX 테스트 바로가기](https://docs.google.com/spreadsheets/d/1hOSDTl7u8tKleh-sLIIzp4eAmfAXmP2C/edit?gid=444207531#gid=444207531)
 
 <br>
 
