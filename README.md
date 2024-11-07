@@ -1,4 +1,5 @@
 # 🏨 EasyStay
+![포스터](https://github.com/user-attachments/assets/5e0f1140-4eb8-4324-afd4-579498a88568)
 > [PLAYDATA] 한화시스템 BEYOND SW캠프 / EasyStay
 
 > Team - EasyCheck
