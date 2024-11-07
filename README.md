@@ -1,8 +1,9 @@
 # 🏨 EasyStay
 > [PLAYDATA] 한화시스템 BEYOND SW캠프 / EasyStay
-> 
 
 > Team - EasyCheck
+
+> Site - 
 
 <br>
 
@@ -41,6 +42,8 @@
 <img alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 <img alt="SpringDataJPA" src="https://img.shields.io/badge/Spring data jpa-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
 <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=black"/>
+<img alt="QueryDSL" src="https://img.shields.io/badge/querydsl-0769AD?style=for-the-badge&logo=QueryDSL&logoColor=white">
+<img alt="JPQL" src="https://img.shields.io/badge/jpql-6DB33F?style=for-the-badge&logo=JPQL&logoColor=white">
 </p>
 <p><strong> Frontend <br></strong>
 <img alt="HTML" src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"> 
@@ -49,6 +52,7 @@
 <img alt="JavaScript" src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"> 
 <img alt="Vue" src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white">
 <img alt="Material Design" src="https://img.shields.io/badge/material design-757575?style=for-the-badge&logo=material design&logoColor=white">
+<img alt="Pinia" src="https://img.shields.io/badge/pinia-F7DF1E?style=for-the-badge&logo=pinia&logoColor=black">
 </p>
 <p><strong> Infrastructure <br></strong>
 <img alt="Vercel" src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=Vercel&logoColor=white"/>
@@ -65,7 +69,9 @@
 </p>
 <p><strong> External API <br></strong>
 <img alt="Naver" src="https://img.shields.io/badge/Naver-03C75A?style=for-the-badge&logo=Naver&logoColor=white"/>
-<img alt="KakaoAPI" src="https://img.shields.io/badge/Kakao%20API-FFCD00?style=for-the-badge&logo=kakao&logoColor=black">
+<img alt="KakaoAPI" src="https://img.shields.io/badge/Kakao API-FFCD00?style=for-the-badge&logo=kakao&logoColor=black">
+<img alt="PortOne" src="https://img.shields.io/badge/portone-FE9A2E?style=for-the-badge&logo=portone&logoColor=black">
+<img alt="CoolSMNS" src="https://img.shields.io/badge/cool sms-2E9AFE?style=for-the-badge&logo=coolsms&logoColor=black">
 </p>
 <p><strong> Collaboration Tools <br></strong>
 <img alt="Git" src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
