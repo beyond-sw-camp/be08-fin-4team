@@ -215,7 +215,7 @@
 
 | [계용운](https://github.com/yongun2) | [김나현](https://github.com/NAHYEON0713) | [임지훈](https://github.com/limjihoon99) | [정진주](https://github.com/jeongjinjoo) |
 | ------------------------------------ | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| <img alt="계용운" src="https://github.com/user-attachments/assets/3fbb0f72-9f9b-49c8-87f0-01873185f631" width="300" /> | <img alt="김나현" src="https://github.com/user-attachments/assets/4ab874f5-c578-4baf-816d-02878f2ae787" width="300" /> | <img alt="임지훈" src="https://github.com/user-attachments/assets/8ff0448a-4ed7-48b9-9a73-5f2ea709413a" width="300" /> | <img alt="정진주" src="https://github.com/user-attachments/assets/70494fdb-e17c-4a9d-bf8f-13a2254f6ad6" width="300" /> |
+| <img alt="계용운" src="https://github.com/user-attachments/assets/c7f0e2cc-94b1-4e0c-84ee-eb10c17ff7f7" width="300" /> | <img alt="김나현" src="https://github.com/user-attachments/assets/540eb49d-c3f8-4efa-904d-8ebcf5de265a" width="300" /> | <img alt="임지훈" src="https://github.com/user-attachments/assets/2553a595-cb2c-4b57-b856-a152c92d4cfd" width="300" /> | <img alt="정진주" src="https://github.com/user-attachments/assets/596b28ea-34fc-4482-8f2b-58bbb67d692e" width="300" /> |
 | Leader, Developer                    | Developer                                | Developer                                | Developer                                |
 
 <br>
