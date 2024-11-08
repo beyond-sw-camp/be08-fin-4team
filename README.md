@@ -42,6 +42,7 @@
 <img alt="SpringSecurity" src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"/>
 <img alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 <img alt="SpringDataJPA" src="https://img.shields.io/badge/Spring data jpa-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
+<img alt="Spring Batch" src="https://img.shields.io/badge/Spring Batch-6DB33F?style=for-the-badge&logo=Springbatch&logoColor=white">
 <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=black"/>
 <img alt="QueryDSL" src="https://img.shields.io/badge/querydsl-0769AD?style=for-the-badge&logo=QueryDSL&logoColor=white">
 <img alt="JPQL" src="https://img.shields.io/badge/jpql-6DB33F?style=for-the-badge&logo=JPQL&logoColor=white">
