@@ -6,7 +6,7 @@
 
 > Site - https://be08-fin-easy-check-easy-stay-front-client.vercel.app/
 
-> Demo - [데모영상 바로가기]()
+> Demo - [데모영상 바로가기](https://youtu.be/zhbBtArym6s?si=fwRhxCqIsMut63eD)
 
 <br>
 
