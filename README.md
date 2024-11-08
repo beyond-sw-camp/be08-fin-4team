@@ -174,6 +174,35 @@
 
 <br>
 
+### 2. Rrehearsal
+
+<details>
+  <summary>사용자</summary>
+    
+  https://drive.google.com/file/d/1ltTQeMDMtiCLjgnnwStp9ME9LjmiDvI3/view?usp=sharing
+
+</details>
+<details>
+  <summary>관리자</summary>
+  
+  https://drive.google.com/file/d/1xdddnoqY7bd4IbATc5YhrkyvnAzuxB0b/view?usp=sharing
+  
+</details>
+<details>
+  <summary>프론트 CI/CD</summary>
+  
+  https://drive.google.com/file/d/1wu5L0WY-w4rR3xSzRq3yqMOgiE_r-pJP/view?usp=sharing
+  
+</details>
+<details>
+  <summary>백엔드 CI/CD</summary>
+  
+  https://drive.google.com/file/d/1fuRmt7GjcykTvv0uBUArqfgyQD3w0IxS/view?usp=sharing
+
+</details>
+
+<br>
+
 ## 📆 WBS
 
 [WBS 바로가기](https://docs.google.com/spreadsheets/d/1Mx-Wy8CSjQHiA8POOaPGxwulrzFT6OTxUZ5VshuP6lM/edit?gid=0#gid=0)
