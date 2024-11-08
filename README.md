@@ -11,8 +11,7 @@
 <br>
 
 ## ✨ Medium
-- [🇺🇸 Medium English.ver]() <br>
-- [🇰🇷 Medium Korean.ver]()
+- [🇰🇷 Medium Korean.ver](https://medium.com/@ljh01051826177/easystay-easy%ED%95%9C-%EC%B2%B4%ED%81%AC%EC%9D%B8-%EC%B2%B4%ED%81%AC%EC%95%84%EC%9B%83%EC%9D%84-%ED%86%B5%ED%95%B4-%EA%B0%84%ED%8E%B8%ED%95%9C-%EC%88%99%EC%86%8C-%EC%98%88%EC%95%BD-27105bdd41ad)
 <br>
 
 ## 📋 Material
