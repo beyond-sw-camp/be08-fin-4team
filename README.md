@@ -1,22 +1,22 @@
 # 🏨 EasyStay
+![포스터](https://github.com/user-attachments/assets/5e0f1140-4eb8-4324-afd4-579498a88568)
 > [PLAYDATA] 한화시스템 BEYOND SW캠프 / EasyStay
 
 > Team - EasyCheck
 
 > Site - https://be08-fin-easy-check-easy-stay-front-client.vercel.app/
 
-> Demo - [데모영상 바로가기]()
+> Demo - [데모영상 바로가기](https://youtu.be/zhbBtArym6s?si=fwRhxCqIsMut63eD)
 
 <br>
 
 ## ✨ Medium
-- [🇺🇸 Medium English.ver]() <br>
-- [🇰🇷 Medium Korean.ver]()
+- [🇰🇷 Medium Korean.ver](https://medium.com/@ljh01051826177/easystay-easy%ED%95%9C-%EC%B2%B4%ED%81%AC%EC%9D%B8-%EC%B2%B4%ED%81%AC%EC%95%84%EC%9B%83%EC%9D%84-%ED%86%B5%ED%95%B4-%EA%B0%84%ED%8E%B8%ED%95%9C-%EC%88%99%EC%86%8C-%EC%98%88%EC%95%BD-27105bdd41ad)
 <br>
 
 ## 📋 Material
 - [Notion Link](https://playdatacademy.notion.site/EasyCheck-4-7f15d7203a36455fa8854fac585c262e)
-- [Presentation Material]()
+- [Presentation Material](https://github.com/user-attachments/files/17671018/EasyStay_EasyCheck.pdf)
 <br>
 
 ## 📋 Contents
@@ -42,6 +42,7 @@
 <img alt="SpringSecurity" src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"/>
 <img alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 <img alt="SpringDataJPA" src="https://img.shields.io/badge/Spring data jpa-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
+<img alt="Spring Batch" src="https://img.shields.io/badge/Spring Batch-6DB33F?style=for-the-badge&logo=Springbatch&logoColor=white">
 <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=black"/>
 <img alt="QueryDSL" src="https://img.shields.io/badge/querydsl-0769AD?style=for-the-badge&logo=QueryDSL&logoColor=white">
 <img alt="JPQL" src="https://img.shields.io/badge/jpql-6DB33F?style=for-the-badge&logo=JPQL&logoColor=white">
@@ -173,6 +174,35 @@
 
 <br>
 
+### 2. Rrehearsal
+
+<details>
+  <summary>사용자</summary>
+    
+  https://drive.google.com/file/d/1ltTQeMDMtiCLjgnnwStp9ME9LjmiDvI3/view?usp=sharing
+
+</details>
+<details>
+  <summary>관리자</summary>
+  
+  https://drive.google.com/file/d/1xdddnoqY7bd4IbATc5YhrkyvnAzuxB0b/view?usp=sharing
+  
+</details>
+<details>
+  <summary>프론트 CI/CD</summary>
+  
+  https://drive.google.com/file/d/1wu5L0WY-w4rR3xSzRq3yqMOgiE_r-pJP/view?usp=sharing
+  
+</details>
+<details>
+  <summary>백엔드 CI/CD</summary>
+  
+  https://drive.google.com/file/d/1fuRmt7GjcykTvv0uBUArqfgyQD3w0IxS/view?usp=sharing
+
+</details>
+
+<br>
+
 ## 📆 WBS
 
 [WBS 바로가기](https://docs.google.com/spreadsheets/d/1Mx-Wy8CSjQHiA8POOaPGxwulrzFT6OTxUZ5VshuP6lM/edit?gid=0#gid=0)
@@ -185,7 +215,7 @@
 
 | [계용운](https://github.com/yongun2) | [김나현](https://github.com/NAHYEON0713) | [임지훈](https://github.com/limjihoon99) | [정진주](https://github.com/jeongjinjoo) |
 | ------------------------------------ | ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| <img alt="계용운" src="https://github.com/user-attachments/assets/3fbb0f72-9f9b-49c8-87f0-01873185f631" width="300" /> | <img alt="김나현" src="https://github.com/user-attachments/assets/4ab874f5-c578-4baf-816d-02878f2ae787" width="300" /> | <img alt="임지훈" src="https://github.com/user-attachments/assets/8ff0448a-4ed7-48b9-9a73-5f2ea709413a" width="300" /> | <img alt="정진주" src="https://github.com/user-attachments/assets/70494fdb-e17c-4a9d-bf8f-13a2254f6ad6" width="300" /> |
+| <img alt="계용운" src="https://github.com/user-attachments/assets/c7f0e2cc-94b1-4e0c-84ee-eb10c17ff7f7" width="300" /> | <img alt="김나현" src="https://github.com/user-attachments/assets/540eb49d-c3f8-4efa-904d-8ebcf5de265a" width="300" /> | <img alt="임지훈" src="https://github.com/user-attachments/assets/2553a595-cb2c-4b57-b856-a152c92d4cfd" width="300" /> | <img alt="정진주" src="https://github.com/user-attachments/assets/596b28ea-34fc-4482-8f2b-58bbb67d692e" width="300" /> |
 | Leader, Developer                    | Developer                                | Developer                                | Developer                                |
 
 <br>
