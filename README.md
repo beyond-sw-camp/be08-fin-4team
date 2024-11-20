@@ -15,7 +15,6 @@
 <br>
 
 ## 📋 Material
-- [Notion Link](https://playdatacademy.notion.site/EasyCheck-4-7f15d7203a36455fa8854fac585c262e)
 - [Presentation Material](https://github.com/user-attachments/files/17671018/EasyStay_EasyCheck.pdf)
 <br>
 
