@@ -4,7 +4,9 @@
 
 > Team - EasyCheck
 
-> Site - https://be08-fin-easy-check-easy-stay-front-client.vercel.app/
+> Client Site - https://easystay.cloudyong.shop/
+
+> Admin Site - https://easystay-admin.cloudyong.shop/
 
 > Demo - [데모영상 바로가기](https://youtu.be/zhbBtArym6s?si=fwRhxCqIsMut63eD)
 
@@ -16,6 +18,9 @@
 
 ## 📋 Material
 - [Presentation Material](https://github.com/user-attachments/files/17671018/EasyStay_EasyCheck.pdf)
+- Backend Github: https://github.com/beyond-sw-camp/be08-fin-EasyCheck-EasyStay-server
+- Frontend(Client) Github: https://github.com/beyond-sw-camp/be08-fin-EasyCheck-EasyStay-front-client
+- Frontend(Admin) Github: https://github.com/beyond-sw-camp/be08-fin-EasyCheck-EasyStay-front-admin
 <br>
 
 ## 📋 Contents
